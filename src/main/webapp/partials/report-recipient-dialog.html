@@ -1,0 +1,53 @@
+<!--
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<script type="text/ng-template" id="customTemplate.html">
+ 	<a class="ng-scope">
+ 		<span bind-html-unsafe="match.model.name | typeaheadHighlight:query"></span>
+ 	</a>
+</script>
+	
+
+
+	  <div class="modal-header">
+		<h4 class="modal-title" id="myModal">Destinatario della segnalazione</h4>
+	  </div>
+	  <div class="modal-body">
+		<form>
+		  <div class="form-group">
+			<label for="recipient-name" class="control-label">Organizzazione:</label>
+			
+			<input type="text" ng-model="organization" typeahead-on-select="serachUserByOrganization($item, $model, $label)" placeholder="nome organizzazione " typeahead="org for org in searchOrganization($viewValue)" typeahead-loading="loadingLocations" typeahead-no-results="noResults" class="form-control"
+			typeahead-template-url="customTemplate.html" typeahead-input-formatter="orgInputFormatter($model)"> 
+			 <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+		 <div ng-show="noResults">
+	      <i class="glyphicon glyphicon-remove"></i> No Results Found
+	    </div>
+		  </div>
+		  <div class="form-group">
+				<div ng-repeat="recipient in recipients">
+				 <label>
+				    <input type="radio" ng-model="selected.item" ng-value="recipient">
+				    {{recipient.firstName}} {{recipient.lastName}} [{{recipient.email}}]
+				  <br/>
+				 </div>
+		  </div>
+		</form>	
+		
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-default" ng-click="cancel()">Annulla</button>
+		<button type="button" class="btn btn-primary" ng-click="ok()" ng-disabled="!selected.item">Invia</button>
+	  </div>
+							

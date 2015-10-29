@@ -1,0 +1,107 @@
+<!--
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!--login modal-->
+<div id="loginModal"  tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+          <h1 class="text-center">WhistleBlowing</h1>
+          <p class="text-center">Accesso</p>
+      </div>
+       <div class="modal-body">
+        <div class="col-md-8 col-md-offset-2">
+          <div class="column-header">
+           <!-- <h3 class="title-column">Login:</h3> -->
+          </div>
+        
+          <form name="form" class="form col-md-12 center-block" ng-submit="doLogin()" novalidate>
+                    
+            
+            <fieldset>
+            <legend>Credenziali di accesso</legend>
+          
+            <div class="form-group has-feedback" 
+            ng-class="(form.$submitted || form.email.$touched) ?  (form.email.$valid ? 'has-success' : 'has-error') : ''">
+          <input type="email" class="form-control" placeholder="Indirizzo Email" ng-model="username" name="email" required ng-model-options="{ updateOn: 'blur' }" />
+           <div ng-show="form.$submitted || form.email.$touched">
+            
+            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+              ng-class="form.email.$valid ? 'glyphicon-ok' : 'glyphicon-remove'" />
+
+                <span class="small text-danger" ng-show="form.email.$error.required" >Campo obbligatorio</span>
+                <span class="small text-danger" ng-show="form.email.$error.email" >Indirizzo email non valido</span>
+        
+           </div>
+          </div>
+
+              <div class="form-group has-feedback" 
+            ng-class="(form.$submitted || form.password.$touched) ?  (form.password.$valid ? 'has-success' : 'has-error') : ''">
+              <input name="password" type="password" class="form-control" placeholder="Password" 
+                required ng-model="password" required />
+            
+                <div ng-show="form.$submitted || form.password.$touched">
+            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+              ng-class="form.password.$valid ? 'glyphicon-ok' : 'glyphicon-remove'" />
+
+            <span class="small text-danger" ng-show="form.password.$error.required" >Campo obbligatorio</span>
+          </div>
+        </div>
+        
+        </fieldset>
+        <br/>
+        
+           <fieldset>
+            <legend>Chiave personale</legend>
+            <div dropzone="dropzoneConfig" ng-hide="privateKey">
+              <!--<label for="fileselect">Files to upload:</label>
+              <input id="fileselect" type="file" multiple="multiple" name="fileselect[]">-->
+              <div id="filedrag" >Trascina in questo spazio il file con la tua chiave privata (Allegata alla e-mail ricevuta al momento della registrazione).</div>
+              <div id="submitbutton" style="display: none;">
+              <!--<button type="submit">Upload Files</button>-->
+              </div>
+            </div>
+
+            <div ng-show="privateKey">
+              <a href="" class="pull-right" ng-click="cleanPrivateKey()">[cancel]</a>
+           
+              <label>Chiave caricata:</label>
+              <span><strong>{{privateKeyFilename}}<strong></span>
+              </div>
+          
+
+          </fieldset>
+
+             <div ng-show="errors">
+              <h4 class="text-danger" ng-bind="errors.message"></h4>
+              <span class="small text-danger" ng-bind="errors.details"></span>
+            </div>
+
+            <div class="form-group">
+              <button class="btn btn-primary btn-block" type="submit">Login</button>
+            </div>           
+          </form>
+            <br/>
+            <div class="text-center">
+              <p>Non sei registrato?<a class="btn btn-link" href="#/register">Crea nuovo Account</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+       
+      </div>
+  </div>
+  </div>
+</div>
+

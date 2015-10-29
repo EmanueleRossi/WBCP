@@ -1,0 +1,62 @@
+[    
+    {
+        "name":"SMTP_HOST",
+        "description":"FQDN name or IP Address of the SMTP Server.",
+        "parameterValue":"smtp.gmail.com",
+        "localeTag":"en-US"
+    },
+    {
+        "name":"SMTP_PORT",
+        "description":"SMTP service TCP/IP port.",
+        "parameterValue":"465",
+        "localeTag":"en-US"
+    },
+    {
+        "name":"SMTP_AUTH_USERNAME",
+        "description":"SMTP SSL Authentication Username",
+        "parameterValue":"whistleblowingtest@gmail.com",
+        "localeTag":"en-US"
+    },    
+    {
+        "name":"SMTP_AUTH_PASSWORD",
+        "description":"SMTP SSL Authentication Password (clear text).",
+        "parameterValue":"whistleblowingtest!",
+        "localeTag":"en-US"
+    },      
+    {
+        "name":"MAIL_FROM_ADDRESS",
+        "description":"Mail address of mail origin.",
+        "parameterValue":"wbcp@wbcp.org",
+        "localeTag":"en-US"
+    },   
+    {
+        "name":"MAIL_SUBJECT",
+        "description":"Subject of the sent e-mail.",
+        "parameterValue":"Your Whistleblowing Private Key",
+        "localeTag":"en-US"
+    },      
+    {
+        "name":"MAIL_SUBJECT",
+        "description":"Subject of the sent e-mail.",
+        "parameterValue":"La tua chiave privata per il Whistleblowing",
+        "localeTag":"it-IT"
+    },     
+    {
+        "name":"MAIL_BODY",
+        "description":"Body of the sent e-mail.",
+        "parameterValue":"<h1>Whistle Blowing Platform</h1>.<span>Attached You'll find your private key, needed to read messages sent to you. Save it on a safe place, do not share it, and use it only for WhistleBlowing platform!</span>",
+        "localeTag":"en-US"
+    },   
+    {
+        "name":"MAIL_BODY",
+        "description":"Body of the sent e-mail.",
+        "parameterValue":"<h1>Whistle Blowing Platform</h1>.<span>In allegato, troverai la tua chiave privata, necessaria per leggere i messaggi che ti vengono spediti. Memorizzala in un posto sicuro, non condividerla ed usala solo per la piattaforma di WhistleBlowing!</span>",
+        "localeTag":"it-IT"
+    },     
+    {
+        "name":"JWT_TOKEN_EXPIRATION",
+        "description":"Token life duration (in minutes).",
+        "parameterValue":"1",
+        "localeTag":"en-US"
+    }      
+]

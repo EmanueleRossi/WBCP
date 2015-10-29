@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+    id="WBCP_ID" version="3.1" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+
+    <display-name>WBCP</display-name>
+
+    <context-param>
+        <param-name>resteasy.servlet.mapping.prefix</param-name>
+        <param-value>/rs</param-value>
+    </context-param>
+    <context-param>
+        <param-name>resteasy.scan</param-name>
+        <param-value>true</param-value>
+    </context-param>    
+ 
+    <servlet>
+    	<display-name>Rest Easy Application</display-name>
+        <servlet-name>it.gpi.wbcp.service.rest.RestApplication</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>it.gpi.wbcp.service.rest.RestApplication</param-value>
+        </init-param> 
+    </servlet>
+ 
+    <servlet-mapping>
+        <servlet-name>it.gpi.wbcp.service.rest.RestApplication</servlet-name>
+        <url-pattern>/rs/*</url-pattern>
+    </servlet-mapping>
+     
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+</web-app>

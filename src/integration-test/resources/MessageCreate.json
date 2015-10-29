@@ -1,0 +1,12 @@
+{
+    "user":{
+        "email":"sonia.composta@gmail.com"
+    },
+    "sender":{
+        "email":"sonia.composta@gmail.com"
+    },    
+    "recipient":{
+        "email":"emanuele.rossi@gmail.com"
+    },
+    "payload":"WBCP Secret Report! ;)"
+}

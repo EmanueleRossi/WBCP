@@ -1,0 +1,190 @@
+<!--
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<div id="loginModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+          <h1 class="text-center">WhistleBlowing</h1>
+      <p class="text-center">Registrazione</p>
+      </div>
+
+
+
+    <div class="col-md-8 col-md-offset-2" ng-hide="accountCreated">
+    
+      <div class="column-header">
+        <h3 class="title-column">Nuovo Account:</h3>
+      </div>
+      <div class="modal-body">
+        <form novalidate name="form" class="form-register col-md-12 center-block">
+     
+        <div class="form-group has-feedback" 
+              ng-class="(form.$submitted || form.firstname.$touched) ?  (form.firstname.$valid ? 'has-success' : 'has-error') : ''">
+          <input type="text" class="form-control" placeholder="Nome" ng-model="user.firstname" name="firstname" required>
+           <div ng-show="form.$submitted || form.firstname.$touched">
+            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+              ng-class="form.firstname.$valid ? 'glyphicon-ok' : 'glyphicon-remove'" />
+
+            <span class="small text-danger" ng-show="form.firstname.$error.required" >Campo obbligatorio</span>
+          </div>
+        </div>
+
+         <div class="form-group has-feedback" 
+              ng-class="(form.$submitted || form.lastname.$touched) ?  (form.lastname.$valid ? 'has-success' : 'has-error') : ''">
+           <input type="text" class="form-control" placeholder="Cognome" ng-model="user.lastname" name="lastname" required>
+           <div ng-show="form.$submitted || form.lastname.$touched">
+            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+              ng-class="form.lastname.$valid ? 'glyphicon-ok' : 'glyphicon-remove'" />
+ 
+            <span class="small text-danger" ng-show="form.lastname.$error.required" >Campo obbligatorio</span>
+          </div>
+        </div>
+
+         <div class="form-group has-feedback" 
+              ng-class="(form.$submitted || form.fiscalcode.$touched) ? 
+                ( form.fiscalcode.$pending.fiscalcodeUnique ? 'has-info' : (form.fiscalcode.$valid ? 'has-success' : 'has-error')) : ''">
+                 <input type="text" class="form-control" placeholder="Codice Fiscale" ng-model="user.fiscalcode" name="fiscalcode" required 
+               fiscalcode  ng-model-options="{ updateOn: 'blur' }">
+           <div ng-show="form.$submitted || form.fiscalcode.$touched">
+             <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+              ng-class="form.fiscalcode.$pending.fiscalcodeUnique ? 'glyphicon-cloud-upload' : (form.fiscalcode.$valid ? 'glyphicon-ok' : 'glyphicon-remove')" />
+
+            <span class="small text-info" ng-show="form.fiscalcode.$pending.fiscalcodeUnique">Verifica codice fiscale...</span>
+           
+            <span class="small text-danger" ng-show="form.fiscalcode.$error.required" >Campo obbligatorio</span>
+            <span class="small text-danger" ng-show="form.fiscalcode.$error.fiscalcodeFormat" >Formato codice fiscale non valido</span>
+            <span class="small text-danger" ng-show="form.fiscalcode.$error.fiscalcodeUnique" >Esiste già un account per il codice fiscale inserito</span>
+          </div>
+        </div>
+
+         <div class="form-group has-feedback" 
+            ng-class="(form.$submitted || form.email.$touched) ?  (form.email.$valid ? 'has-success' : 'has-error') : ''">
+          <input type="email" class="form-control" placeholder="Indirizzo Email" ng-model="user.email" name="email" required ng-model-options="{ updateOn: 'blur' }">
+           <div ng-show="form.$submitted || form.email.$touched">
+            
+            <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+              ng-class="form.email.$valid ? 'glyphicon-ok' : 'glyphicon-remove'" />
+
+                <span class="small text-danger" ng-show="form.email.$error.required" >Campo obbligatorio</span>
+                <span class="small text-danger" ng-show="form.email.$error.email" >Indirizzo email non valido</span>
+        
+          </div>
+        </div>
+
+         <div class="form-group has-feedback" 
+             ng-class="(form.$submitted || form.password.$touched) ? (form.password.$valid ? 'has-success' : 'has-error') : ''">
+           <input type="password" class="form-control" placeholder="Password" ng-model="user.password" name="password" minlength="8" required>
+           <div ng-show="form.$submitted || form.password.$touched">
+            
+           <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+              ng-class="form.password.$valid ? 'glyphicon-ok' : 'glyphicon-remove'" />
+        
+            <span class="small text-danger" ng-show="form.password.$error.required" >Campo obbligatorio</span>
+            <span class="small text-danger" ng-show="form.password.$error.minlength" >la password deve essere lunga almeno 8 caratteri</span>
+          </div>
+        </div>
+
+         <div class="form-group has-feedback" 
+            ng-class="(form.$submitted || form.passwordConfirm.$touched) ?  (form.passwordConfirm.$valid ? 'has-success' : 'has-error') : ''">
+           <input type="password" class="form-control" placeholder="Ripeti Password" ng-model="user.passwordConfirm" name="passwordConfirm" required 
+              compare-to="user.password">
+           <div ng-show="form.$submitted || form.passwordConfirm.$touched">
+            
+             <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"
+              ng-class="form.passwordConfirm.$valid ? 'glyphicon-ok' : 'glyphicon-remove'" />
+            
+            <span class="small text-danger" ng-show="form.passwordConfirm.$error.required" >Campo obbligatorio</span>
+        
+            <span class="small text-danger" ng-show="form.passwordConfirm.$error.compareTo" >
+              Il valore inserito non corrisponde a quello del campo precedente
+            </span>
+            
+          </div>
+        </div>
+
+        <div ng-show="errors">
+          <h4 class="text-danger" ng-bind="errors.message"></h4>
+          <span class="small text-danger" ng-bind="errors.details"></span>
+        </div>
+     
+        <div class="form-group">
+          <button class="btn btn-primary btn-block" ng-click="createAccount()">Iscriviti</button>
+        </div>
+        </form>
+
+         <div class="text-center">
+              <p>Hai già un account?<a class="btn btn-link" href="#/login">Torna al login</a></p>
+          </div>
+       
+
+      </div>
+    </div>
+
+    <div class="col-md-10 col-md-offset-1" ng-show="accountCreated">
+      <div class="column-header">
+        <h3 class="text-center text-success">Account creato con successo.</h3>
+      </div>
+      <div class="modal-body">
+        <p>
+           A breve, riceverai una email all'indirizzo indicato con le istruzioni per l'utilizzo del servizio.
+        </p>
+       
+        <a class="btn btn-link btn-block" href="#/login">Ora puoi procedere al login</a>
+      </div>
+    </div>
+      
+      <div class="modal-footer">
+            
+      </div>
+  
+  
+  </div>
+  </div>
+</div>
+
+
+<!--
+<nav class="navbar navbar-default navbar-fixed-top">
+  <a href="#/home" class="btn btn-default btn-back glyphicon glyphicon-menu-left"></a>
+  <div class="title text-center">Login</div>
+</nav>
+
+<div class="container page-content">
+
+
+<div>
+ <form class="form-signin" ng-submit="doLogin()">
+    <h2 class="form-signin-heading">Esegui l'accesso</h2>
+    <label for="inputUsername" class="sr-only">Username</label>
+    <input type="text" id="inputUsername" class="form-control" placeholder="login caleido" required autofocus ng-model="username">
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="password" required ng-model="password">
+    <div class="checkbox" ng-show="canRemember">
+      <label>
+        <input type="checkbox" ng-model="remember">Mantieni ai successivi accessi
+      </label>
+    </div>
+    <button class="btn btn-primary btn-block" type="submit">Login</button>
+ 	<br/>
+ 	<span class="text-danger" ng-bind="errorMessage" />
+  </form>
+  
+ 	
+</div>
+
+
+
+</div>
+-->

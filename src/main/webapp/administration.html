@@ -1,0 +1,243 @@
+<!--
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+ 
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>WBCP Administration Snippets...</title>
+</head>
+<body>
+    <h1>Access to WildFly Web Console</h1>
+    <a href="http://localhost:9990/console/">http://localhost:9990/console/</a>
+    <h1>Application Server Data Source Registration</h1>
+    <h2>Microsoft Windows</h2>
+    <h3>Command Prompt</h3>
+    <pre>
+    cd C:\dev\tools\wildfly-8.2.0.Final\bin>
+
+    set JAVA_HOME=C:\Program Files\Java\jdk1.8.0_25
+    
+    jboss-cli.bat
+    </pre>
+    <h3>Inside WildFly CLI...</h3>
+    <pre>	
+    module add --name=org.postgresql-9.4-1201.jdbc41 --resources=C:\dev\tools\postgresql-9.4-1201.jdbc41.jar --dependencies=javax.api,javax.transaction.api
+		
+    connect
+
+    /subsystem=datasources/jdbc-driver=postgresql-9.4-1201.jdbc41:add(driver-name="postgresql-9.4-1201.jdbc41",driver-module-name="org.postgresql-9.4-1201.jdbc41",driver-class-name=org.postgresql.Driver)
+		
+    data-source add --jndi-name=java:jboss/datasources/WBCP_DS --name=WBCP_DS --connection-url=jdbc:postgresql://localhost:5432/WBCP --driver-name=postgresql-9.4-1201.jdbc41 --user-name=wbcp --password=test
+    </pre>
+    <h1>Database Creation</h1>
+    <h2>PostgreSQL</h2>
+    <pre>
+    CREATE ROLE wbcp LOGIN
+        PASSWORD 'test'
+        NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+     
+    CREATE DATABASE "WBCP"
+        WITH OWNER = wbcp
+        ENCODING = 'UTF8'
+        TABLESPACE = pg_default
+        LC_COLLATE = 'it_IT.utf8'
+        LC_CTYPE = 'it_IT.utf8'
+        CONNECTION LIMIT = -1
+	TEMPLATE template0;
+    </pre>
+    <h1>Server Upgrade BATCH</h1>
+    <h2>Linux</h2>
+    <pre>
+    #!/bin/bash
+    SRC_HOME=/home/wildfly82/src
+    WBCP_REPO=file:///home/gitrepo/DevLab.git
+    export SRC_HOME WBCP_REPO
+
+    cd $SRC_HOME
+    rm -rf $SRC_HOME/DevLab
+    git clone file:///home/gitrepo/DevLab.git
+
+    cd $SRC_HOME/DevLab/WBCP/project
+    mvn -q clean install
+
+    mvn -N -q compile flyway:clean
+    mvn -N -q compile flyway:baseline
+    mvn -N -q compile flyway:migrate
+
+    mvn -N -q wildfly:undeploy
+    mvn -N -q wildfly:deploy
+    </pre>      
+    <h1>Application Server Client Interfaces Specification</h1>    
+    <table border='1'>
+        <thead>
+            <td>Service</td>
+            <td>URL</td>
+            <td>Request Sample</td>
+            <td>Notes</td>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Users List</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/user/list">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/user/list</a></td>
+                <td>
+                    <pre>
+    GET call to URL.
+                    </pre>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>User Creation</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/user/create">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/user/create</a></td>
+                <td>
+                    <pre>
+    {
+        "lastName":"Rossi",
+        "firstName":"Emanuele",
+        "taxCode":"RSSMNL77R02L781Y",
+        "email":"emanuele.rossi@gpi.it",
+        "requestedClearPassword":"Secret123"
+    }
+                    </pre>
+                </td>
+                <td>Server process will send an e-mail with the private key attached to the specified e-mail address.</td>
+            </tr>
+            <tr>
+                <td>User Search, by ID</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/user/id/{id}">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/user/id/{id}</a></td>
+                <td>
+                    <pre>
+    GET call to URL.
+                    </pre>
+                </td>
+                <td></td>
+            </tr> 
+            <tr>
+                <td>User Search, by e-mail</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/user/email/{email}">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/user/email/{email}</a></td>
+                <td>
+                    <pre>
+    GET call to URL.
+                    </pre>
+                </td>
+                <td></td>
+            </tr>           
+            <tr>
+                <td>User Search, by organization ID</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/user/searchByOrganization/{id}">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/user/searchByOrganization/{id}</a></td>
+                <td>
+                    <pre>
+    GET call to URL.
+                    </pre>
+                </td>
+                <td>
+                    Returns users list related to the specified organization. System verifies the real existence of organization, and returns the list.
+                </td>
+            </tr>             
+            <tr>
+                <td>Login</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/auth/login">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/auth/login</a></td>
+                <td>
+                    <pre>
+    {
+        "loginEmail":"emanuele.rossi@gmail.it",
+        "loginPassword":"qLGGFLjS982j",
+        "privateKeyBase64":"PROVA"
+    }
+                    </pre>
+                </td>
+                <td>Return a session token (field <code>code</code>), or an HTTP 401 if the password is wrong! The private key is not verified in login process (is not saved on back-end!), but is mandatory.</td>
+            </tr>              
+            <tr>
+                <td>Message Creation</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/message/create">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/message/create</a></td>
+                <td>
+                    <pre>
+    {
+        "user":{
+            "email":"sonia.composta@gmail.com"
+        },
+        "sender":{
+            "email":"sonia.composta@gmail.com"
+        },    
+        "recipient":{
+            "email":"emanuele.rossi@gmail.com"
+        },
+        "payload":"WBCP Secret Report! ;)"
+    }
+                    </pre>
+                </td>
+                <td>
+                    <ul>
+                        <li><pre>User</pre>Message Owner, has to exist as a system user!</li>
+                        <li><pre>Sender</pre>Message Sender, has to exist as a system user!</li>
+                        <li><pre>Recipient</pre>Message Recipient, has to exist as a system user!</li>                        
+                        <li><pre>Payload</pre>Message Content. Server does not implements any login on content, treated as a string.</li>                           
+                    </ul>
+                </td>
+            </tr>                  
+            <tr>
+                <td>Message Search, by Instant</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/message/searchByInstant/2015-01-01/2015-12-31">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/message/searchByInstant/2015-01-01/2015-12-31</a></td>
+                <td>
+                    <pre>
+    POST call to URL, with some parameters specified in the URL and others in POST (User Session).
+                    </pre>
+                </td>
+                <td></td>
+            </tr>                      
+            <tr>
+                <td>Organization Creation</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/organization/create">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/organization/create</a></td>
+                <td>
+                    <pre>
+    {
+        "name":"GPI S.p.A.",
+        "taxCode":"01944260221",
+        "mailDomain":"gpi.it"
+    }
+                    </pre>
+                </td>
+                <td>The organization JSON data structure, may contain an element, "users" with an array of users, for creating the organization - users bi-directional relationship</td>                                  
+            </tr>
+            <tr>
+                <td>Organizations List</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/organization/list">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/organization/list</a></td>
+                <td>
+                    <pre>
+    GET call to URL.
+                    </pre>
+                </td>
+                <td></td>                                  
+            </tr>
+            <tr>
+                <td>Organizations Search (full text)</td>
+                <td><a href="http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/organization/fullTextSearch/{text}">http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs/organization/fullTextSearch/{text}</a></td>
+                <td>
+                    <pre>
+    GET call to URL.
+                    </pre>
+                </td>
+                <td>Search notes:
+                    <ul>
+                        <li>Server executes searches in LIKE.</li>
+                        <li>Server executes search on all organization fields (<code>name, taxCode, mailDomain</code>).</li>
+                    </ul>
+                </td>                                  
+            </tr>
+        </tbody>
+    </table>    
+</body>
+</html>

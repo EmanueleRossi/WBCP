@@ -1,0 +1,330 @@
+/*
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+.modal-footer {   border-top: 0px; }
+
+.clear{
+	clear:both;
+}
+
+.link {
+    display: block;
+    padding: 0.8em 0 1.8em 2%;
+}
+
+.title-column{
+	font-weight:100;
+	padding-left:9%;
+}
+
+.title-application{
+	font-size:1.8em;
+}
+
+.modal {
+    background-color: rgba(100,100,100,0.7);
+}
+
+.modal-content{
+	font-weight:100;
+}
+
+.modal-header, .container-header {
+	/*background: transparent url("../img/logo.png") no-repeat scroll 97% 20%*/
+}
+
+.modal-header h1{
+	font-size:1.9em;
+}
+
+.modal-content h3{
+	font-size:1.3em;
+}
+
+.modal-dialog .modal-content{
+	border:1px solid rgba(0, 0, 0, 0.05);
+	border-radius:0;
+}
+
+.autenticazione, .title-application{
+	float:left;
+}
+
+.autenticazione{
+	margin:20px 0 0
+	5%;
+	line-height: 2.3em;
+}
+.autenticazione span{
+	color:#f48120;
+}
+
+.autenticazione .logout {
+	cursor: pointer;
+}
+
+.btn.btn-add-report {
+	margin-bottom: 10px;
+}
+
+.tab-pane.active, .elenco-messaggi {
+    background-clip: padding-box;
+    background-color: #fff;
+   /* border: 1px solid rgba(0, 0, 0, 0.2);*/
+	box-shadow: 0 3px 5px rgba(0, 0, 0, 0.15);
+    outline: 0 none;
+    position: relative;
+}
+
+.nav-tabs > li > a {
+	margin-right:0px;
+}
+
+.elenco-messaggi {padding: 40px 22px;}
+
+.elenco-messaggi th {
+	font-weight: normal;
+
+}
+
+.btn-back-to-list {
+	margin: 0px 20px;
+}
+
+label{
+	font-weight:normal;
+	text-align:left;
+}
+
+.descrizione label{
+margin-top:2em;
+}
+
+.form-horizontal {
+    border-bottom: 1px solid #eeeeee;
+    margin-bottom: 2em;
+    padding-bottom: 1em;
+}
+
+.form-control.segnalazioni{
+	float:left;
+}
+
+.delete, .add{
+	float:right;
+	color:#fff;
+	border-radius:3px;
+	padding: 6px 12px;
+}
+
+.delete{
+	background-color:#575757;
+	border-color:#575757;
+}
+
+.add{
+	background-color:#ff801a;
+	border-color:#ff801a;
+}
+
+.tab-pane 
+{
+	display: none;
+}
+
+.tab-pane.active 
+{
+	display: block;
+}
+
+
+.form-group .modal-body {
+    padding: 15px 32px;
+}
+
+.form-group {
+    margin-bottom: 8px;
+}
+
+.elenco .last{ border-bottom: 1px solid #ddd;}
+
+.read{
+	background-color: #fbfbfb;
+}
+
+ .unread{
+	font-weight:bold;
+ }
+ 
+ th.stato, tr.stato{
+	width:300px;
+ }
+ 
+ .attivo{
+	background: transparent url("../img/i-attivo.png") no-repeat scroll 0 50%;
+	width:40px;
+ }
+ 
+ .concluso{
+	background: transparent url("../img/i-concluso.png") no-repeat scroll 0 50%;
+ }
+ 
+ .annullato{
+	background: transparent url("../img/i-annullato.png") no-repeat scroll 0 50%;
+ }
+ 
+ .elenco .read td,
+ .elenco .unread td{
+ line-height:2;
+ }
+ 
+ .elenco a{
+ display:block;
+ }
+ 
+  .elenco a:hover{
+text-decoration:none;
+ }
+
+.elenco-messaggi .elenco .date {
+	width: 100px;
+}
+
+.elenco-messaggi .elenco tr {
+	cursor: pointer;
+}
+
+.form-control-static {
+	background-color: #f7f7f7;
+	border: solid 1px #ddd;
+	padding-left: 10px;
+	padding-right: 10px;
+
+}
+
+.form-control-static.multi-linea {
+	white-space: pre;
+}
+
+.input-group-btn .btn {
+	padding-top:6px;
+	padding-bottom: 6px;
+}
+
+.homepage-image {
+	height: 380px;
+	background: transparent url("../img/homepage-image.jpg") no-repeat scroll 50% 50%;
+	background-size:cover;
+}
+
+.homepage-enter-button {
+	padding-top:25px;
+}
+
+.homepage-enter-button .btn {
+	width: 170px;
+}
+
+.comments-container {
+	 border-top: solid 1px #ccc;
+   margin-top: 30px;
+   padding: 10px;
+}
+
+.comments-container .comment {
+	margin-bottom: 20px;
+}
+
+.status-container td, .status-container th {
+	padding: 0px 20px;
+	font-size: 0.95em;
+}
+
+/* ========================================= */
+
+.animate.ng-hide-add, 
+.animate.ng-hide-remove {
+  transition: 0s linear all;
+}
+
+.animate.ng-hide-add-active,
+.animate.ng-hide-remove-active {
+  transition: 1s linear all;
+}
+
+/* ============================================ */
+
+.report-view-container .form-group {
+	margin-bottom: 15px;
+}
+
+.report-view-container .form-group label {
+	/* width: 250px; */
+}
+
+
+/*  =======================================  */
+#filedrag, #file-drag-area {
+    border: 1px dashed #555;
+    border-radius: 3px;
+    color: #555;
+    cursor: default;
+    display: block;
+    margin: 1em 0;
+    padding: 2em 0;
+    text-align: center;
+}
+#filedrag.hover, #file-drag-area.hover {
+    border-color: #FF9037;
+    border-style: solid;
+    box-shadow: 0 3px 4px #888 inset;
+    /*color: #f00; */
+}
+
+
+.element-list-item {
+	margin-right:80px;
+}
+
+/*
+.element-list-item.last {
+	margin-right:80px;
+}
+*/
+.element-list-item .col-sm-2,
+.element-list-item .col-sm-3,
+.element-list-item .col-sm-5,
+.element-list-item .col-sm-7,
+.element-list-item .col-sm-8
+{
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.element-list-item .row {
+	margin-left: -5px;
+	margin-right: -5px;
+}
+
+.element-list-container .btn.add {
+	margin-right: 3px;
+}
+
+fieldset {
+	margin-bottom: 15px;
+}
+
+td, th {
+	padding:3px 10px;
+}
