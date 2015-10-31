@@ -43,6 +43,17 @@ public class User extends RootDto {
         organizations = new ArrayList<>();
     }     
     
+    public String getSignature() {
+        String signature = new StringBuilder()
+                .append(lastName)
+                .append(",")
+                .append(firstName)
+                .append(" <")
+                .append(email)
+                .append(">").toString();
+        return signature;
+    }
+    
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
     

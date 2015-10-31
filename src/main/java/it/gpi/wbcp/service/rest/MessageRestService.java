@@ -109,7 +109,7 @@ public class MessageRestService {
                                     CryptoUtil cuSender = new CryptoUtil(sender.getPublicKeyBase64());
                                     SecretKey senderAESMessageKey = cuSender.newAESKey();
                                     byte[] senderEncryptedPayload = cuSender.encrypt_AES(clearTextPayload.getBytes(StandardCharsets.UTF_8.name()), senderAESMessageKey);
-                                    byte[] senderEncryptedAuthor = cuSender.encrypt_AES(user.get().getBytes(StandardCharsets.UTF_8.name()), senderAESMessageKey);
+                                    byte[] senderEncryptedAuthor = cuSender.encrypt_AES(user.getSignature().getBytes(StandardCharsets.UTF_8.name()), senderAESMessageKey);
                                     message.setPayload(StringUtil.getBase64EncodedUTF8String(senderEncryptedPayload));  
                                     message.setAuthor(StringUtil.getBase64EncodedUTF8String(senderEncryptedAuthor));
                                     byte[] cryptedSenderAESMessageKey = cuSender.encrypt_RSA(senderAESMessageKey.getEncoded());
@@ -123,7 +123,7 @@ public class MessageRestService {
                                     CryptoUtil cuRecipient = new CryptoUtil(recipient.getPublicKeyBase64());
                                     SecretKey recipientAESMessageKey = cuRecipient.newAESKey();
                                     byte[] recipientEncryptedPayload = cuRecipient.encrypt_AES(clearTextPayload.getBytes(StandardCharsets.UTF_8.name()), recipientAESMessageKey);
-                                    byte[] recipientEncryptedAuthor = cuRecipient.encrypt_AES(recipient.getAuthorSignature().getBytes(StandardCharsets.UTF_8.name()), recipientAESMessageKey);                                    
+                                    byte[] recipientEncryptedAuthor = cuRecipient.encrypt_AES(recipient.getSignature().getBytes(StandardCharsets.UTF_8.name()), recipientAESMessageKey);                                    
                                     recipientMessage.setPayload(StringUtil.getBase64EncodedUTF8String(recipientEncryptedPayload));
                                     recipientMessage.setAuthor(StringUtil.getBase64EncodedUTF8String(recipientEncryptedAuthor));
                                     byte[] cryptedRecipientAESMessageKey = cuRecipient.encrypt_RSA(recipientAESMessageKey.getEncoded());
