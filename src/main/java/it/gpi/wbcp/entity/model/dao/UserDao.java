@@ -137,10 +137,12 @@ public class UserDao {
             q.select(r).where(cb.equal(r.<String>get("email"), email));
             TypedQuery<UserEjb> tq = em.createQuery(q);
             UserEjb responseEjb = tq.getSingleResult();
-            pub.copyProperties(response, responseEjb);
+            pub.copyProperties(response, responseEjb);            
+            logger.debug("responseEjb" + responseEjb.toString());
         } catch (NoResultException nre) {
             logger.info("Not found User with email: |{}|", email);            
         }
+        logger.debug("response" + response.toString());
         return response;
     } 
 }
