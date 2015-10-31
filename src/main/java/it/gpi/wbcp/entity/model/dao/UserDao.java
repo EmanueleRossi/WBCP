@@ -98,7 +98,7 @@ public class UserDao {
     }
     
     public User getById(Long id) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    	User response = null;
+    	User response = new User();
         try {        
             UserEjb responseEjb = this.getEjbById(id);
             pub.copyProperties(response, responseEjb);
@@ -129,7 +129,7 @@ public class UserDao {
     }
     
     public User getByEmail(String email) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    	User response = null;
+    	User response = new User();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<UserEjb> q = cb.createQuery(UserEjb.class);    
