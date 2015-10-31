@@ -102,12 +102,10 @@ public class UserEjb {
     @Column(name = "EMAIL_ADDRESS", nullable = false, unique = true, length = 255) 
     private String email;
      
-    @JsonIgnore
     @Basic(optional=false)
     @Column(name = "PASSWORD_HASH_BASE64", nullable = false, length = 255)
     private String passwordHashBase64;
       
-    @JsonIgnore
     @Basic(optional=false)
     @Column(name = "PUBLIC_KEY_BASE64", nullable = false, length = 1024)
     private String publicKeyBase64;         
@@ -122,19 +120,17 @@ public class UserEjb {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Calendar accountExpirationInstant;
     
-    @JsonIgnore
     @Basic(optional=true)
     @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "user")
     private List<MessageEjb> messages;
      
-    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.ALL}, mappedBy="users")
     private List<OrganizationEjb> organizations;
          
     public UserEjb() {
         messages = new ArrayList<>();
         organizations = new ArrayList<>();
-                this.creationInstantUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK);
+        this.creationInstantUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK);
         this.creationInstantLocale = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
     } 
     

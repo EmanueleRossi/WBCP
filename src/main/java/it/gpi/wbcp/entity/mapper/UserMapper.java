@@ -18,12 +18,18 @@ import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.entity.model.entity.ejb.UserEjb;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface UserMapper {    
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class );
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
  
-    User userEjbToUser(UserEjb userEjb);    
+    @Mappings({
+        @Mapping(target = "id", source = "id"),
+        @Mapping(target = "requestedClearPassword", ignore = true)
+    })
+    User userEjbToUser(UserEjb userEjb);  
+    @Mapping(target = "id", source = "id")
     UserEjb userToUserEjb(User user);    
 }
