@@ -14,12 +14,13 @@
  */
 package it.gpi.wbcp.entity.model.entity.dto;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.EXTERNAL_PROPERTY, property="type")
-public class Organization extends RootDto {
+public class Organization {
+    
+    private Long id;
     
     private String name;
     private String taxCode;
@@ -29,7 +30,15 @@ public class Organization extends RootDto {
            
     public Organization() {
         users = new ArrayList<>();
-    }           
+    }     
+    
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    } 
+    
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

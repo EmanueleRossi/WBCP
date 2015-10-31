@@ -16,12 +16,12 @@ package it.gpi.wbcp.entity.model.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.Calendar;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.EXTERNAL_PROPERTY, property="type")
-public class Message extends RootDto {
-
-    private static final long serialVersionUID = 1L;    
-	
+public class Message {
+   
+    private Long id;
+    
     private User user;
     private User sender;    
     private User recipient;
@@ -33,6 +33,14 @@ public class Message extends RootDto {
     public Message() {
     }
 
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    } 
+    
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }    
+    
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
     
