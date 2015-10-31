@@ -59,12 +59,14 @@ public class UserDao {
         
         this.persist(userEjb);
                 
-        User response = UserMapper.INSTANCE.userEjbToUser(userEjb);       
+        User response = UserMapper.INSTANCE.userEjbToUser(userEjb);    
+        logger.debug("RESPONSE:" + response.toString());
         return response;
     }   
     
     private void persist(UserEjb userEjb) {
         em.persist(userEjb);
+        logger.debug("RESPONSE1:" + userEjb.toString());
     }
     
     /*
