@@ -14,9 +14,11 @@
  */
 package it.gpi.wbcp.entity.model.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.EXTERNAL_PROPERTY, property="type")
 public class Organization extends RootDto {
     
     private String name;

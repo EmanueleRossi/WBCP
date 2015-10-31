@@ -67,7 +67,7 @@ public class UserRestService {
     ApplicationParameterDao aParameterDao;   
     @EJB
     OrganizationDao organizationDao;
-    
+/*    
     @GET
     @Path("/list")    
     @Produces(MediaType.APPLICATION_JSON)
@@ -145,7 +145,7 @@ public class UserRestService {
         }     
         return response;        
     }
-
+*/
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)        

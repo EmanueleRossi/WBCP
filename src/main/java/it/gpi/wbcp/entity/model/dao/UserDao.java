@@ -14,6 +14,7 @@
  */
 package it.gpi.wbcp.entity.model.dao;
 
+import it.gpi.wbcp.entity.mapper.UserMapper;
 import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.entity.model.entity.ejb.UserEjb;
 import it.gpi.wbcp.util.StringUtil;
@@ -34,41 +35,34 @@ import javax.persistence.criteria.Root;
 import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mapstruct.factory.Mappers;
 
 @Stateless
 public class UserDao {
     
     private static final Logger logger = LogManager.getLogger();
-    
-    private final PropertyUtilsBean pub;
 	
+    private UserMapper mapper;
+    
     @PersistenceContext(unitName="WBCP_PU")
     private EntityManager em;
     
     public UserDao() {
-        pub = new PropertyUtilsBean();
+        mapper = Mappers.getMapper(UserMapper.class);
     } 
 	
     public User persist(User user) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {    	        
-        User response = new User();
-        UserEjb userEjb;
-        if (user.getId() != null) {
-            userEjb = this.getEjbById(user.getId());
-        } else {
-            userEjb = new UserEjb(); 
-        }
         
-        pub.copyProperties(userEjb, user);          
-    
+        UserEjb userEjb = UserMapper.INSTANCE.userToUserEjb(user);    
     	userEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
     	userEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));    	        
         em.persist(userEjb);
-        
-        pub.copyProperties(response, userEjb);  
-        
+                
+        User response = UserMapper.INSTANCE.userEjbToUser(userEjb);       
         return response;
     }   
     
+    /*
     public List<User> getAll() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {    	
     	CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<UserEjb> q = cb.createQuery(UserEjb.class);        
@@ -107,7 +101,7 @@ public class UserDao {
         }
         return response;
     }
-    
+    */
     public boolean verifyCredentials(String email, String password) {        
         boolean response = false;
         try {
@@ -137,8 +131,7 @@ public class UserDao {
             q.select(r).where(cb.equal(r.<String>get("email"), email));
             TypedQuery<UserEjb> tq = em.createQuery(q);
             UserEjb responseEjb = tq.getSingleResult();
-            response = new User();
-            pub.copyProperties(response, responseEjb);            
+            response = UserMapper.INSTANCE.userEjbToUser(responseEjb);             
         } catch (NoResultException nre) {            
             logger.info("Not found User with email: |{}|", email);            
         }

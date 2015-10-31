@@ -14,8 +14,10 @@
  */
 package it.gpi.wbcp.entity.model.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.util.Calendar;
 
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.EXTERNAL_PROPERTY, property="type")
 public class Message extends RootDto {
 
     private static final long serialVersionUID = 1L;    

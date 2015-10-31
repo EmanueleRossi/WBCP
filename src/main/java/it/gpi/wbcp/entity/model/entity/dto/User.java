@@ -15,12 +15,14 @@
 package it.gpi.wbcp.entity.model.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.gpi.wbcp.entity.model.entity.ejb.MessageEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.OrganizationEjb;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.EXTERNAL_PROPERTY, property="type")
 public class User extends RootDto {
     
     private String lastName;
