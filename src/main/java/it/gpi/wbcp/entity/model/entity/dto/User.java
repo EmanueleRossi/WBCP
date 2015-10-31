@@ -15,15 +15,17 @@
 package it.gpi.wbcp.entity.model.entity.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import it.gpi.wbcp.entity.model.entity.ejb.MessageEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.OrganizationEjb;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-public class User extends RootDto {
+public class User {
     
+    private Long id;
+       
     private String lastName;
     private String firstName;
     private String taxCode;
@@ -44,6 +46,11 @@ public class User extends RootDto {
         organizations = new ArrayList<>();
     }     
     
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this);
+    } 
+    
     public String getSignature() {
         String signature = new StringBuilder()
                 .append(lastName)
@@ -54,6 +61,9 @@ public class User extends RootDto {
                 .append(">").toString();
         return signature;
     }
+    
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }	
     
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
