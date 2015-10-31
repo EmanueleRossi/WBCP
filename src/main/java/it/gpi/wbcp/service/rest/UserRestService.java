@@ -189,7 +189,7 @@ public class UserRestService {
                                 user.setAccountStartInstant(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));
                                 user.setAccountExpirationInstant(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));
 
-                                userDao.persist(user); 
+                                User responseUser = userDao.persist(user); 
 
                                 String smtpHost = aParameterDao.getParameterAsString("SMTP_HOST");
                                 Integer smtpPort = aParameterDao.getParameterAsInteger("SMTP_PORT");
@@ -203,7 +203,7 @@ public class UserRestService {
                                 String privateKeyBase64 = StringUtil.getBase64EncodedUTF8String(cu.getPrivateKey().getEncoded());
                                 mu.sendMailSSL(mailFromAddress, user.getEmail(), mailSubject, mailBody, privateKeyBase64);
 
-                                response = Response.status(Status.OK).entity(user).build();   
+                                response = Response.status(Status.OK).entity(responseUser).build();   
                             }
                         }
                     }
