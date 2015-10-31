@@ -20,11 +20,8 @@ import it.gpi.wbcp.entity.model.entity.ejb.OrganizationEjb;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-public class User {
-    
-    private Long id;
+public class User extends RootDto {
        
     private String lastName;
     private String firstName;
@@ -46,11 +43,6 @@ public class User {
         organizations = new ArrayList<>();
     }     
     
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    } 
-    
     public String getSignature() {
         String signature = new StringBuilder()
                 .append(lastName)
@@ -60,10 +52,7 @@ public class User {
                 .append(email)
                 .append(">").toString();
         return signature;
-    }
-    
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }	
+    }	
     
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
