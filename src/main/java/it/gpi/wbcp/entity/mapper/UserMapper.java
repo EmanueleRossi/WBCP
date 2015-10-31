@@ -25,11 +25,15 @@ import org.mapstruct.factory.Mappers;
 public interface UserMapper {    
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
  
-    @Mappings({
-        @Mapping(target = "id", source = "id"),
+    @Mappings({        
         @Mapping(target = "requestedClearPassword", ignore = true)
     })
-    User userEjbToUser(UserEjb userEjb);  
-    @Mapping(target = "id", source = "id")
+    User userEjbToUser(UserEjb userEjb);    
+    @Mappings({        
+        @Mapping(target = "creationInstantUTC", ignore = true),
+        @Mapping(target = "creationInstantLocale", ignore = true),
+        @Mapping(target = "updateInstantUTC", ignore = true),
+        @Mapping(target = "updateInstantLocale", ignore = true)    
+    })
     UserEjb userToUserEjb(User user);    
 }

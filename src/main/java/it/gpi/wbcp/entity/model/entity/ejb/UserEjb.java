@@ -14,18 +14,13 @@
  */
 package it.gpi.wbcp.entity.model.entity.ejb;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
@@ -33,53 +28,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.validation.constraints.Size;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 @Entity
 @Table(name="USERS")
-//@Inheritance(strategy = InheritanceType.JOINED)
-public class UserEjb {
-	
-    @Id
-    @GeneratedValue
-    private Long id;
-
-    @Column(name = "CREATION_INSTANT_UTC", nullable = false)    
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Calendar creationInstantUTC;
-
-    @Column(name = "CREATION_INSTANT_LOCALE", nullable = false)        
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Calendar creationInstantLocale;
-      
-    @Column(name = "LASTUPDATE_INSTANT_UTC", nullable = false)       
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)        
-    private Calendar lastUpdateInstantUTC;
-  
-    @Column(name = "LASTUPDATE_INSTANT_LOCALE", nullable = false)       
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)        
-    private Calendar lastUpdateInstantLocale;
-
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    }                     
-    
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }	
-
-    public Calendar getCreationInstantUTC() { return creationInstantUTC; }
-    public void setCreationInstantUTC(Calendar creationInstantUTC) { this.creationInstantUTC = creationInstantUTC; }
-
-    public Calendar getCreationInstantLocale() { return creationInstantLocale; }
-    public void setCreationInstantLocale(Calendar creationInstantLocale) { this.creationInstantLocale = creationInstantLocale; }
-
-    public Calendar getUpdateInstantUTC() {	return lastUpdateInstantUTC; }
-    public void setUpdateInstantUTC(Calendar updateInstantUTC) { this.lastUpdateInstantUTC = updateInstantUTC; }
-
-    public Calendar getUpdateInstantLocale() { return lastUpdateInstantLocale; }
-    public void setUpdateInstantLocale(Calendar updateInstantLocale) { this.lastUpdateInstantLocale = updateInstantLocale; }
-    
+@Inheritance(strategy = InheritanceType.JOINED)
+public class UserEjb extends RootEjb {
+	    
     private static final long serialVersionUID = 1L;
 	
     @Size(max = 255, message="{user.lastName.size}")
@@ -130,8 +84,6 @@ public class UserEjb {
     public UserEjb() {
         messages = new ArrayList<>();
         organizations = new ArrayList<>();
-        this.creationInstantUTC = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK);
-        this.creationInstantLocale = Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault());
     } 
     
     public String getAuthorSignature() {
