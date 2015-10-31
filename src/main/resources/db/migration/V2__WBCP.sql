@@ -59,6 +59,10 @@ ALTER TABLE errors
     ADD CONSTRAINT fk_errors_base_entities FOREIGN KEY (id) REFERENCES base_entities(id);	
 
 CREATE TABLE users (
+    creation_instant_locale timestamp without time zone,
+    creation_instant_utc timestamp without time zone,
+    lastupdate_instant_locale timestamp without time zone,
+    lastupdate_instant_utc timestamp without time zone,
     account_expiration_instant timestamp without time zone NOT NULL,
     account_start_instant timestamp without time zone NOT NULL,
     email_address character varying(255) NOT NULL,
@@ -74,8 +78,10 @@ ALTER TABLE users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
 ALTER TABLE users
     ADD CONSTRAINT uk_users_email UNIQUE (email_address);
-ALTER TABLE users
-    ADD CONSTRAINT fk_users_base_entites FOREIGN KEY (id) REFERENCES base_entities(id);	
+
+
+
+
 
 CREATE TABLE messages (
     aes_key_rsa_crypted_base64 character varying(1024) NOT NULL,

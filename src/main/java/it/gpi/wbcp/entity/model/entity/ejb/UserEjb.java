@@ -40,26 +40,22 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 //@Inheritance(strategy = InheritanceType.JOINED)
 public class UserEjb {
 	
-        @Id
+    @Id
     @GeneratedValue
-    Long id;
+    private Long id;
 
-    @JsonIgnore
     @Column(name = "CREATION_INSTANT_UTC", nullable = false)    
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Calendar creationInstantUTC;
-    
-    @JsonIgnore
+
     @Column(name = "CREATION_INSTANT_LOCALE", nullable = false)        
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Calendar creationInstantLocale;
-    
-    @JsonIgnore    
+      
     @Column(name = "LASTUPDATE_INSTANT_UTC", nullable = false)       
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)        
     private Calendar lastUpdateInstantUTC;
-
-    @JsonIgnore    
+  
     @Column(name = "LASTUPDATE_INSTANT_LOCALE", nullable = false)       
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)        
     private Calendar lastUpdateInstantLocale;
