@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.List;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.EXTERNAL_PROPERTY, property="jsonType")
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="jsonType")
 public class User {
     
     private final String jsonType = User.class.getName();
