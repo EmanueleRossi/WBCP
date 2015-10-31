@@ -56,11 +56,16 @@ public class UserDao {
         UserEjb userEjb = UserMapper.INSTANCE.userToUserEjb(user);    
     	userEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
     	userEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));    	        
-        em.persist(userEjb);
+        
+        this.persist(userEjb);
                 
         User response = UserMapper.INSTANCE.userEjbToUser(userEjb);       
         return response;
     }   
+    
+    private void persist(UserEjb userEjb) {
+        em.persist(userEjb);
+    }
     
     /*
     public List<User> getAll() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {    	
