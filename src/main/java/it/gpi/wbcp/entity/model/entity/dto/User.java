@@ -26,7 +26,7 @@ import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.EXTERNAL_PROPERTY, property="jsonType")
 public class User {
     
-    private final Class jsonType = User.class;
+    private final String jsonType = User.class.getName();
     
     private Long id;
        
