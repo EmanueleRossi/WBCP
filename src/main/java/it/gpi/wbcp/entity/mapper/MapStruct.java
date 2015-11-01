@@ -22,8 +22,8 @@ import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface UserMapper {    
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+public interface MapStruct {    
+    MapStruct INSTANCE = Mappers.getMapper(MapStruct.class);
  
     @Mappings({        
         @Mapping(target = "requestedClearPassword", ignore = true)

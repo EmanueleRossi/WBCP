@@ -14,7 +14,7 @@
  */
 package it.gpi.wbcp.entity.model.dao;
 
-import it.gpi.wbcp.entity.mapper.UserMapper;
+import it.gpi.wbcp.entity.mapper.MapStruct;
 import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.entity.model.entity.ejb.UserEjb;
 import it.gpi.wbcp.util.StringUtil;
@@ -41,24 +41,17 @@ import org.mapstruct.factory.Mappers;
 public class UserDao {
     
     private static final Logger logger = LogManager.getLogger();
-	
-    private UserMapper mapper;
     
     @PersistenceContext(unitName="WBCP_PU")
     private EntityManager em;
-    
-    public UserDao() {
-        mapper = Mappers.getMapper(UserMapper.class);
-    } 
 	
-    public User persist(User user) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {    	        
-        
-        UserEjb userEjb = UserMapper.INSTANCE.userToUserEjb(user);    
+    public User persist(User user) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {    	                
+        UserEjb userEjb = MapStruct.INSTANCE.userToUserEjb(user);    
     	userEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
     	userEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));    	        
         em.persist(userEjb);
                 
-        User response = UserMapper.INSTANCE.userEjbToUser(userEjb);       
+        User response = MapStruct.INSTANCE.userEjbToUser(userEjb);       
         return response;
     }   
     
@@ -131,7 +124,7 @@ public class UserDao {
             q.select(r).where(cb.equal(r.<String>get("email"), email));
             TypedQuery<UserEjb> tq = em.createQuery(q);
             UserEjb responseEjb = tq.getSingleResult();
-            response = UserMapper.INSTANCE.userEjbToUser(responseEjb);             
+            response = MapStruct.INSTANCE.userEjbToUser(responseEjb);             
         } catch (NoResultException nre) {            
             logger.info("Not found User with email: |{}|", email);            
         }

@@ -40,10 +40,7 @@ dependencies {
 	[group: 'org.jboss.resteasy', name: 'resteasy-validator-provider-11', version: '3.0.11.Final'], 
 	[group: 'org.jboss.resteasy', name: 'resteasy-client', version: '3.0.10.Final'],
         [group: 'org.mapstruct', name: 'mapstruct', version: '1.0.0.CR2'],      
-        [group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.0.0.CR2']          
-    )
-    testCompile (
-        [group: 'junit', name: 'junit', version: '4.12']
+        [group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.0.0.CR2']         
     )
     integrationTestCompile (
         [group: 'junit', name: 'junit', version: '4.12'],
@@ -71,20 +68,41 @@ flyway {
 
 buildscript {
     repositories {
-        mavenCentral()
+        mavenCentral()     
     }    
     dependencies {
-        classpath (
+        classpath (            
             [group: 'org.flywaydb', name: 'flyway-gradle-plugin', version: '3.2.1'],
             [group: 'org.postgresql', name: 'postgresql', version: '9.4-1202-jdbc42']         
         )
     }
 }
 
-test {
-    filter {
-        includeTestsMatching "*Auth*Test"
+task deploy(dependsOn: war, type: Copy) { 
+    from('build/libs/') { 
+        include '*.war'
     }
+    into 'C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments' 
+    def ok=new File('C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments\\WBCP-1.0.war.deployed'); 
+    def ko=new File('C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments\\WBCP-1.0.war.failed');    
+    doFirst {
+        if(ok.exists()) { ok.delete() }
+        if(ko.exists()) { ko.delete() } 
+    }
+    doLast {
+        print 'Executing WildFly deploy...'
+        def deployed = false
+        for(def i = 0; i < 80; i++) { 
+            if(ok.exists()) { deployed = true; break }
+            if(ko.exists()) { break }
+            sleep(500);
+        } 
+        if (deployed) { 
+            println(' deploy ok :)') 
+        } else { 
+            throw new RuntimeException('Deployment failed, see WildFly logs!') 
+        } 
+     } 
 }
 
 task integrationTest(type: Test) {
@@ -95,3 +113,4 @@ task integrationTest(type: Test) {
         includeTestsMatching "*Auth*Test"
     }
 }
+

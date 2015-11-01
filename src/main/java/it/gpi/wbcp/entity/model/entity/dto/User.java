@@ -46,7 +46,7 @@ public class User extends RootDto {
     public String getSignature() {
         String signature = new StringBuilder()
                 .append(lastName)
-                .append(",")
+                .append(", ")
                 .append(firstName)
                 .append(" <")
                 .append(email)
