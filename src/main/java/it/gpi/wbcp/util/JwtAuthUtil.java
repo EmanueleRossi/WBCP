@@ -40,14 +40,13 @@ public class JwtAuthUtil {
     }
 
     public static String encodeJWT(JwtClaims claims, String stringKey) throws JoseException {
-        String serializedJwe = null ;
-        Key key = new AesKey(stringKey .getBytes());
+        Key key = new AesKey(stringKey.getBytes());
         JsonWebEncryption jwe = new JsonWebEncryption();
         jwe.setPayload(claims.toJson());
         jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.A128KW);
         jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         jwe.setKey(key);
-        serializedJwe = jwe.getCompactSerialization();
+        String serializedJwe = jwe.getCompactSerialization();
         return serializedJwe ;
     }
 

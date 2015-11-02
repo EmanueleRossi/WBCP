@@ -22,7 +22,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
@@ -31,9 +33,9 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.junit.Assert;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -44,6 +46,27 @@ public class AuthRestServiceTest {
     private static final Logger logger = LogManager.getLogger();
     
     private ResteasyClient client;
+    private static String loginEmail;
+    private static String loginPassword;
+    private String authorizationToken;
+    
+    @BeforeClass
+    public static void createTestUser() {
+        try {          
+            String jsonAuthLoginUserCreate = new String(Files.readAllBytes(Paths.get(AuthRestServiceTest.class.getResource("/AuthLoginUserCreate.json").toURI())));                        
+            ObjectMapper responseLoginValidObjectMapper = new ObjectMapper();
+            JsonNode rootNode = responseLoginValidObjectMapper.readTree(jsonAuthLoginUserCreate);   
+            loginEmail = rootNode.path("email").getTextValue();
+            loginPassword = rootNode.path("requestedClearPassword").getTextValue();            
+            ResteasyWebTarget targetUserCreate = new ResteasyClientBuilder().build().target(new URI("http", null, "localhost", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            targetUserCreate.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
+            Response responseUserCreate = targetUserCreate.request().post(Entity.json(jsonAuthLoginUserCreate));
+            Assert.assertTrue(responseUserCreate.getStatus() == 200);            
+            responseUserCreate.close();
+        } catch (IllegalArgumentException | NullPointerException | URISyntaxException | IOException e) {
+            fail("Exception! " + StringUtil.stringifyStackTrace(e));
+        }            
+    }
     
     @Before 
     public void initialize() {
@@ -53,49 +76,61 @@ public class AuthRestServiceTest {
        
     @Test
     public void testValidLogin() {
-        try {                                              
-            String jsonAuthLoginUserCreate = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/AuthLoginUserCreate.json").toURI())));                        
-            ResteasyWebTarget targetUserCreate = client.target(new URI("http", null, "localhost", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
-            targetUserCreate.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response responseUserCreate = targetUserCreate.request().post(Entity.json(jsonAuthLoginUserCreate));   
-            assertTrue(responseUserCreate.getStatus() == 200);            
-            responseUserCreate.close();
-                                                                                          
-            String jsonAuthLoginValid = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/AuthLoginValid.json").toURI())));                       
+        try {                                                                                                               
             ResteasyWebTarget targetLoginValid = client.target(new URI("http", null, "localhost", 8080, "/WBCP-1.0/rs/auth/login", null, null).toASCIIString());
-            targetLoginValid.request().accept(MediaType.APPLICATION_JSON_TYPE);
-            Response responseLoginValid = targetLoginValid.request().post(Entity.json(jsonAuthLoginValid));  
-            byte[] responseLoginValidByteArray = responseLoginValid.readEntity(byte[].class);            
-            System.out.println(new String(responseLoginValidByteArray));                        
-            System.out.println(responseLoginValid.getHeaderString("AuthorizationToken"));            
-            assertTrue(responseLoginValid.getStatus() == 200);                                              
-            
-            /*ObjectMapper responseLoginValidObjectMapper = new ObjectMapper();
-            JsonNode rootNode = responseLoginValidObjectMapper.readTree(responseLoginValidByteArray);            
-            Assert.assertNotNull(rootNode.path("code"));            
-            Assert.assertTrue(rootNode.path("loginEmail").isNull());     
-            Assert.assertTrue(rootNode.path("loginPassword").isNull());*/
+            targetLoginValid.request().accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE);                        
+            MultivaluedHashMap<String, String> targetLoginParams = new MultivaluedHashMap<>();
+            targetLoginParams.add("loginEmail", loginEmail);
+            targetLoginParams.add("loginPassword", loginPassword);
+            targetLoginParams.add("privateKeyBase64", "SECRET");
+            Response responseLoginValid = targetLoginValid.request().post(Entity.form(targetLoginParams));  
+            Assert.assertEquals(responseLoginValid.getStatus(), Status.OK.getStatusCode());   
+            authorizationToken = responseLoginValid.getHeaderString("AuthorizationToken");
+            Assert.assertNotNull(authorizationToken);            
             responseLoginValid.close();
             
-        } catch (IllegalArgumentException | NullPointerException | IOException | URISyntaxException e) {
+        } catch (IllegalArgumentException | NullPointerException | URISyntaxException e) {
             fail("Exception! " + StringUtil.stringifyStackTrace(e));
         }
     }    
 
-    /*
     @Test
-    public void testInValidLogin() {
+    public void testWrongLoginParameters() {
         try {                                                                                                              
-            String jsonAuthLoginInValid = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/AuthLoginInValid.json").toURI())));                       
-            ResteasyWebTarget targetLoginInValid = client.target(new URI("http", null, "localhost", 8080, "/WBCP-1.0/rs/auth/login", null, null).toASCIIString());
-            targetLoginInValid.request().accept(MediaType.APPLICATION_JSON_TYPE);
-            Response responseLoginInValid = targetLoginInValid.request().post(Entity.json(jsonAuthLoginInValid));       
-            assertTrue(responseLoginInValid.getStatus() == 401);
-            responseLoginInValid.close();
+            ResteasyWebTarget targetLoginValid = client.target(new URI("http", null, "localhost", 8080, "/WBCP-1.0/rs/auth/login", null, null).toASCIIString());
+            targetLoginValid.request().accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE);                        
+            MultivaluedHashMap<String, String> targetLoginParams = new MultivaluedHashMap<>();
+            Response responseLoginValid_01 = targetLoginValid.request().post(Entity.form(targetLoginParams));                                          
+            Assert.assertEquals(responseLoginValid_01.getStatus(), Status.BAD_REQUEST.getStatusCode());                   
+            targetLoginParams.add("loginEmail", loginEmail);
+            responseLoginValid_01.close();            
+            Response responseLoginValid_02 = targetLoginValid.request().post(Entity.form(targetLoginParams));                                          
+            Assert.assertEquals(responseLoginValid_02.getStatus(), Status.BAD_REQUEST.getStatusCode());   
+            responseLoginValid_02.close();            
+            targetLoginParams.add("loginPassword", loginPassword);
+            Response responseLoginValid_03 = targetLoginValid.request().post(Entity.form(targetLoginParams));                                          
+            Assert.assertEquals(responseLoginValid_03.getStatus(), Status.BAD_REQUEST.getStatusCode());
+            responseLoginValid_03.close();            
                        
-        } catch (IllegalArgumentException | NullPointerException | IOException | URISyntaxException e) {
+        } catch (IllegalArgumentException | NullPointerException | URISyntaxException e) {
             fail("Exception! " + StringUtil.stringifyStackTrace(e));
         }
     }
-    */
+    
+    @Test
+    public void testInvalidPassword() {
+        try {                                                                                                              
+            ResteasyWebTarget targetLoginInValid = client.target(new URI("http", null, "localhost", 8080, "/WBCP-1.0/rs/auth/login", null, null).toASCIIString());
+            targetLoginInValid.request().accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE);                        
+            MultivaluedHashMap<String, String> targetLoginParams = new MultivaluedHashMap<>();
+            targetLoginParams.add("loginEmail", loginEmail);
+            targetLoginParams.add("loginPassword", "WRONG PASSWORD");
+            targetLoginParams.add("privateKeyBase64", "SECRET");
+            Response responseLoginInValid = targetLoginInValid.request().post(Entity.form(targetLoginParams));
+            Assert.assertEquals(responseLoginInValid.getStatus(), Status.UNAUTHORIZED.getStatusCode());   
+                       
+        } catch (IllegalArgumentException | NullPointerException | URISyntaxException e) {
+            fail("Exception! " + StringUtil.stringifyStackTrace(e));
+        }
+    }    
 }

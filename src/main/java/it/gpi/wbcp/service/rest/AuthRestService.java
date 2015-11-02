@@ -25,6 +25,8 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -50,10 +52,14 @@ public class AuthRestService {
     @EJB
     ApplicationParameterDao aParameterDao;
 
-    @POST
+    @POST    
     @Path("/login")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response login(@Context HttpServletRequest httpRequest, String loginEmail, String loginPassword, String privateKeyBase64) {
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)    
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response login(@Context HttpServletRequest httpRequest, 
+                          @FormParam("loginEmail") String loginEmail, 
+                          @FormParam("loginPassword") String loginPassword, 
+                          @FormParam("privateKeyBase64") String privateKeyBase64) {
         Response response = null;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
         try {
@@ -74,8 +80,7 @@ public class AuthRestService {
                     } else {
                         if (userDao.verifyCredentials(loginEmail, loginPassword)) {
                             
-                            Integer jwtTokenExpirationMinutes = aParameterDao.getParameterAsInteger("JWT_TOKEN_EXPIRATION");
-                            
+                            Integer jwtTokenExpirationMinutes = aParameterDao.getParameterAsInteger("JWT_TOKEN_EXPIRATION");              
                             JwtClaims claims = new JwtClaims();
                             claims.setIssuer("WBCP"); 
                             claims.setAudience("WBCP");
@@ -83,9 +88,8 @@ public class AuthRestService {
                             claims.setGeneratedJwtId();
                             claims.setIssuedAtToNow();  
                             claims.setSubject(loginEmail);
-                            claims.setClaim("privateKeyBase64", privateKeyBase64);
-                            
-                            String token = JwtAuthUtil.encodeJWT(claims, "WBCP");
+                            claims.setClaim("privateKeyBase64", privateKeyBase64);                                                        
+                            String token = JwtAuthUtil.encodeJWT(claims, "WBCPWBCPWBCPWBCP");
                             
                             response = Response.status(Status.OK).header("AuthorizationToken", token).build();
                         } else {

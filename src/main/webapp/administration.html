@@ -33,13 +33,13 @@
     </pre>
     <h3>Inside WildFly CLI...</h3>
     <pre>	
-    module add --name=org.postgresql-9.4-1201.jdbc41 --resources=C:\dev\tools\postgresql-9.4-1201.jdbc41.jar --dependencies=javax.api,javax.transaction.api
+    module add --name=org.postgresql-9.4-1204.jdbc4 --resources=C:\dev\tools\postgresql-9.4-1204.jdbc4.jar --dependencies=javax.api,javax.transaction.api
 		
     connect
 
-    /subsystem=datasources/jdbc-driver=postgresql-9.4-1201.jdbc41:add(driver-name="postgresql-9.4-1201.jdbc41",driver-module-name="org.postgresql-9.4-1201.jdbc41",driver-class-name=org.postgresql.Driver)
+    /subsystem=datasources/jdbc-driver=postgresql-9.4-1204.jdbc4:add(driver-name="postgresql-9.4-1204.jdbc4",driver-module-name="org.postgresql-9.4-1204.jdbc4",driver-class-name=org.postgresql.Driver)
 		
-    data-source add --jndi-name=java:jboss/datasources/WBCP_DS --name=WBCP_DS --connection-url=jdbc:postgresql://localhost:5432/WBCP --driver-name=postgresql-9.4-1201.jdbc41 --user-name=wbcp --password=test
+    data-source add --jndi-name=java:jboss/datasources/WBCP_DS --name=WBCP_DS --connection-url=jdbc:postgresql://localhost:5432/WBCP --driver-name=postgresql-9.4-1204.jdbc4 --user-name=wbcp --password=test
     </pre>
     <h1>Database Creation</h1>
     <h2>PostgreSQL</h2>

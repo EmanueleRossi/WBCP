@@ -83,26 +83,9 @@ task deploy(dependsOn: war, type: Copy) {
         include '*.war'
     }
     into 'C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments' 
-    def ok=new File('C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments\\WBCP-1.0.war.deployed'); 
-    def ko=new File('C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments\\WBCP-1.0.war.failed');    
-    doFirst {
-        if(ok.exists()) { ok.delete() }
-        if(ko.exists()) { ko.delete() } 
-    }
     doLast {
-        print 'Executing WildFly deploy...'
-        def deployed = false
-        for(def i = 0; i < 80; i++) { 
-            if(ok.exists()) { deployed = true; break }
-            if(ko.exists()) { break }
-            sleep(500);
-        } 
-        if (deployed) { 
-            println(' deploy ok :)') 
-        } else { 
-            throw new RuntimeException('Deployment failed, see WildFly logs!') 
-        } 
-     } 
+        print 'Deployed... se logs for details...'
+    } 
 }
 
 task integrationTest(type: Test) {
