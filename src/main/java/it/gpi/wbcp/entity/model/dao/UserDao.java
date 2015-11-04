@@ -19,9 +19,7 @@ import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.entity.model.entity.ejb.UserEjb;
 import it.gpi.wbcp.util.StringUtil;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import javax.ejb.Stateless;
@@ -32,10 +30,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.mapstruct.factory.Mappers;
 
 @Stateless
 public class UserDao {
@@ -54,47 +50,7 @@ public class UserDao {
         User response = MapStruct.INSTANCE.userEjbToUser(userEjb);       
         return response;
     }   
-    
-    /*
-    public List<User> getAll() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {    	
-    	CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<UserEjb> q = cb.createQuery(UserEjb.class);        
-        Root<UserEjb> r = q.from(UserEjb.class);
-        q.select(r);
-        TypedQuery<UserEjb> tq = em.createQuery(q);
-        List<UserEjb> rs = tq.getResultList();   
-        
-        List<User> users = new ArrayList<>();
-        for(UserEjb userEjb : rs) {
-            User user = new User();
-            pub.copyProperties(user, userEjb);
-            users.add(user);
-        }        
-        return users;    		        		
-    }  
-    
-    private UserEjb getEjbById(Long id) throws NoResultException {
-        UserEjb response = null;   
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<UserEjb> q = cb.createQuery(UserEjb.class);    
-        Root<UserEjb> r = q.from(UserEjb.class);
-        q.select(r).where(cb.equal(r.<Integer>get("id"), id));
-        TypedQuery<UserEjb> tq = em.createQuery(q);
-        response = tq.getSingleResult();
-        return response;
-    }
-    
-    public User getById(Long id) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    	User response = new User();
-        try {        
-            UserEjb responseEjb = this.getEjbById(id);
-            pub.copyProperties(response, responseEjb);
-        } catch (NoResultException nre) {
-            logger.info("Not found User with id: |{}|", id);            
-        }
-        return response;
-    }
-    */
+
     public boolean verifyCredentials(String email, String password) {        
         boolean response = false;
         try {

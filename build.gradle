@@ -79,21 +79,38 @@ buildscript {
 }
 
 task deploy(dependsOn: war, type: Copy) { 
-    from('build/libs/') { 
-        include '*.war'
+    from('build\\libs\\') { 
+        include 'WBCP-1.0.war'
     }
-    into 'C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments' 
+    into 'C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments'     
+    def ok=new File('C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments\\WBCP-1.0.war.deployed'); 
+    def ko=new File('C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments\\WBCP-1.0.war.failed');    
+    doFirst {
+        if(ok.exists()) { ok.delete() }
+        if(ko.exists()) { ko.delete() } 
+    }    
     doLast {
-        print 'Deployed... se logs for details...'
+        print 'Executing WildFly deploy...'
+        def deployed = false
+        for(def i = 0; i < 100; i++) { 
+            if(ok.exists()) { deployed = true; break }
+            if(ko.exists()) { break }
+            sleep(500);
+        } 
+        if (deployed) { 
+            println(' done :)') 
+        } else { 
+            throw new RuntimeException('Deployment failed, see WildFly log!') 
+        }         
     } 
 }
 
-task integrationTest(type: Test) {
+task integrationTest(dependsOn: ['flywayClean', 'flywayMigrate', 'deploy'], type: Test) {
     testClassesDir = sourceSets.integrationTest.output.classesDir
     classpath = sourceSets.integrationTest.runtimeClasspath
     outputs.upToDateWhen { false }
     filter {
-        includeTestsMatching "*Auth*Test"
+        includeTestsMatching "*ITest"
     }
 }
 

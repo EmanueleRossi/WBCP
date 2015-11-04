@@ -39,8 +39,6 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class MessageRestServiceTest {
     
-    private static final Logger logger = LogManager.getLogger();
-    
     private ResteasyClient client;
     
     @Before 

@@ -97,7 +97,7 @@ CREATE TABLE organizations (
     name character varying(255) NOT NULL,
     tax_code character varying(255),
     mail_domain character varying(255),
-    user_in_charge_id bigint NOT NULL,
+    user_in_charge_id bigint,
     id bigint NOT NULL
 );
 

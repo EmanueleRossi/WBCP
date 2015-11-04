@@ -23,8 +23,6 @@ import java.nio.file.Paths;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -40,8 +38,6 @@ import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class UserRestServiceTest {
-    
-    private static final Logger logger = LogManager.getLogger();
     
     private ResteasyClient client;
     

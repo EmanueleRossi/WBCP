@@ -20,6 +20,8 @@ import it.gpi.wbcp.entity.model.dao.UserDao;
 import it.gpi.wbcp.entity.model.entity.ejb.ApplicationErrorEjb;
 import it.gpi.wbcp.util.JwtAuthUtil;
 import it.gpi.wbcp.util.StringUtil;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -37,6 +39,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jose4j.jwt.JwtClaims;
+import org.jose4j.lang.JoseException;
 
 @ApplicationPath("/rs")
 @Path("/auth")
@@ -78,19 +81,8 @@ public class AuthRestService {
                         aErrorDao.persist(ae);
                         response = Response.status(Status.BAD_REQUEST).entity(ae).build(); 
                     } else {
-                        if (userDao.verifyCredentials(loginEmail, loginPassword)) {
-                            
-                            Integer jwtTokenExpirationMinutes = aParameterDao.getParameterAsInteger("JWT_TOKEN_EXPIRATION");              
-                            JwtClaims claims = new JwtClaims();
-                            claims.setIssuer("WBCP"); 
-                            claims.setAudience("WBCP");
-                            claims.setExpirationTimeMinutesInTheFuture(jwtTokenExpirationMinutes);
-                            claims.setGeneratedJwtId();
-                            claims.setIssuedAtToNow();  
-                            claims.setSubject(loginEmail);
-                            claims.setClaim("privateKeyBase64", privateKeyBase64);                                                        
-                            String token = JwtAuthUtil.encodeJWT(claims, "WBCPWBCPWBCPWBCP");
-                            
+                        if (userDao.verifyCredentials(loginEmail, loginPassword)) {                            
+                            String token = this.generateJwtToken(loginEmail, privateKeyBase64);
                             response = Response.status(Status.OK).header("AuthorizationToken", token).build();
                         } else {
                             response = Response.status(Status.UNAUTHORIZED).build();
@@ -106,4 +98,18 @@ public class AuthRestService {
         }
         return response;
     }
+    
+    private String generateJwtToken(String loginEmail, String privateKeyBase64) throws JoseException, IOException, URISyntaxException {
+        Integer jwtTokenExpirationMinutes = aParameterDao.getParameterAsInteger("JWT_TOKEN_EXPIRATION");              
+        JwtClaims claims = new JwtClaims();
+        claims.setIssuer("WBCP"); 
+        claims.setAudience("WBCP");
+        claims.setExpirationTimeMinutesInTheFuture(jwtTokenExpirationMinutes);
+        claims.setGeneratedJwtId();
+        claims.setIssuedAtToNow();  
+        claims.setSubject(loginEmail);
+        claims.setClaim("privateKeyBase64", privateKeyBase64);                                                        
+        String token = JwtAuthUtil.encodeJWT(claims, "WBCPWBCPWBCPWBCP");
+        return token;        
+    }    
 }

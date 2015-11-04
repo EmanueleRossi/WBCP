@@ -14,6 +14,7 @@
  */
 package it.gpi.wbcp.entity.model.dao;
 
+import it.gpi.wbcp.entity.mapper.MapStruct;
 import it.gpi.wbcp.entity.model.entity.dto.Organization;
 import it.gpi.wbcp.entity.model.entity.ejb.OrganizationEjb;
 import it.gpi.wbcp.util.StringUtil;
@@ -31,7 +32,6 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import org.apache.commons.beanutils.PropertyUtilsBean;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,82 +39,23 @@ import org.apache.logging.log4j.Logger;
 public class OrganizationDao {
     
     private static final Logger logger = LogManager.getLogger();
-    
-    private final PropertyUtilsBean pub;
 	
     @PersistenceContext(unitName="WBCP_PU")
-    private EntityManager em;
-    
-    public OrganizationDao() {
-        pub = new PropertyUtilsBean();
-    }     
+    private EntityManager em;   
 	
-    public Organization persist(Organization organization) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {    	
-        Organization response = new Organization();
-        OrganizationEjb organizationEjb;
-        if (organization.getId() != null) {
-            organizationEjb = this.getEjbById(organization.getId());
-        } else {
-            organizationEjb = new OrganizationEjb(); 
-        }
+    public Organization persist(Organization organization) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         
-        pub.copyProperties(organizationEjb, organization);
-    
+        OrganizationEjb organizationEjb = MapStruct.INSTANCE.organizationToOrganizationEjb(organization);    
     	organizationEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
     	organizationEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));    	        
         em.persist(organizationEjb);
-        
-        pub.copyProperties(response, organizationEjb);  
-        
+                
+        Organization response = MapStruct.INSTANCE.organizationEjbToOrganization(organizationEjb);       
         return response;
-    }
- 
-    public List<Organization> getAll() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {    	
-    	CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<OrganizationEjb> q = cb.createQuery(OrganizationEjb.class);        
-        Root<OrganizationEjb> r = q.from(OrganizationEjb.class);
-        q.select(r);
-        TypedQuery<OrganizationEjb> tq = em.createQuery(q);
-        List<OrganizationEjb> rs = tq.getResultList();   
-        
-        List<Organization> organizations = new ArrayList<>();
-        for(OrganizationEjb organizationEjb : rs) {
-            Organization organization = new Organization();
-            pub.copyProperties(organization, organizationEjb);
-            organizations.add(organization);
-        }        
-        return organizations;          
-    }    
-    
-    private OrganizationEjb getEjbById(Long id) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    	OrganizationEjb response = null;
-        try {           
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<OrganizationEjb> q = cb.createQuery(OrganizationEjb.class);    
-            Root<OrganizationEjb> r = q.from(OrganizationEjb.class);
-            q.select(r).where(cb.equal(r.<Integer>get("id"), id));
-            TypedQuery<OrganizationEjb> tq = em.createQuery(q);
-            response = tq.getSingleResult();
-        } catch (NoResultException nre) {
-            logger.info("Not found Organization with id: |{}|", id);            
-        }
-        return response; 
-    }
-
-    public Organization getById(Long id) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    	Organization response = null;
-        try {        
-            OrganizationEjb responseEjb = this.getEjbById(id);
-            pub.copyProperties(response, responseEjb);
-        } catch (NoResultException nre) {
-            logger.info("Not found User with id: |{}|", id);            
-        }
-        return response;
-    }
+    }   
     
     public List<Organization> fullTextSearch(String text) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     	List<OrganizationEjb> responseEjb = new ArrayList<>();        
-    	List<Organization> response = new ArrayList<>();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<OrganizationEjb> q = cb.createQuery(OrganizationEjb.class);    
@@ -133,11 +74,7 @@ public class OrganizationDao {
             logger.info("Not found Organization with criteria: |{}|", text);            
         }
         
-        for(OrganizationEjb organizationEjb : responseEjb) {
-            Organization organization = new Organization();
-            pub.copyProperties(organization, organizationEjb);
-            response.add(organization);
-        }        
+        List<Organization> response = MapStruct.INSTANCE.organizationListEjbToOrganizationList(responseEjb);      
         return response;
     }     
 }

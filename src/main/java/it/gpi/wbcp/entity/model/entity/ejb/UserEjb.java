@@ -86,14 +86,6 @@ public class UserEjb extends RootEjb {
         organizations = new ArrayList<>();
     } 
     
-    public String getAuthorSignature() {
-        String response = new String();
-        response += this.getLastName() + ", " + this.getFirstName() + System.lineSeparator();
-        response += this.getTaxCode() + System.lineSeparator();
-        response += this.getEmail();                
-        return response;
-    }
-    
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
     

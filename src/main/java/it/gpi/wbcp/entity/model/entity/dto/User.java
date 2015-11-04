@@ -41,8 +41,9 @@ public class User extends RootDto {
     public User() {
         messages = new ArrayList<>();
         organizations = new ArrayList<>();
-    }     
+    }
     
+    @JsonIgnore
     public String getSignature() {
         String signature = new StringBuilder()
                 .append(lastName)

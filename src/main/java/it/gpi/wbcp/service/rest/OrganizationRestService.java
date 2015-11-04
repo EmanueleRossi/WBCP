@@ -21,6 +21,7 @@ import it.gpi.wbcp.entity.model.entity.ejb.ApplicationErrorEjb;
 import it.gpi.wbcp.util.StringUtil;
 import java.util.List;
 import java.util.ResourceBundle;
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
@@ -49,35 +50,13 @@ public class OrganizationRestService {
     OrganizationDao organizationDao;
     @EJB
     ApplicationErrorDao aErrorDao;      
-
-    @GET
-    @Path("/list")    
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response list(@Context HttpServletRequest httpRequest) {
-        Response response;
-        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());         
-        try {
-            List<Organization> organizations = organizationDao.getAll();
-            if (organizations.isEmpty()) {
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("organization.not_found"), new String());
-                aErrorDao.persist(ae);
-                response = Response.status(Status.NOT_FOUND).entity(ae).build();
-            } else {
-                response = Response.status(Status.OK).entity(organizations).build();
-            }            
-        } catch (Exception eg) {
-            ApplicationErrorEjb aeg = new ApplicationErrorEjb(eg);
-            aErrorDao.persist(aeg);
-            logger.error("Generic exception in retrieving organizations. CODE=|{}|", aeg.getCode());
-            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
-        }     
-        return response;   
-    }
 	
     @GET
     @Path("/fullTextSearch/{text}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response fullTextSearch(@Context HttpServletRequest httpRequest, @PathParam("text") String text) {
+    public Response fullTextSearch(@Context HttpServletRequest httpRequest,
+                                   @Context String authorization,
+                                   @PathParam("text") String text) {
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());          
         try {
@@ -99,9 +78,11 @@ public class OrganizationRestService {
     }
     
     @POST
-    @Path("/create")
+    @Path("/create")    
     @Produces(MediaType.APPLICATION_JSON)        
-    public Response create(@Context HttpServletRequest httpRequest, @Valid Organization organization) {
+    public Response create(@Context HttpServletRequest httpRequest,
+                           @Context String authorization,
+                           @Valid Organization organization) {
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());  
         try {
@@ -111,7 +92,6 @@ public class OrganizationRestService {
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {
                 organizationDao.persist(organization); 
-
                 response = Response.status(Status.OK).entity(organization).build();   
             }                        
         } catch (Exception eg) {
