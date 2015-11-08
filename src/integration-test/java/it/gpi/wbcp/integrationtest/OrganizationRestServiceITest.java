@@ -53,9 +53,8 @@ public class OrganizationRestServiceITest {
         try {
             String jsonOrganization = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateNoName.json").toURI())));            
             ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
-            target.request().accept(MediaType.APPLICATION_JSON_TYPE);       
-            target.request().header("Authorization", "PROVA!!!!");
-            Response response = target.request().post(Entity.json(jsonOrganization));
+            target.request().accept(MediaType.APPLICATION_JSON_TYPE);                   
+            Response response = target.request().header("Authorization", "PROVA!!!!").post(Entity.json(jsonOrganization));
             String responseString = response.readEntity(String.class);  
             System.out.printf("testOrganizationCreateNoName(): |%s|", responseString);              
             Assert.assertEquals(response.getStatus(), Response.Status.NOT_FOUND.getStatusCode());                                    

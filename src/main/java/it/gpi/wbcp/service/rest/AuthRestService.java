@@ -14,10 +14,9 @@
  */
 package it.gpi.wbcp.service.rest;
 
-import it.gpi.wbcp.entity.model.dao.ApplicationErrorDao;
 import it.gpi.wbcp.entity.model.dao.ApplicationParameterDao;
 import it.gpi.wbcp.entity.model.dao.UserDao;
-import it.gpi.wbcp.entity.model.entity.ejb.ApplicationErrorEjb;
+import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
 import it.gpi.wbcp.util.JwtAuthUtil;
 import it.gpi.wbcp.util.StringUtil;
 import java.io.IOException;
@@ -51,8 +50,6 @@ public class AuthRestService {
     @EJB
     UserDao userDao;
     @EJB
-    ApplicationErrorDao aErrorDao;
-    @EJB
     ApplicationParameterDao aParameterDao;
 
     @POST    
@@ -67,18 +64,18 @@ public class AuthRestService {
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
         try {
             if (StringUtil.isNullOrEmpty(loginEmail)) {
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("auth.login.email_empty"), loginEmail);
-                aErrorDao.persist(ae);
+                ApplicationError ae = new ApplicationError(lmb.getString("auth.login.email_empty"));
+                logger.warn(ae);                
                 response = Response.status(Status.BAD_REQUEST).entity(ae).build();
             } else {
                 if (StringUtil.isNullOrEmpty(loginPassword)) {
-                    ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("auth.login.password_empty"), loginPassword);
-                    aErrorDao.persist(ae);
+                    ApplicationError ae = new ApplicationError(lmb.getString("auth.login.password_empty"));
+                    logger.warn(ae);                
                     response = Response.status(Status.BAD_REQUEST).entity(ae).build();                                                                                
                 } else {
                     if (StringUtil.isNullOrEmpty(privateKeyBase64)) {
-                        ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("auth.login.privateKeyBase64_empty"), privateKeyBase64);
-                        aErrorDao.persist(ae);
+                        ApplicationError ae = new ApplicationError(lmb.getString("auth.login.privateKeyBase64_empty"));
+                        logger.warn(ae);                
                         response = Response.status(Status.BAD_REQUEST).entity(ae).build(); 
                     } else {
                         if (userDao.verifyCredentials(loginEmail, loginPassword)) {                            
@@ -91,9 +88,8 @@ public class AuthRestService {
                 }
             }
         } catch (Exception eg) {
-            ApplicationErrorEjb aeg = new ApplicationErrorEjb(eg);
-            aErrorDao.persist(aeg);
-            logger.error("Generic exception in login method. CODE=|{}|", aeg.getCode());
+            ApplicationError aeg = new ApplicationError(eg);
+            logger.error(aeg);
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();
         }
         return response;

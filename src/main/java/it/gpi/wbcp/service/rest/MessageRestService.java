@@ -14,12 +14,11 @@
  */
 package it.gpi.wbcp.service.rest;
 
-import it.gpi.wbcp.entity.model.dao.ApplicationErrorDao;
 import it.gpi.wbcp.entity.model.dao.MessageDao;
 import it.gpi.wbcp.entity.model.dao.UserDao;
 import it.gpi.wbcp.entity.model.entity.dto.Message;
 import it.gpi.wbcp.entity.model.entity.dto.User;
-import it.gpi.wbcp.entity.model.entity.ejb.ApplicationErrorEjb;
+import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
 import it.gpi.wbcp.util.CryptoUtil;
 import it.gpi.wbcp.util.StringUtil;
 import java.io.IOException;
@@ -60,8 +59,6 @@ public class MessageRestService {
     UserDao userDao;
     @EJB
     MessageDao messageDao;
-    @EJB
-    ApplicationErrorDao aErrorDao;  
 	
     @POST
     @Path("/create")
@@ -71,36 +68,36 @@ public class MessageRestService {
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
         try {
             if (message.getUser() == null | StringUtil.isNullOrEmpty(message.getUser().getEmail())) {              
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("message.creation.no_user"), new String());
-                aErrorDao.persist(ae);
+                ApplicationError ae = new ApplicationError(lmb.getString("message.creation.no_user"));
+                logger.warn(ae);
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {
                 if (message.getSender() == null | StringUtil.isNullOrEmpty(message.getSender().getEmail())) {              
-                    ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("message.creation.no_sender"), new String());
-                    aErrorDao.persist(ae);
+                    ApplicationError ae = new ApplicationError(lmb.getString("message.creation.no_sender"));
+                    logger.warn(ae);
                     response = Response.status(Status.NOT_FOUND).entity(ae).build();
                 } else {
                     if (message.getRecipient() == null | StringUtil.isNullOrEmpty(message.getRecipient().getEmail())) {              
-                        ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("message.creation.no_recipient"), new String());
-                        aErrorDao.persist(ae);
+                        ApplicationError ae = new ApplicationError(lmb.getString("message.creation.no_recipient"));
+                        logger.warn(ae);
                         response = Response.status(Status.NOT_FOUND).entity(ae).build();
                     } else {                       
                         User user = userDao.getByEmail(message.getUser().getEmail());
                         if (user == null) {
-                            ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("message.creation.user_not_registered"), new String());
-                            aErrorDao.persist(ae);
+                            ApplicationError ae = new ApplicationError(lmb.getString("message.creation.user_not_registered"));
+                            logger.warn(ae);
                             response = Response.status(Status.NOT_FOUND).entity(ae).build();
                         } else {
                             User sender = userDao.getByEmail(message.getSender().getEmail());
                             if (sender == null) {
-                                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("message.creation.sender_not_registered"), new String());
-                                aErrorDao.persist(ae);   
+                                ApplicationError ae = new ApplicationError(lmb.getString("message.creation.sender_not_registered"));
+                                logger.warn(ae);
                                 response = Response.status(Status.NOT_FOUND).entity(ae).build();                                
                             } else {
                                 User recipient = userDao.getByEmail(message.getRecipient().getEmail());
                                 if (recipient == null) {
-                                    ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("message.creation.recipient_not_registered"), new String());
-                                    aErrorDao.persist(ae);   
+                                    ApplicationError ae = new ApplicationError(lmb.getString("message.creation.recipient_not_registered"));
+                                    logger.warn(ae);
                                     response = Response.status(Status.NOT_FOUND).entity(ae).build();   
                                 } else {                         
                                     String clearTextPayload = message.getPayload();
@@ -138,13 +135,11 @@ public class MessageRestService {
                 }   
             }                                
         } catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | InvalidAlgorithmParameterException | IOException e) {
-            ApplicationErrorEjb ae = new ApplicationErrorEjb(e);
-            aErrorDao.persist(ae);
+            ApplicationError ae = new ApplicationError(e);
             logger.error("Exception using crypto utility. CODE=|{}|", ae.getCode());
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();   
         } catch (Exception eg) {
-            ApplicationErrorEjb ae = new ApplicationErrorEjb(eg);
-            aErrorDao.persist(ae);
+            ApplicationError ae = new ApplicationError(eg);
             logger.error("Generic exception. CODE=|{}|", ae.getCode());
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();   
         }        
@@ -195,13 +190,11 @@ public class MessageRestService {
                 response = Response.status(Status.OK).build();
             //}                   
         } catch (ParseException pe) {
-            ApplicationErrorEjb ae = new ApplicationErrorEjb(String.format(lmb.getString("message.search_by_instant.invalid_date"), instantFrom, instantTo), pe);
-            aErrorDao.persist(ae);
+            ApplicationError ae = new ApplicationError(String.format(lmb.getString("message.search_by_instant.invalid_date"), instantFrom, instantTo), pe);
             response = Response.status(Status.NOT_FOUND).entity(ae).build();
         } catch (Exception eg) { 
-            ApplicationErrorEjb aeg = new ApplicationErrorEjb(eg);                        
+            ApplicationError aeg = new ApplicationError(eg);                        
             logger.error("Generic exception executing organization full text search. CODE=|{}|", aeg.getCode());
-            aErrorDao.persist(aeg);
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
         }     
         return response;        

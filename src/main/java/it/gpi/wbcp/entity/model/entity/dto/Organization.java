@@ -16,11 +16,8 @@ package it.gpi.wbcp.entity.model.entity.dto;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-public class Organization {
-    
-    private Long id;
+public class Organization extends RootDto {
     
     private String name;
     private String taxCode;
@@ -31,14 +28,6 @@ public class Organization {
     public Organization() {
         users = new ArrayList<>();
     }     
-    
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this);
-    } 
-    
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

@@ -43,20 +43,7 @@ ALTER TABLE app_parameters
 ALTER TABLE app_parameters
     ADD CONSTRAINT uk_app_parameters_name UNIQUE (name, locale_tag);
 ALTER TABLE app_parameters
-    ADD CONSTRAINT fk_app_parameters_base_entities FOREIGN KEY (id) REFERENCES base_entities(id);	
-
-CREATE TABLE errors (
-    code character varying(255) NOT NULL,
-    details character varying(65535),
-    instant timestamp without time zone NOT NULL,
-    message text NOT NULL,
-    id bigint NOT NULL
-);
-
-ALTER TABLE errors
-    ADD CONSTRAINT errors_pkey PRIMARY KEY (id);
-ALTER TABLE errors
-    ADD CONSTRAINT fk_errors_base_entities FOREIGN KEY (id) REFERENCES base_entities(id);	
+    ADD CONSTRAINT fk_app_parameters_base_entities FOREIGN KEY (id) REFERENCES base_entities(id);		
 
 CREATE TABLE users (
     account_expiration_instant timestamp without time zone NOT NULL,

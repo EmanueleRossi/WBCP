@@ -14,19 +14,17 @@
  */
 package it.gpi.wbcp.service.rest.auth;
 
-import it.gpi.wbcp.entity.model.entity.dto.User;
 import java.io.IOException;
-import java.security.Principal;
-import java.util.Set;
+import java.util.Iterator;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jboss.resteasy.spi.ResteasyProviderFactory;
 
 @Provider
 @Priority(Priorities.AUTHENTICATION)
@@ -38,11 +36,19 @@ public class AuthRequestFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext containerRequestContext) throws IOException {
         
         SecurityContext originalContext = containerRequestContext.getSecurityContext();
-                        
-        String authorization = containerRequestContext.getHeaders().getFirst("Authorization");
-        logger.debug("Authorization DEBUG: |{}|", authorization);
+            
+        String headersString = new String();
+        MultivaluedMap headers = containerRequestContext.getHeaders();
+        Iterator<String> it = headers.keySet().iterator();
+        
+        while(it.hasNext()) {
+            String key = it.next();
+            headersString += key + "=|" + headers.get(key) + "| ";
+        }
+               
+        logger.debug("Authorization DEBUG: |{}|", headersString);
                         
         //containerRequestContext.abortWith(response);
-        ResteasyProviderFactory.pushContext(String.class, authorization);
+        //ResteasyProviderFactory.pushContext(String.class, authorization);
     }       
 }

@@ -14,7 +14,7 @@
  */
 package it.gpi.wbcp.service.rest.validation;
 
-import it.gpi.wbcp.entity.model.entity.ejb.ApplicationErrorEjb;
+import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
 import javax.validation.ValidationException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -29,7 +29,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ValidationExce
     @Override
     @Produces(MediaType.APPLICATION_JSON)       
     public Response toResponse(ValidationException e) {
-        ApplicationErrorEjb ae = new ApplicationErrorEjb("User Input Validation Exception", e);
+        ApplicationError ae = new ApplicationError("User Input Validation Exception", e);
         return Response.status(Status.NOT_FOUND).entity(ae).type(MediaType.APPLICATION_JSON).build();                                
     }
 }

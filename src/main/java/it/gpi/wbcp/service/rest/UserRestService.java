@@ -14,12 +14,11 @@
  */
 package it.gpi.wbcp.service.rest;
 
-import it.gpi.wbcp.entity.model.dao.ApplicationErrorDao;
 import it.gpi.wbcp.entity.model.dao.ApplicationParameterDao;
 import it.gpi.wbcp.entity.model.dao.OrganizationDao;
 import it.gpi.wbcp.entity.model.dao.UserDao;
 import it.gpi.wbcp.entity.model.entity.dto.User;
-import it.gpi.wbcp.entity.model.entity.ejb.ApplicationErrorEjb;
+import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
 import it.gpi.wbcp.util.CryptoUtil;
 import it.gpi.wbcp.util.MailUtil;
 import it.gpi.wbcp.util.PasswordUtil;
@@ -29,7 +28,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
@@ -39,10 +37,8 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -61,8 +57,6 @@ public class UserRestService {
 		
     @EJB
     UserDao userDao;
-    @EJB
-    ApplicationErrorDao aErrorDao;  
     @EJB
     ApplicationParameterDao aParameterDao;   
     @EJB
@@ -154,30 +148,30 @@ public class UserRestService {
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());  
         try {
             if (!StringUtil.isNullOrEmpty(user.getEmail()) && !StringUtil.validateEmailPattern(user.getEmail())) {
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(String.format(lmb.getString("user.email_address_not_valid"), user.getEmail()), new String());
-                aErrorDao.persist(ae);
+                ApplicationError ae = new ApplicationError(String.format(lmb.getString("user.email_address_not_valid"), user.getEmail()));
+                logger.warn(ae);
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {
                 if (userDao.getByEmail(user.getEmail()) != null) {      
-                    ApplicationErrorEjb ae = new ApplicationErrorEjb(String.format(lmb.getString("user.email_already_exists"), user.getEmail()), new String());
-                    aErrorDao.persist(ae);
+                    ApplicationError ae = new ApplicationError(String.format(lmb.getString("user.email_already_exists"), user.getEmail()));
+                    logger.warn(ae);
                     response = Response.status(Status.NOT_FOUND).entity(ae).build();
                 } else {
                     if (StringUtil.isNullOrEmpty(user.getRequestedClearPassword())) {
-                        ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("user.requested_password_empty"), "user.getRequestedClearPassword()=|" + user.getRequestedClearPassword()+ "|");
-                        aErrorDao.persist(ae);
+                        ApplicationError ae = new ApplicationError(lmb.getString("user.requested_password_empty"));
+                        logger.warn(ae);
                         response = Response.status(Status.NOT_FOUND).entity(ae).build();
                     } else {                
                         if (StringUtil.isNullOrEmpty(user.getEmail())) {
-                            ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("user.email_empty"), "user.getEmail()=|" + user.getEmail()+ "|");
-                            aErrorDao.persist(ae);
+                            ApplicationError ae = new ApplicationError(lmb.getString("user.email_empty"));
+                            logger.warn(ae);
                             response = Response.status(Status.NOT_FOUND).entity(ae).build();
                         } else {                                        
                             String requestedClearPassword = user.getRequestedClearPassword();
                             pwUtil = new PasswordUtil(requestedClearPassword, httpRequest.getLocale());
                             if (!pwUtil.isAValidPassword()) {
-                                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("user.requested_password_not_valid"), pwUtil.getValidationResultMessagesConcat());
-                                aErrorDao.persist(ae);
+                                ApplicationError ae = new ApplicationError(lmb.getString("user.requested_password_not_valid"));
+                                logger.warn(ae);
                                 response = Response.status(Status.NOT_FOUND).entity(ae).build();                            
                             } else {
                                 user.setPasswordHashBase64(StringUtil.getSHA512Base64(requestedClearPassword));
@@ -210,23 +204,19 @@ public class UserRestService {
                 }
             }                        
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-            ApplicationErrorEjb ae = new ApplicationErrorEjb(e);
-            aErrorDao.persist(ae);
+            ApplicationError ae = new ApplicationError(e);
             logger.error("Exception creating crypto keys. CODE=|{}|", ae.getCode());
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();   
         } catch (IOException | URISyntaxException ex) {
-            ApplicationErrorEjb ae = new ApplicationErrorEjb(ex);
-            aErrorDao.persist(ae);
+            ApplicationError ae = new ApplicationError(ex);
             logger.error("Exception in reading JSON default parameters file. CODE=|{}|", ae.getCode());
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();                       
         } catch (MessagingException ex) {
-            ApplicationErrorEjb ae = new ApplicationErrorEjb(ex);
-            aErrorDao.persist(ae);
+            ApplicationError ae = new ApplicationError(ex);
             logger.error("Exception in sending mail message with private Key. CODE=|{}|", ae.getCode());
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();             
         } catch (Exception eg) {
-            ApplicationErrorEjb aeg = new ApplicationErrorEjb(eg);
-            aErrorDao.persist(aeg);
+            ApplicationError aeg = new ApplicationError(eg);
             logger.error("Generic exception in creating user. CODE=|{}|", aeg.getCode());
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
         }

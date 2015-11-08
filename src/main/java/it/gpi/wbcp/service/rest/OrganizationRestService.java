@@ -14,14 +14,12 @@
  */
 package it.gpi.wbcp.service.rest;
 
-import it.gpi.wbcp.entity.model.dao.ApplicationErrorDao;
 import it.gpi.wbcp.entity.model.dao.OrganizationDao;
 import it.gpi.wbcp.entity.model.entity.dto.Organization;
-import it.gpi.wbcp.entity.model.entity.ejb.ApplicationErrorEjb;
+import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
 import it.gpi.wbcp.util.StringUtil;
 import java.util.List;
 import java.util.ResourceBundle;
-import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
@@ -47,9 +45,7 @@ public class OrganizationRestService {
     private static final Logger logger = LogManager.getLogger();    
     
     @EJB
-    OrganizationDao organizationDao;
-    @EJB
-    ApplicationErrorDao aErrorDao;      
+    OrganizationDao organizationDao;     
 	
     @GET
     @Path("/fullTextSearch/{text}")
@@ -62,15 +58,14 @@ public class OrganizationRestService {
         try {
             List<Organization> organizations = organizationDao.fullTextSearch(text);
             if (organizations == null) {
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("organization.not_found"), String.format("text=|{{}|", text));
-                aErrorDao.persist(ae);
+                ApplicationError ae = new ApplicationError(lmb.getString("organization.not_found"));
+                logger.warn(ae);
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {
                 response = Response.status(Status.OK).entity(organizations).build();                
             }        
         } catch (Exception eg) {
-            ApplicationErrorEjb aeg = new ApplicationErrorEjb(eg);
-            aErrorDao.persist(aeg);
+            ApplicationError aeg = new ApplicationError(eg);
             logger.error("Generic exception executing organization full text search. CODE=|{}|", aeg.getCode());
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
         }     
@@ -87,16 +82,15 @@ public class OrganizationRestService {
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());  
         try {
             if (StringUtil.isNullOrEmpty(organization.getName())) {
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("organization.creation.no_name"), organization.getMailDomain());
-                aErrorDao.persist(ae);
+                ApplicationError ae = new ApplicationError(lmb.getString("organization.creation.no_name"));
+                logger.warn(ae);
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {
                 organizationDao.persist(organization); 
                 response = Response.status(Status.OK).entity(organization).build();   
             }                        
         } catch (Exception eg) {
-            ApplicationErrorEjb aeg = new ApplicationErrorEjb(eg);
-            aErrorDao.persist(aeg);
+            ApplicationError aeg = new ApplicationError(eg);            
             logger.error("Generic exception in creating organization. CODE=|{}|", aeg.getCode());
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
         }
