@@ -14,41 +14,65 @@
  */
 package it.gpi.wbcp.service.rest.auth;
 
+import it.gpi.wbcp.entity.model.dao.ApplicationParameterDao;
+import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
+import it.gpi.wbcp.entity.model.entity.dto.User;
+import it.gpi.wbcp.service.rest.AuthRestService;
+import it.gpi.wbcp.service.rest.UserRestService;
+import it.gpi.wbcp.util.JwtAuthUtil;
 import java.io.IOException;
-import java.util.Iterator;
+import java.lang.reflect.Method;
 import javax.annotation.Priority;
+import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Priorities;
+import javax.ws.rs.Produces;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.SecurityContext;
+import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jboss.resteasy.spi.ResteasyProviderFactory;
+import org.jose4j.jwt.JwtClaims;
 
 @Provider
 @Priority(Priorities.AUTHENTICATION)
 public class AuthRequestFilter implements ContainerRequestFilter {
     
     private static final Logger logger = LogManager.getLogger();
+    
+    @EJB
+    ApplicationParameterDao aParameterDao;    
+    
+    @Context
+    private ResourceInfo resourceInfo;    
 
     @Override
-    public void filter(ContainerRequestContext containerRequestContext) throws IOException {
-        
-        SecurityContext originalContext = containerRequestContext.getSecurityContext();
-            
-        String headersString = new String();
-        MultivaluedMap headers = containerRequestContext.getHeaders();
-        Iterator<String> it = headers.keySet().iterator();
-        
-        while(it.hasNext()) {
-            String key = it.next();
-            headersString += key + "=|" + headers.get(key) + "| ";
+    @Produces(MediaType.APPLICATION_JSON)   
+    public void filter(ContainerRequestContext containerRequestContext) throws IOException {                        
+        try {            
+            Method method = resourceInfo.getResourceMethod();       
+            if (!(method.equals(UserRestService.class.getMethod("create", HttpServletRequest.class, User.class)) ||  
+                 method.equals(AuthRestService.class.getMethod("login", HttpServletRequest.class, String.class, String.class, String.class)))) {
+                String jwtAudience = aParameterDao.getParameterAsString("JWT_AUDIENCE");        
+                String jwtPassword = aParameterDao.getParameterAsString("JWT_PASSWORD");                
+                String authorization = containerRequestContext.getHeaderString("Authorization");                                              
+                JwtClaims claims = JwtAuthUtil.decodeJWT(authorization, jwtPassword, jwtAudience);
+                String subject = claims.getSubject();
+                String privateKey = claims.getClaimValue("privateKeyBase64", String.class);                
+                User user = new User();
+                user.setEmail(subject);
+                user.setPrivateKeyBase64(privateKey);                               
+                ResteasyProviderFactory.pushContext(User.class, user);
+            }                
+        } catch (Exception ex) {
+            ApplicationError ae = new ApplicationError(ex);
+            logger.error(ex);
+            containerRequestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(ae).build());
         }
-               
-        logger.debug("Authorization DEBUG: |{}|", headersString);
-                        
-        //containerRequestContext.abortWith(response);
-        //ResteasyProviderFactory.pushContext(String.class, authorization);
     }       
 }

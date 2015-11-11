@@ -52,7 +52,25 @@
         "description":"Body of the sent e-mail.",
         "parameterValue":"<h1>Whistle Blowing Platform</h1>.<span>In allegato, troverai la tua chiave privata, necessaria per leggere i messaggi che ti vengono spediti. Memorizzala in un posto sicuro, non condividerla ed usala solo per la piattaforma di WhistleBlowing!</span>",
         "localeTag":"it-IT"
+    },       
+    {
+        "name":"JWT_ISSUER",
+        "description":"Jwt issuer, the name of application that issues Jwt tokens!",
+        "parameterValue":"WBCP",
+        "localeTag":"en-US"
+    },    
+    {
+        "name":"JWT_AUDIENCE",
+        "description":"Jwt audience, the name of application that is the auditor of Jwt tokens!",
+        "parameterValue":"WBCP",
+        "localeTag":"en-US"
     },     
+    {
+        "name":"JWT_PASSWORD",
+        "description":"Jwt password, used to encode/decode tokens. MUST be a 16 chars length string!",
+        "parameterValue":"WBCPWBCPWBCPWBCP",
+        "localeTag":"en-US"
+    },
     {
         "name":"JWT_TOKEN_EXPIRATION",
         "description":"Token life duration (in minutes).",

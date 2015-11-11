@@ -110,8 +110,6 @@ task integrationTest(dependsOn: ['flywayClean', 'flywayMigrate', 'deploy'], type
     testClassesDir = sourceSets.integrationTest.output.classesDir
     classpath = sourceSets.integrationTest.runtimeClasspath
     outputs.upToDateWhen { false }
-    filter {
-        includeTestsMatching "*ITest"
-    }
+    includes = ['**/IntegrationTestSuite*'] as Set
 }
 

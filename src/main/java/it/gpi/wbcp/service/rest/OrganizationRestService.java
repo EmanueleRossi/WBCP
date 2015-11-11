@@ -17,6 +17,7 @@ package it.gpi.wbcp.service.rest;
 import it.gpi.wbcp.entity.model.dao.OrganizationDao;
 import it.gpi.wbcp.entity.model.entity.dto.Organization;
 import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
+import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.util.StringUtil;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -76,8 +77,11 @@ public class OrganizationRestService {
     @Path("/create")    
     @Produces(MediaType.APPLICATION_JSON)        
     public Response create(@Context HttpServletRequest httpRequest,
-                           @Context String authorization,
-                           @Valid Organization organization) {
+                           @Context User requestUser,
+                           Organization organization) {
+        
+        System.out.printf("user=(%s)", requestUser.toString());
+        
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());  
         try {

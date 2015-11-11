@@ -36,17 +36,14 @@ public class OrganizationEjb extends RootEjb {
 	
     private static final long serialVersionUID = 1L;
 	
-    @Size(max = 255, message="{organization.name.size}")    
     @Basic(optional=false)
     @Column(name = "NAME", nullable = false, length = 255)
     private String name;
-    
-    @Size(max = 255, message="{organization.taxCode.size}")        
+          
     @Basic(optional=true)
     @Column(name = "TAX_CODE", nullable = true, length = 255)
     private String taxCode;
-    
-    @Size(max = 255, message="{organization.mail_domain.size}")        
+          
     @Basic(optional=true)
     @Column(name = "MAIL_DOMAIN", nullable = true, length = 255)
     private String mailDomain;    

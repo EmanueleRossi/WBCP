@@ -29,7 +29,8 @@ public interface MapStruct {
     MapStruct INSTANCE = Mappers.getMapper(MapStruct.class);
  
     @Mappings({        
-        @Mapping(target = "requestedClearPassword", ignore = true)
+        @Mapping(target = "requestedClearPassword", ignore = true),
+        @Mapping(target = "privateKeyBase64", ignore = true)        
     })
     User userEjbToUser(UserEjb userEjb);    
     @Mappings({        

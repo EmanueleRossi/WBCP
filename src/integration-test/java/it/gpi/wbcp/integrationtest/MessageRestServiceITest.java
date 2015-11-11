@@ -37,7 +37,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class MessageRestServiceTest {
+public class MessageRestServiceITest {
     
     private ResteasyClient client;
     

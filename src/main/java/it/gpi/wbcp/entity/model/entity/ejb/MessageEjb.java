@@ -47,17 +47,14 @@ public class MessageEjb extends RootEjb {
     @Transient
     private UserEjb recipient;
     
-    @Size(max = 10485760, message="{message.payload.size}")
     @Basic(optional=false)    
     @Column(name = "PAYLOAD", nullable = false, length = 10485760)
     private String payload;
 
-    @Size(max = 10485760, message="{message.author.size}")
     @Basic(optional=false)    
     @Column(name = "AUTHOR", nullable = false, length = 10485760)
     private String author;    
 
-    @Size(max = 1024, message="{message.aeskey.size}")
     @Basic(optional=false)
     @Column(name = "AES_KEY_RSA_CRYPTED_BASE64", nullable = false, length = 1024)
     private String aesKeyRSACryptedBase64;        

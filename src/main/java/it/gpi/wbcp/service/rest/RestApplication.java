@@ -15,7 +15,6 @@
 package it.gpi.wbcp.service.rest;
 
 import it.gpi.wbcp.service.rest.auth.AuthRequestFilter;
-import it.gpi.wbcp.service.rest.validation.ValidationExceptionMapper;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.core.Application;
@@ -35,7 +34,6 @@ public class RestApplication extends Application {
         classes.add(AuthRestService.class);
         
         classes.add(AuthRequestFilter.class);
-        classes.add(ValidationExceptionMapper.class);
     }
  
     @Override

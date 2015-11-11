@@ -25,15 +25,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.junit.Assert;
 import static org.junit.Assert.fail;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -42,28 +39,6 @@ import org.junit.runners.MethodSorters;
 public class AuthRestServiceITest {
     
     private ResteasyClient client;
-    private static String loginEmail;
-    private static String loginPassword;
-    private String authorizationToken;
-    
-    @BeforeClass
-    public static void createTestUser() {
-        try {          
-            String jsonAuthLoginUserCreate = new String(Files.readAllBytes(Paths.get(AuthRestServiceITest.class.getResource("/AuthLoginUserCreate.json").toURI())));                        
-            ObjectMapper responseLoginValidObjectMapper = new ObjectMapper();
-            JsonNode rootNode = responseLoginValidObjectMapper.readTree(jsonAuthLoginUserCreate);   
-            loginEmail = rootNode.path("email").getTextValue();
-            loginPassword = rootNode.path("requestedClearPassword").getTextValue();            
-            ResteasyWebTarget targetUserCreate = new ResteasyClientBuilder().build().target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
-            targetUserCreate.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response responseUserCreate = targetUserCreate.request().post(Entity.json(jsonAuthLoginUserCreate));
-            System.out.printf("createTestUser(): |%s|", responseUserCreate.readEntity(String.class));
-            Assert.assertEquals(Status.OK.getStatusCode(), responseUserCreate.getStatus());            
-            responseUserCreate.close();
-        } catch (IllegalArgumentException | NullPointerException | URISyntaxException | IOException e) {
-            fail("Exception! " + StringUtil.stringifyStackTrace(e));
-        }            
-    }
     
     @Before 
     public void initialize() {
@@ -77,14 +52,14 @@ public class AuthRestServiceITest {
             ResteasyWebTarget targetLoginValid = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/auth/login", null, null).toASCIIString());
             targetLoginValid.request().accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE);                        
             MultivaluedHashMap<String, String> targetLoginParams = new MultivaluedHashMap<>();
-            targetLoginParams.add("loginEmail", loginEmail);
-            targetLoginParams.add("loginPassword", loginPassword);
+            targetLoginParams.add("loginEmail", IntegrationTestSuite.LOGIN_EMAIL);
+            targetLoginParams.add("loginPassword", IntegrationTestSuite.LOGIN_PASSWORD);
             targetLoginParams.add("privateKeyBase64", "SECRET");
             Response responseLoginValid = targetLoginValid.request().post(Entity.form(targetLoginParams));  
             System.out.printf("testValidLogin(): |%s|", responseLoginValid.readEntity(String.class));
             Assert.assertEquals(responseLoginValid.getStatus(), Status.OK.getStatusCode());   
-            authorizationToken = responseLoginValid.getHeaderString("AuthorizationToken");
-            Assert.assertNotNull(authorizationToken);            
+            IntegrationTestSuite.TOKEN = responseLoginValid.getHeaderString("AuthorizationToken");
+            Assert.assertNotNull(IntegrationTestSuite.TOKEN);            
             responseLoginValid.close();
             
         } catch (IllegalArgumentException | NullPointerException | URISyntaxException e) {
@@ -98,17 +73,17 @@ public class AuthRestServiceITest {
             ResteasyWebTarget targetLoginValid = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/auth/login", null, null).toASCIIString());
             targetLoginValid.request().accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE);                        
             MultivaluedHashMap<String, String> targetLoginParams = new MultivaluedHashMap<>();
-            Response responseLoginValid_01 = targetLoginValid.request().post(Entity.form(targetLoginParams));     
+            Response responseLoginValid_01 = targetLoginValid.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));     
             System.out.printf("testWrongLoginParameters(): |%s|", responseLoginValid_01.readEntity(String.class));
             Assert.assertEquals(responseLoginValid_01.getStatus(), Status.BAD_REQUEST.getStatusCode());                   
-            targetLoginParams.add("loginEmail", loginEmail);
+            targetLoginParams.add("loginEmail", IntegrationTestSuite.LOGIN_EMAIL);
             responseLoginValid_01.close();            
-            Response responseLoginValid_02 = targetLoginValid.request().post(Entity.form(targetLoginParams));
+            Response responseLoginValid_02 = targetLoginValid.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));
             System.out.printf("testWrongLoginParameters(): |%s|", responseLoginValid_02.readEntity(String.class));
             Assert.assertEquals(responseLoginValid_02.getStatus(), Status.BAD_REQUEST.getStatusCode());   
             responseLoginValid_02.close();            
-            targetLoginParams.add("loginPassword", loginPassword);
-            Response responseLoginValid_03 = targetLoginValid.request().post(Entity.form(targetLoginParams));   
+            targetLoginParams.add("loginPassword", IntegrationTestSuite.LOGIN_PASSWORD);
+            Response responseLoginValid_03 = targetLoginValid.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));   
             System.out.printf("testWrongLoginParameters(): |%s|", responseLoginValid_03.readEntity(String.class));            
             Assert.assertEquals(responseLoginValid_03.getStatus(), Status.BAD_REQUEST.getStatusCode());
             responseLoginValid_03.close();            
@@ -124,10 +99,10 @@ public class AuthRestServiceITest {
             ResteasyWebTarget targetLoginInValid = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/auth/login", null, null).toASCIIString());
             targetLoginInValid.request().accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE);                        
             MultivaluedHashMap<String, String> targetLoginParams = new MultivaluedHashMap<>();
-            targetLoginParams.add("loginEmail", loginEmail);
+            targetLoginParams.add("loginEmail", IntegrationTestSuite.LOGIN_EMAIL);
             targetLoginParams.add("loginPassword", "WRONG PASSWORD");
             targetLoginParams.add("privateKeyBase64", "SECRET");
-            Response responseLoginInValid = targetLoginInValid.request().post(Entity.form(targetLoginParams));
+            Response responseLoginInValid = targetLoginInValid.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));
             System.out.printf("testInvalidPassword(): |%s|", responseLoginInValid.readEntity(String.class));             
             Assert.assertEquals(responseLoginInValid.getStatus(), Status.UNAUTHORIZED.getStatusCode());   
                        
@@ -135,4 +110,36 @@ public class AuthRestServiceITest {
             fail("Exception! " + StringUtil.stringifyStackTrace(e));
         }
     }    
+    
+    @Test
+    public void testNoToken() {
+        try {                                                                                                              
+            String jsonOrganization = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateNoName.json").toURI())));            
+            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
+            target.request().accept(MediaType.APPLICATION_JSON_TYPE);                   
+            Response response = target.request().post(Entity.json(jsonOrganization));
+            String responseString = response.readEntity(String.class);  
+            System.out.printf("testNoToken(): |%s|", responseString);              
+            Assert.assertEquals(response.getStatus(), Response.Status.UNAUTHORIZED.getStatusCode());    
+                       
+        } catch (IllegalArgumentException | NullPointerException | URISyntaxException | IOException e) {
+            fail("Exception! " + StringUtil.stringifyStackTrace(e));
+        }
+    }   
+    
+    @Test
+    public void testWrongToken() {
+        try {                                                                                                              
+            String jsonOrganization = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateNoName.json").toURI())));            
+            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
+            target.request().accept(MediaType.APPLICATION_JSON_TYPE);                   
+            Response response = target.request().header("Authorization", "WRONG TOKEN!!!").post(Entity.json(jsonOrganization));
+            String responseString = response.readEntity(String.class);  
+            System.out.printf("testWrongToken(): |%s|", responseString);              
+            Assert.assertEquals(response.getStatus(), Response.Status.UNAUTHORIZED.getStatusCode());    
+                       
+        } catch (IllegalArgumentException | NullPointerException | URISyntaxException | IOException e) {
+            fail("Exception! " + StringUtil.stringifyStackTrace(e));
+        }
+    }      
 }

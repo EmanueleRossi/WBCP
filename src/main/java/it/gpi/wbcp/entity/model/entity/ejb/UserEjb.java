@@ -36,22 +36,18 @@ public class UserEjb extends RootEjb {
 	    
     private static final long serialVersionUID = 1L;
 	
-    @Size(max = 255, message="{user.lastName.size}")
     @Basic(optional=false)
     @Column(name = "LAST_NAME", nullable = false, length = 255)	
     private String lastName;
     
-    @Size(max = 255, message="{user.firstName.size}")
     @Basic(optional=false)
     @Column(name = "FIRST_NAME", nullable = false, length = 255)
     private String firstName;
 
-    @Size(max = 255, message="{user.taxCode.size}")      
     @Basic(optional=true)
     @Column(name = "TAX_CODE", nullable = true, length = 255)
     private String taxCode;
-    
-    @Size(max = 255, message="{user.email.size}")  
+      
     @Basic(optional=false)
     @Column(name = "EMAIL_ADDRESS", nullable = false, unique = true, length = 255) 
     private String email;

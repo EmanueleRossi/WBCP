@@ -96,16 +96,19 @@ public class AuthRestService {
     }
     
     private String generateJwtToken(String loginEmail, String privateKeyBase64) throws JoseException, IOException, URISyntaxException {
+        String jwtIssuer = aParameterDao.getParameterAsString("JWT_ISSUER");
+        String jwtAudience = aParameterDao.getParameterAsString("JWT_AUDIENCE");        
         Integer jwtTokenExpirationMinutes = aParameterDao.getParameterAsInteger("JWT_TOKEN_EXPIRATION");              
+        String jwtPassword = aParameterDao.getParameterAsString("JWT_PASSWORD");        
         JwtClaims claims = new JwtClaims();
-        claims.setIssuer("WBCP"); 
-        claims.setAudience("WBCP");
+        claims.setIssuer(jwtIssuer); 
+        claims.setAudience(jwtAudience);
         claims.setExpirationTimeMinutesInTheFuture(jwtTokenExpirationMinutes);
         claims.setGeneratedJwtId();
         claims.setIssuedAtToNow();  
         claims.setSubject(loginEmail);
         claims.setClaim("privateKeyBase64", privateKeyBase64);                                                        
-        String token = JwtAuthUtil.encodeJWT(claims, "WBCPWBCPWBCPWBCP");
+        String token = JwtAuthUtil.encodeJWT(claims, jwtPassword);
         return token;        
     }    
 }

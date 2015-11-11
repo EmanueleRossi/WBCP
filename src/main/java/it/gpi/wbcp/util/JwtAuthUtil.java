@@ -27,20 +27,8 @@ import org.jose4j.lang.JoseException;
 
 public class JwtAuthUtil {
  
-    public static String encodeJWT(String subject, String stringKey) throws Exception {
-        JwtClaims claims = new JwtClaims();
-        claims.setIssuer("Issuer");
-        claims.setAudience("Audience");
-        claims.setExpirationTimeMinutesInTheFuture(1);
-        claims.setGeneratedJwtId();
-        claims.setIssuedAtToNow(); 
-        claims.setNotBeforeMinutesInThePast(2); 
-        claims.setSubject(subject); 
-        return encodeJWT(claims, stringKey);
-    }
-
-    public static String encodeJWT(JwtClaims claims, String stringKey) throws JoseException {
-        Key key = new AesKey(stringKey.getBytes());
+    public static String encodeJWT(JwtClaims claims, String password) throws JoseException {
+        Key key = new AesKey(password.getBytes());
         JsonWebEncryption jwe = new JsonWebEncryption();
         jwe.setPayload(claims.toJson());
         jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.A128KW);
@@ -50,15 +38,14 @@ public class JwtAuthUtil {
         return serializedJwe ;
     }
 
-    public static JwtClaims decodeJWT(String serializedJwt, String stringKey) throws InvalidJwtException {
-        Key key = new AesKey(stringKey .getBytes());
+    public static JwtClaims decodeJWT(String serializedJwt, String password, String expectedAudience) throws InvalidJwtException {
+        Key key = new AesKey(password.getBytes());
         JwtConsumer consumer = new JwtConsumerBuilder()
-            .setDecryptionKey( key)
+            .setDecryptionKey(key)
             .setDisableRequireSignature()
-            .setExpectedAudience("Audience")
+            .setExpectedAudience(expectedAudience)
             .build();
-        JwtClaims receivedClaims = null ;
-        receivedClaims = consumer.processToClaims(serializedJwt);
+        JwtClaims receivedClaims = consumer.processToClaims(serializedJwt);
         return receivedClaims ;
     }
 }

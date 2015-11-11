@@ -63,7 +63,7 @@ public class MessageRestService {
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)    
-    public Response create(@Context HttpServletRequest httpRequest, @Valid Message message) {
+    public Response create(@Context HttpServletRequest httpRequest, Message message) {
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
         try {
