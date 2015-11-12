@@ -80,8 +80,7 @@ public class ApplicationParameterDao {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)     
     private String getParameterValueString(String parameterName, Locale locale) throws IOException, URISyntaxException {
         ApplicationParameterEjb parameter = this.getByName(parameterName, locale);
-        if (parameter == null) {            
-            
+        if (parameter == null) {                        
             URL jsonDefaultParametersFileURL = Thread.currentThread().getContextClassLoader().getResource("ApplicationDefaultParameters.json");
             InputStream jsonDefaultParametersFileInputStream = jsonDefaultParametersFileURL.openStream();
             String jsonDefaultParmetersString = StringUtil.readString(jsonDefaultParametersFileInputStream);
@@ -101,7 +100,7 @@ public class ApplicationParameterDao {
                 }                                                               
             }
             this.persist(defaultParameter);
-            logger.info("Inserted new Parameter: |{}|=|{}|", defaultParameter.getName(), defaultParameter.getParameterValue());   
+            logger.trace("Inserted new Parameter: |{}|=|{}|", defaultParameter.getName(), defaultParameter.getParameterValue());   
             
             parameter = this.getByName(parameterName, locale);
         }                       

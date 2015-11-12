@@ -24,7 +24,6 @@ import java.util.ResourceBundle;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -52,7 +51,6 @@ public class OrganizationRestService {
     @Path("/fullTextSearch/{text}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response fullTextSearch(@Context HttpServletRequest httpRequest,
-                                   @Context String authorization,
                                    @PathParam("text") String text) {
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());          
@@ -77,11 +75,7 @@ public class OrganizationRestService {
     @Path("/create")    
     @Produces(MediaType.APPLICATION_JSON)        
     public Response create(@Context HttpServletRequest httpRequest,
-                           @Context User requestUser,
-                           Organization organization) {
-        
-        System.out.printf("user=(%s)", requestUser.toString());
-        
+                           Organization organization) {       
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());  
         try {

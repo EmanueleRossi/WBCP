@@ -15,7 +15,6 @@
 package it.gpi.wbcp.service.rest;
 
 import it.gpi.wbcp.entity.model.dao.ApplicationParameterDao;
-import it.gpi.wbcp.entity.model.dao.OrganizationDao;
 import it.gpi.wbcp.entity.model.dao.UserDao;
 import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
@@ -35,7 +34,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -59,87 +57,7 @@ public class UserRestService {
     UserDao userDao;
     @EJB
     ApplicationParameterDao aParameterDao;   
-    @EJB
-    OrganizationDao organizationDao;
-/*    
-    @GET
-    @Path("/list")    
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response list(@Context HttpServletRequest httpRequest) {
-        Response response;
-        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());         
-        try {
-            List<User> users = userDao.getAll();
-            if (users.isEmpty()) {
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("user.not_found"), new String());
-                aErrorDao.persist(ae);
-                response = Response.status(Status.NOT_FOUND).entity(ae).build();
-            } else {
-                response = Response.status(Status.OK).entity(users).build();
-            }            
-        } catch (Exception eg) {
-            ApplicationErrorEjb aeg = new ApplicationErrorEjb(eg);
-            aErrorDao.persist(aeg);
-            logger.error("Generic exception in retrieving users. CODE=|{}|", aeg.getCode());
-            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
-        }     
-        return response;   
-    }
-	
-    @GET
-    @Path("/id/{id : \\d+}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@Context HttpServletRequest httpRequest, @PathParam("id") Long id) {
-        Response response;
-        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());         
-        try {
-            User u = userDao.getById(id);
-            if (u == null) {
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("user.not_found"), String.format("id=|{{}|", id));
-                aErrorDao.persist(ae);
-                response = Response.status(Status.NOT_FOUND).entity(ae).build();
-            } else {
-                response = Response.status(Status.OK).entity(u).build();
-            }            
-        } catch (Exception eg) {
-            ApplicationErrorEjb aeg = new ApplicationErrorEjb(eg);
-            aErrorDao.persist(aeg);
-            logger.error("Generic exception in retrieving user by id. CODE=|{}|", aeg.getCode());
-            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
-        }     
-        return response;              
-    }    
-    
-    @GET
-    @Path("/email/{email}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response get(@Context HttpServletRequest httpRequest, @PathParam("email") String email) {
-        Response response;
-        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());          
-        try {
-            if (!StringUtil.validateEmailPattern(email)) {      
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(String.format(lmb.getString("user.email_address_not_valid"), email), new String());
-                aErrorDao.persist(ae);
-                response = Response.status(Status.NOT_FOUND).entity(ae).build();
-            } else {
-                User u = userDao.getByEmail(email);
-                if (u == null) {
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("user.not_found"), String.format("email=|{}|", email));
-                    aErrorDao.persist(ae);
-                    response = Response.status(Status.NOT_FOUND).entity(ae).build();
-                } else {
-                    response = Response.status(Status.OK).entity(u).build();
-                }
-            }        
-        } catch (Exception eg) {
-            ApplicationErrorEjb aeg = new ApplicationErrorEjb(eg);
-            aErrorDao.persist(aeg);
-            logger.error("Generic exception in retrieving user by email. CODE=|{}|", aeg.getCode());
-            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
-        }     
-        return response;        
-    }
-*/
+
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)        

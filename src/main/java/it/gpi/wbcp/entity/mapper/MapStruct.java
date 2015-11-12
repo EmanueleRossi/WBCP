@@ -14,8 +14,10 @@
  */
 package it.gpi.wbcp.entity.mapper;
 
+import it.gpi.wbcp.entity.model.entity.dto.Message;
 import it.gpi.wbcp.entity.model.entity.dto.Organization;
 import it.gpi.wbcp.entity.model.entity.dto.User;
+import it.gpi.wbcp.entity.model.entity.ejb.MessageEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.OrganizationEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.UserEjb;
 import java.util.List;
@@ -50,4 +52,14 @@ public interface MapStruct {
     })    
     OrganizationEjb organizationToOrganizationEjb(Organization organization);
     List<Organization> organizationListEjbToOrganizationList(List<OrganizationEjb> organizationEjbList);
+    
+    @Mappings({        
+        @Mapping(target = "creationInstantUTC", ignore = true),
+        @Mapping(target = "creationInstantLocale", ignore = true),
+        @Mapping(target = "updateInstantUTC", ignore = true),
+        @Mapping(target = "updateInstantLocale", ignore = true)    
+    })     
+    MessageEjb messageToMessageEjb(Message message);
+    Message messageEjbToMessage(MessageEjb messageEjb);
+    List<Message> messageListEjbToMessageList(List<MessageEjb> messageEjbList);    
 }

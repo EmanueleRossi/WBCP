@@ -51,24 +51,29 @@ public class MessageRestServiceITest {
     public void testMessageCreate() {
         try {
             String jsonSender = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/MessageCreateSender.json").toURI())));            
-            ResteasyWebTarget targetSender = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget targetSender = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             targetSender.request().accept(MediaType.APPLICATION_JSON_TYPE);                                                    
-            Response responseSender = targetSender.request().post(Entity.json(jsonSender));
-            assertTrue(responseSender.getStatus() == 200);
+            Response responseSender = targetSender.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonSender));
+            String responseSenderString = responseSender.readEntity(String.class);
+            System.out.printf("testMessageCreate(): |%s|", responseSenderString);               
+            Assert.assertEquals(Response.Status.OK.getStatusCode(), responseSender.getStatus());  
             responseSender.close();
             
             String jsonRecipient = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/MessageCreateRecipient.json").toURI())));
-            ResteasyWebTarget targetRecipient = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget targetRecipient = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             targetRecipient.request().accept(MediaType.APPLICATION_JSON_TYPE);      
-            Response responseRecipient = targetRecipient.request().post(Entity.json(jsonRecipient));                    
-            assertTrue(responseRecipient.getStatus() == 200);
+            Response responseRecipient = targetRecipient.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonRecipient));                    
+            String responseRecipientString = responseSender.readEntity(String.class);
+            System.out.printf("testMessageCreate(): |%s|", responseRecipientString);              
+            Assert.assertEquals(Response.Status.OK.getStatusCode(), responseRecipient.getStatus());    
             responseRecipient.close();
             
             String jsonMessage = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/MessageCreate.json").toURI())));
-            ResteasyWebTarget targetMessage = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/message/create", null, null).toASCIIString());
-            Response responseMessage = targetMessage.request().post(Entity.json(jsonMessage));            
-            String responseMessageString = responseMessage.readEntity(String.class);               
-            assertTrue(responseMessage.getStatus() == 200);                   
+            ResteasyWebTarget targetMessage = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/message/create", null, null).toASCIIString());
+            Response responseMessage = targetMessage.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonMessage));            
+            String responseMessageString = responseMessage.readEntity(String.class);
+            System.out.printf("testMessageCreate(): |%s|", responseMessageString);               
+            Assert.assertEquals(Response.Status.OK.getStatusCode(), responseMessage.getStatus());                   
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseMessageString);
             Assert.assertNotNull(rootNode.path("id"));              

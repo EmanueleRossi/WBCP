@@ -51,11 +51,12 @@ public class UserRestServiceITest {
     public void testUserCreateInvalidPassowrd() {
         try {
             String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreateInvalidPassword.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);                    
-            assertTrue(response.getStatus() == 404);                                   
+            System.out.printf("testUserCreateInvalidPassowrd(): |{}|", responseString);               
+            Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());                                   
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);                        
             Assert.assertNotNull(rootNode.path("message"));              
@@ -70,11 +71,12 @@ public class UserRestServiceITest {
     public void testUserCreateNoPassword() {
         try {
             String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreateNoPassword.json").toURI())));
-            ResteasyWebTarget target = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));
-            String responseString = response.readEntity(String.class);            
-            assertTrue(response.getStatus() == 404);                       
+            String responseString = response.readEntity(String.class);       
+            System.out.printf("testUserCreateNoPassword(): |{}|", responseString);               
+            Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());                  
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);                                           
             Assert.assertNotNull(rootNode.path("message"));  
@@ -89,11 +91,12 @@ public class UserRestServiceITest {
     public void testUserCreateNoEmail() {
         try {
             String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreateNoEmail.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);            
-            assertTrue(response.getStatus() == 404);           
+            System.out.printf("testUserCreateNoEmail(): |{}|", responseString);               
+            Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());     
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);            
             Assert.assertNotNull(rootNode.path("message"));                      
@@ -108,11 +111,12 @@ public class UserRestServiceITest {
     public void testUserCreateInvalidEmail() {
         try {
             String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreateInvalidEmail.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);            
-            assertTrue(response.getStatus() == 404);           
+            System.out.printf("testUserCreateInvalidEmail(): |{}|", responseString);               
+            Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());              
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);            
             Assert.assertNotNull(rootNode.path("message"));                      
@@ -124,33 +128,15 @@ public class UserRestServiceITest {
     }    
 
     @Test
-    public void testUserCreateBeanValidation() {
-        try {
-            String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreateBeanValidation.json").toURI())));
-            ResteasyWebTarget target = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
-            target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response response = target.request().post(Entity.json(jsonUser));
-            String responseString = response.readEntity(String.class);            
-            assertTrue(response.getStatus() == 404);                                   
-            ObjectMapper responseObjectMapper = new ObjectMapper();
-            JsonNode rootNode = responseObjectMapper.readTree(responseString);            
-            Assert.assertNotNull(rootNode.path("message"));                      
-            response.close();
-            
-        } catch (IllegalArgumentException | NullPointerException | IOException | URISyntaxException e) {
-            fail("Exception! " + StringUtil.stringifyStackTrace(e));
-        }
-    }  
-
-    @Test
     public void testUserCreate() {
         try {
             String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreate.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);             
-            assertTrue(response.getStatus() == 200);                       
+            System.out.printf("testUserCreate(): |{}|", responseString);               
+            Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());                       
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);            
             Assert.assertNotNull(rootNode.path("id"));            
@@ -164,69 +150,5 @@ public class UserRestServiceITest {
         } catch (IllegalArgumentException | NullPointerException | IOException | URISyntaxException e) {
             fail("Exception! " + StringUtil.stringifyStackTrace(e));
         }
-    }
-
-    @Test
-    public void testUserGetByEMailAndId() {
-        try {
-            ResteasyWebTarget targetEmail = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/email/emanuele.rossi@gpi.it", null, null).toASCIIString());
-            targetEmail.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response responseEmail = targetEmail.request().get();
-            String responseEmailString = responseEmail.readEntity(String.class); 
-            assertTrue(responseEmail.getStatus() == 200);                    
-            ObjectMapper responseEmailObjectMapper = new ObjectMapper();
-            JsonNode rootNodeEmail = responseEmailObjectMapper.readTree(responseEmailString);                        
-            Assert.assertNotNull(rootNodeEmail.path("email"));                                              
-            Assert.assertNotNull(rootNodeEmail.path("id"));
-            Assert.assertEquals("emanuele.rossi@gpi.it", rootNodeEmail.path("email").getTextValue());
-            responseEmail.close();
-            
-            ResteasyWebTarget targetId =  client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/id/" + rootNodeEmail.path("id"), null, null).toASCIIString());            
-            targetId.request().accept(MediaType.APPLICATION_JSON_TYPE);  
-            Response responseId = targetId.request().get(); 
-            String responseIdString = responseId.readEntity(String.class);   
-            assertTrue(responseId.getStatus() == 200);                                    
-            ObjectMapper responseIdObjectMapper = new ObjectMapper();
-            JsonNode rootNodeId = responseIdObjectMapper.readTree(responseIdString);                              
-            Assert.assertNotNull(rootNodeId.path("id"));
-            Assert.assertNotNull(rootNodeId.path("email"));                           
-            Assert.assertEquals(rootNodeEmail.path("id").asInt(), rootNodeId.path("id").asInt());            
-            Assert.assertEquals("emanuele.rossi@gpi.it", rootNodeId.path("email").getTextValue());
-            responseId.close();
-            
-        } catch (IllegalArgumentException | NullPointerException | IOException | URISyntaxException e) {
-            fail("Exception! " + StringUtil.stringifyStackTrace(e));
-        }
-    }     
-    
-    @Test
-    public void testUserGetByEMailNotFound() {
-        try {            
-            ResteasyWebTarget target = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/email/emanuele.rossi@gpi.com", null, null).toASCIIString());
-            target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response response = target.request().get();
-            String responseString = response.readEntity(String.class);            
-            assertTrue(response.getStatus() == 404);                                   
-            ObjectMapper responseObjectMapper = new ObjectMapper();
-            JsonNode rootNode = responseObjectMapper.readTree(responseString);            
-            Assert.assertNotNull(rootNode.path("message"));                      
-            response.close();
-            
-        } catch (IllegalArgumentException | NullPointerException | IOException | URISyntaxException e) {
-            fail("Exception! " + StringUtil.stringifyStackTrace(e));
-        }            
-    } 
-    
-    @Test
-    public void testUserListWithResult() {
-        try {
-            ResteasyWebTarget target = client.target(new URI("http", null, "devsrv03.erossi.org", 8080, "/WBCP-1.0/rs/user/list", null, null).toASCIIString());
-            target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response response = target.request().get();         
-            assertTrue(response.getStatus() == 200);                                   
-            
-        } catch (IllegalArgumentException | NullPointerException | URISyntaxException e) {
-            fail("Exception! " + StringUtil.stringifyStackTrace(e));
-        }
-    }       
+    }    
 }

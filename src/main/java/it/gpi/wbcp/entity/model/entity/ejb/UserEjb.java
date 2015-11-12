@@ -27,7 +27,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="USERS")

@@ -14,7 +14,6 @@
  */
 package it.gpi.wbcp.entity.model.entity.ejb;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Locale;
@@ -40,22 +39,18 @@ public class RootEjb implements Serializable {
     @GeneratedValue
     Long id;
 
-    @JsonIgnore
     @Column(name = "CREATION_INSTANT_UTC", nullable = false)    
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Calendar creationInstantUTC;
     
-    @JsonIgnore
     @Column(name = "CREATION_INSTANT_LOCALE", nullable = false)        
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Calendar creationInstantLocale;
     
-    @JsonIgnore    
     @Column(name = "LASTUPDATE_INSTANT_UTC", nullable = false)       
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)        
     private Calendar lastUpdateInstantUTC;
 
-    @JsonIgnore    
     @Column(name = "LASTUPDATE_INSTANT_LOCALE", nullable = false)       
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)        
     private Calendar lastUpdateInstantLocale;

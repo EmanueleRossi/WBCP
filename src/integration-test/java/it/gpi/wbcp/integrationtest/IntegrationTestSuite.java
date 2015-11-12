@@ -38,7 +38,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses( { 
     AuthRestServiceITest.class,
-    OrganizationRestServiceITest.class
+    OrganizationRestServiceITest.class,
+    MessageRestServiceITest.class
 } )
 public class IntegrationTestSuite {
 

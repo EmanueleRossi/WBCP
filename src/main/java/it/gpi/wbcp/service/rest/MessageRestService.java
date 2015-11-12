@@ -29,13 +29,14 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -63,7 +64,9 @@ public class MessageRestService {
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)    
-    public Response create(@Context HttpServletRequest httpRequest, Message message) {
+    public Response create(@Context HttpServletRequest httpRequest, 
+                           @Context User requestUser,
+                           Message message) {
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
         try {
@@ -82,7 +85,7 @@ public class MessageRestService {
                         logger.warn(ae);
                         response = Response.status(Status.NOT_FOUND).entity(ae).build();
                     } else {                       
-                        User user = userDao.getByEmail(message.getUser().getEmail());
+                        User user = userDao.getByEmail(requestUser.getEmail());
                         if (user == null) {
                             ApplicationError ae = new ApplicationError(lmb.getString("message.creation.user_not_registered"));
                             logger.warn(ae);
@@ -106,7 +109,7 @@ public class MessageRestService {
                                     CryptoUtil cuSender = new CryptoUtil(sender.getPublicKeyBase64());
                                     SecretKey senderAESMessageKey = cuSender.newAESKey();
                                     byte[] senderEncryptedPayload = cuSender.encrypt_AES(clearTextPayload.getBytes(StandardCharsets.UTF_8.name()), senderAESMessageKey);
-                                    byte[] senderEncryptedAuthor = cuSender.encrypt_AES(user.getSignature().getBytes(StandardCharsets.UTF_8.name()), senderAESMessageKey);
+                                    byte[] senderEncryptedAuthor = cuSender.encrypt_AES(sender.getSignature().getBytes(StandardCharsets.UTF_8.name()), senderAESMessageKey);
                                     message.setPayload(StringUtil.getBase64EncodedUTF8String(senderEncryptedPayload));  
                                     message.setAuthor(StringUtil.getBase64EncodedUTF8String(senderEncryptedAuthor));
                                     byte[] cryptedSenderAESMessageKey = cuSender.encrypt_RSA(senderAESMessageKey.getEncoded());
@@ -150,8 +153,9 @@ public class MessageRestService {
     @Path("/searchByInstant/{instantFrom}/{instantTo}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchByInstant(@Context HttpServletRequest httpRequest,
-            @PathParam("instantFrom") String instantFrom, 
-            @PathParam("instantTo") String instantTo) {
+                                    @PathParam("instantFrom") String instantFrom, 
+                                    @PathParam("instantTo") String instantTo,
+                                    @Context User requestUser) {
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
         Calendar instantFromCalendar = Calendar.getInstance(httpRequest.getLocale());
@@ -160,37 +164,24 @@ public class MessageRestService {
         try {                     
             instantFromCalendar.setTime(sdf.parse(instantFrom));   
             instantToCalendar.setTime(sdf.parse(instantTo));
-            
-            /*
-            TODO FINIRE!
-            
-            
-            
-            List<MessageEjb> messages = messageDao.searchByInstant(userSession.getUser().getId(), instantFromCalendar, instantToCalendar);                       
-            List<MessageEjb> responseMessages = new ArrayList<>();
+            User user = userDao.getByEmail(requestUser.getEmail());                                    
+            List<Message> messages = messageDao.searchByInstant(user, instantFromCalendar, instantToCalendar);                       
             if (messages == null) {
-                ApplicationErrorEjb ae = new ApplicationErrorEjb(lmb.getString("message.not_found"), String.format("instantFrom=|{}|, instantTo=|{}|", instantFrom, instantTo));
-                aErrorDao.persist(ae);
+                ApplicationError ae = new ApplicationError(lmb.getString("message.not_found") + String.format("instantFrom=|{}|, instantTo=|{}|", instantFrom, instantTo));
+                logger.trace(ae);                
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {                                                                                           
-                CryptoUtil cu = new CryptoUtil(userSession.getUser().getPublicKeyBase64(), userSession.getPrivateKeyBase64());                
-                for (MessageEjb message : messages) {
+                CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), user.getPrivateKeyBase64());                
+                for (Message message : messages) {
                     byte[] aesKeyByteArray = cu.decrypt_RSA(StringUtil.decodeBase64(message.getAESKeyRSACryptedBase64()));                                       
                     byte[] decodedMessagePayload = cu.decrypt_AES(StringUtil.decodeBase64(message.getPayload()), new SecretKeySpec(aesKeyByteArray, 0, aesKeyByteArray.length, "AES"));
-                    
-                    MessageEjb responseMessage = new MessageEjb();
-                    responseMessage.setId(message.getId());
-                    responseMessage.setUser(message.getUser());
-                    responseMessage.setInstant(message.getInstant());
-                    responseMessage.setPayload(new String(decodedMessagePayload, StandardCharsets.UTF_8.name())); 
-                    responseMessages.add(responseMessage);
+                    message.setPayload(new String(decodedMessagePayload, StandardCharsets.UTF_8.name())); 
                 }                                              
-                    */
-                //response = Response.status(Status.OK).entity(responseMessages).build();                
-                response = Response.status(Status.OK).build();
-            //}                   
+                response = Response.status(Status.OK).entity(messages).build();                
+            }                   
         } catch (ParseException pe) {
             ApplicationError ae = new ApplicationError(String.format(lmb.getString("message.search_by_instant.invalid_date"), instantFrom, instantTo), pe);
+            logger.warn(ae);                   
             response = Response.status(Status.NOT_FOUND).entity(ae).build();
         } catch (Exception eg) { 
             ApplicationError aeg = new ApplicationError(eg);                        

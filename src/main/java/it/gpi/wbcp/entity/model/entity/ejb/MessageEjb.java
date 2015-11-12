@@ -27,7 +27,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.Transient;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="MESSAGES")
