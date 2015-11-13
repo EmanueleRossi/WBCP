@@ -49,21 +49,12 @@ public class MessageRestServiceITest {
     
     @Test
     public void testMessageCreate() {
-        try {
-            String jsonSender = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/MessageCreateSender.json").toURI())));            
-            ResteasyWebTarget targetSender = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
-            targetSender.request().accept(MediaType.APPLICATION_JSON_TYPE);                                                    
-            Response responseSender = targetSender.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonSender));
-            String responseSenderString = responseSender.readEntity(String.class);
-            System.out.printf("testMessageCreate(): |%s|", responseSenderString);               
-            Assert.assertEquals(Response.Status.OK.getStatusCode(), responseSender.getStatus());  
-            responseSender.close();
-            
+        try {            
             String jsonRecipient = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/MessageCreateRecipient.json").toURI())));
             ResteasyWebTarget targetRecipient = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             targetRecipient.request().accept(MediaType.APPLICATION_JSON_TYPE);      
-            Response responseRecipient = targetRecipient.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonRecipient));                    
-            String responseRecipientString = responseSender.readEntity(String.class);
+            Response responseRecipient = targetRecipient.request().post(Entity.json(jsonRecipient));                    
+            String responseRecipientString = responseRecipient.readEntity(String.class);
             System.out.printf("testMessageCreate(): |%s|", responseRecipientString);              
             Assert.assertEquals(Response.Status.OK.getStatusCode(), responseRecipient.getStatus());    
             responseRecipient.close();

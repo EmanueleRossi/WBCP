@@ -35,55 +35,55 @@ import org.apache.logging.log4j.Logger;
 
 @Stateless
 public class UserDao {
-    
+
     private static final Logger logger = LogManager.getLogger();
-    
+
     @PersistenceContext(unitName="WBCP_PU")
     private EntityManager em;
-	
-    public User persist(User user) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {    	                
-        UserEjb userEjb = MapStruct.INSTANCE.userToUserEjb(user);    
-    	userEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
-    	userEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));    	        
-        em.persist(userEjb);
-                
-        User response = MapStruct.INSTANCE.userEjbToUser(userEjb);       
-        return response;
-    }   
 
-    public boolean verifyCredentials(String email, String password) {        
+    public User persist(User user) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        UserEjb userEjb = MapStruct.INSTANCE.userToUserEjb(user);
+    	  userEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
+    	  userEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));
+        em.persist(userEjb);
+
+        User response = MapStruct.INSTANCE.userEjbToUser(userEjb);
+        return response;
+    }
+
+    public boolean verifyCredentials(String email, String password) {
         boolean response = false;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<UserEjb> q = cb.createQuery(UserEjb.class);    
+            CriteriaQuery<UserEjb> q = cb.createQuery(UserEjb.class);
             Root<UserEjb> r = q.from(UserEjb.class);
             q.select(r).where(cb.equal(r.<String>get("email"), email));
             TypedQuery<UserEjb> tq = em.createQuery(q);
-            UserEjb u = tq.getSingleResult();            
+            UserEjb u = tq.getSingleResult();
             String dbPasswordHashBase64 = u.getPasswordHashBase64();
-            String requestPasswordHashBase64 = StringUtil.getSHA512Base64(password);            
+            String requestPasswordHashBase64 = StringUtil.getSHA512Base64(password);
             if (requestPasswordHashBase64.equals(dbPasswordHashBase64)) {
                 response = true;
-            }                                    
+            }
         } catch (NoResultException nre) {
-            logger.info("Login refused: not found User with email: |{}|", email);            
-        }      
-        return response;        
+            logger.info("Login refused: not found User with email: |{}|", email);
+        }
+        return response;
     }
-    
+
     public User getByEmail(String email) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
     	User response = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<UserEjb> q = cb.createQuery(UserEjb.class);    
+            CriteriaQuery<UserEjb> q = cb.createQuery(UserEjb.class);
             Root<UserEjb> r = q.from(UserEjb.class);
             q.select(r).where(cb.equal(r.<String>get("email"), email));
             TypedQuery<UserEjb> tq = em.createQuery(q);
             UserEjb responseEjb = tq.getSingleResult();
-            response = MapStruct.INSTANCE.userEjbToUser(responseEjb);             
-        } catch (NoResultException nre) {            
-            logger.info("Not found User with email: |{}|", email);            
+            response = MapStruct.INSTANCE.userEjbToUser(responseEjb);
+        } catch (NoResultException nre) {
+            logger.info("Not found User with email: |{}|", email);
         }
         return response;
-    } 
+    }
 }

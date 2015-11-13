@@ -61,7 +61,8 @@ public class UserRestService {
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)        
-    public Response create(@Context HttpServletRequest httpRequest, User user) {
+    public Response create(@Context HttpServletRequest httpRequest, 
+                           User user) {
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());  
         try {

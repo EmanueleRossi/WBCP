@@ -53,7 +53,8 @@ public interface MapStruct {
     OrganizationEjb organizationToOrganizationEjb(Organization organization);
     List<Organization> organizationListEjbToOrganizationList(List<OrganizationEjb> organizationEjbList);
     
-    @Mappings({        
+    @Mappings({
+        @Mapping(target = "instant", ignore = true),
         @Mapping(target = "creationInstantUTC", ignore = true),
         @Mapping(target = "creationInstantLocale", ignore = true),
         @Mapping(target = "updateInstantUTC", ignore = true),
