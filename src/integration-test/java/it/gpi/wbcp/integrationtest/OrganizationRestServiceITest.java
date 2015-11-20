@@ -52,7 +52,7 @@ public class OrganizationRestServiceITest {
     public void testOrganizationCreateNoName() {
         try {
             String jsonOrganization = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateNoName.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                   
             Response response = target.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganization));
             String responseString = response.readEntity(String.class);  
@@ -72,7 +72,7 @@ public class OrganizationRestServiceITest {
     public void testOrganizationCreate() {
         try {
             String jsonOrganization = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreate.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganization)); 
             String responseString = response.readEntity(String.class);
@@ -95,7 +95,7 @@ public class OrganizationRestServiceITest {
     public void testOrganizationCreateWithUsers() {
         try {
             String jsonOrganizationUserCreateFirst = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateUserCreateFirst.json").toURI())));                        
-            ResteasyWebTarget targetUserCreateFirst = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget targetUserCreateFirst = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             targetUserCreateFirst.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response responseUserCreateFirst = targetUserCreateFirst.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganizationUserCreateFirst));                 
             String responseUserCreateFirstString = responseUserCreateFirst.readEntity(String.class);                              
@@ -106,7 +106,7 @@ public class OrganizationRestServiceITest {
             responseUserCreateFirst.close();
             
             String jsonOrganizationUserCreateSecond = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateUserCreateSecond.json").toURI())));                        
-            ResteasyWebTarget targetUserCreateSecond = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget targetUserCreateSecond = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             targetUserCreateSecond.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response responseUserCreateSecond = targetUserCreateSecond.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganizationUserCreateSecond));                
             String responseUserCreateSecondString = responseUserCreateSecond.readEntity(String.class);                              
@@ -124,7 +124,7 @@ public class OrganizationRestServiceITest {
             jsonUsers.add(rootNodeUserCreateFirst);
             jsonUsers.add(rootNodeUserCreateSecond);
             
-            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);        
             Response response = target.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganizationObjectNode));               
             String responseString = response.readEntity(String.class);   
@@ -148,7 +148,7 @@ public class OrganizationRestServiceITest {
     @Test
     public void testOrganizationFullTextSearch() {
         try {
-            ResteasyWebTarget targetName = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/organization/fullTextSearch/GPI S.", null, null).toASCIIString());
+            ResteasyWebTarget targetName = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/organization/fullTextSearch/GPI S.", null, null).toASCIIString());
             targetName.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response responseName = targetName.request().header("Authorization", IntegrationTestSuite.TOKEN).get();          
             String responseNameString = responseName.readEntity(String.class); 
@@ -161,7 +161,7 @@ public class OrganizationRestServiceITest {
             Assert.assertEquals("GPI S.p.A.", rootNodeName.get(0).path("name").getTextValue());
             responseName.close();
             
-            ResteasyWebTarget targetTaxCode = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/organization/fullTextSearch/4260", null, null).toASCIIString());
+            ResteasyWebTarget targetTaxCode = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/organization/fullTextSearch/4260", null, null).toASCIIString());
             targetTaxCode.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response responseTaxCode = targetTaxCode.request().header("Authorization", IntegrationTestSuite.TOKEN).get();          
             String responseTaxCodeString = responseTaxCode.readEntity(String.class); 
@@ -174,7 +174,7 @@ public class OrganizationRestServiceITest {
             Assert.assertEquals("01944260221", rootNodeTaxCode.get(0).path("taxCode").getTextValue());
             responseName.close();
             
-            ResteasyWebTarget targetMailDomain = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/organization/fullTextSearch/gpi.i", null, null).toASCIIString());
+            ResteasyWebTarget targetMailDomain = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/organization/fullTextSearch/gpi.i", null, null).toASCIIString());
             targetMailDomain.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response responseMailDomain = targetMailDomain.request().header("Authorization", IntegrationTestSuite.TOKEN).get();            
             String responseMailDomainString = responseMailDomain.readEntity(String.class); 

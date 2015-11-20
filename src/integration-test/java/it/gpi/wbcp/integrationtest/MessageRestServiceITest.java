@@ -51,7 +51,7 @@ public class MessageRestServiceITest {
     public void testMessageCreate() {
         try {            
             String jsonRecipient = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/MessageCreateRecipient.json").toURI())));
-            ResteasyWebTarget targetRecipient = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget targetRecipient = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             targetRecipient.request().accept(MediaType.APPLICATION_JSON_TYPE);      
             Response responseRecipient = targetRecipient.request().post(Entity.json(jsonRecipient));                    
             String responseRecipientString = responseRecipient.readEntity(String.class);
@@ -60,7 +60,7 @@ public class MessageRestServiceITest {
             responseRecipient.close();
             
             String jsonMessage = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/MessageCreate.json").toURI())));
-            ResteasyWebTarget targetMessage = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/message/create", null, null).toASCIIString());
+            ResteasyWebTarget targetMessage = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/message/create", null, null).toASCIIString());
             Response responseMessage = targetMessage.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonMessage));            
             String responseMessageString = responseMessage.readEntity(String.class);
             System.out.printf("testMessageCreate(): |%s|", responseMessageString);               

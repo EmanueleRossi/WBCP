@@ -1,5 +1,7 @@
-apply plugin: 'org.flywaydb.flyway'
-apply plugin: 'war'
+plugins {
+    id 'org.flywaydb.flyway' version '3.2.1'
+    id 'war'
+}
 
 repositories {
     mavenCentral()
@@ -40,42 +42,29 @@ dependencies {
 	[group: 'org.jboss.resteasy', name: 'resteasy-validator-provider-11', version: '3.0.11.Final'], 
 	[group: 'org.jboss.resteasy', name: 'resteasy-client', version: '3.0.10.Final'],
         [group: 'org.mapstruct', name: 'mapstruct', version: '1.0.0.CR2'],      
-        [group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.0.0.CR2']                
+        [group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.0.0.CR2']
     )
     integrationTestCompile (
         [group: 'junit', name: 'junit', version: '4.12'],
         [group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.3'], 		
         [group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.3'],         
         [group: 'org.jboss.resteasy', name: 'resteasy-jackson-provider', version: '3.0.11.Final'],
+        [group: 'org.postgresql', name: 'postgresql', version: '9.4-1202-jdbc42'],        
         [group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.12']                       
     )    
 }
 
 sourceCompatibility = 1.8
 version = '1.0'
-jar {
-    manifest {
-        attributes 'Implementation-Title': 'WBCP',
-                   'Implementation-Version': version
-    }
+war {
+    archiveName = 'WBCP-' + version + '.war'
+    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens:['WBCP-Version': version])
 }
 
 flyway {
     url = 'jdbc:postgresql://localhost:5432/WBCP'
     user = 'wbcp'
     password = 'test'
-}
-
-buildscript {
-    repositories {
-        mavenCentral()     
-    }    
-    dependencies {
-        classpath (            
-            [group: 'org.flywaydb', name: 'flyway-gradle-plugin', version: '3.2.1'],
-            [group: 'org.postgresql', name: 'postgresql', version: '9.4-1202-jdbc42']         
-        )
-    }
 }
 
 task deploy(dependsOn: war, type: Copy) { 

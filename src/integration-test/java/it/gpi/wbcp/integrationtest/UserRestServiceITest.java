@@ -51,7 +51,7 @@ public class UserRestServiceITest {
     public void testUserCreateInvalidPassowrd() {
         try {
             String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreateInvalidPassword.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);                    
@@ -71,7 +71,7 @@ public class UserRestServiceITest {
     public void testUserCreateNoPassword() {
         try {
             String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreateNoPassword.json").toURI())));
-            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));
             String responseString = response.readEntity(String.class);       
@@ -91,7 +91,7 @@ public class UserRestServiceITest {
     public void testUserCreateNoEmail() {
         try {
             String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreateNoEmail.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);            
@@ -111,7 +111,7 @@ public class UserRestServiceITest {
     public void testUserCreateInvalidEmail() {
         try {
             String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreateInvalidEmail.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);            
@@ -131,7 +131,7 @@ public class UserRestServiceITest {
     public void testUserCreate() {
         try {
             String jsonUser = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/UserCreate.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, "127.0.0.1", 8080, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);             

@@ -15,6 +15,10 @@
         <param-name>resteasy.scan</param-name>
         <param-value>true</param-value>
     </context-param>   
+    <context-param>
+        <param-name>WBCP-Version</param-name>
+        <param-value>@WBCP-Version@</param-value>
+    </context-param>      
  
     <servlet>
     	<display-name>Rest Easy Application</display-name>
