@@ -12,7 +12,7 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.gpi.wbcp.entity.mapper;
+package it.gpi.wbcp.entity.util;
 
 import it.gpi.wbcp.entity.model.entity.dto.Message;
 import it.gpi.wbcp.entity.model.entity.dto.Organization;

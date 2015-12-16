@@ -49,7 +49,7 @@ public class AuthRestServiceITest {
     @Test
     public void testValidLogin() {
         try {                                                                                                               
-            ResteasyWebTarget targetLoginValid = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/auth/login", null, null).toASCIIString());
+            ResteasyWebTarget targetLoginValid = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/auth/login", null, null).toASCIIString());
             targetLoginValid.request().accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE);                        
             MultivaluedHashMap<String, String> targetLoginParams = new MultivaluedHashMap<>();
             targetLoginParams.add("loginEmail", IntegrationTestSuite.LOGIN_EMAIL);
@@ -70,7 +70,7 @@ public class AuthRestServiceITest {
     @Test
     public void testWrongLoginParameters() {
         try {                                                                                                              
-            ResteasyWebTarget targetLoginValid = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/auth/login", null, null).toASCIIString());
+            ResteasyWebTarget targetLoginValid = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/auth/login", null, null).toASCIIString());
             targetLoginValid.request().accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE);                        
             MultivaluedHashMap<String, String> targetLoginParams = new MultivaluedHashMap<>();
             Response responseLoginValid_01 = targetLoginValid.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));     
@@ -96,7 +96,7 @@ public class AuthRestServiceITest {
     @Test
     public void testInvalidPassword() {
         try {                                                                                                              
-            ResteasyWebTarget targetLoginInValid = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/auth/login", null, null).toASCIIString());
+            ResteasyWebTarget targetLoginInValid = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/auth/login", null, null).toASCIIString());
             targetLoginInValid.request().accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE);                        
             MultivaluedHashMap<String, String> targetLoginParams = new MultivaluedHashMap<>();
             targetLoginParams.add("loginEmail", IntegrationTestSuite.LOGIN_EMAIL);
@@ -115,7 +115,7 @@ public class AuthRestServiceITest {
     public void testNoToken() {
         try {                                                                                                              
             String jsonOrganization = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateNoName.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/organization/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                   
             Response response = target.request().post(Entity.json(jsonOrganization));
             String responseString = response.readEntity(String.class);  
@@ -131,7 +131,7 @@ public class AuthRestServiceITest {
     public void testWrongToken() {
         try {                                                                                                              
             String jsonOrganization = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateNoName.json").toURI())));            
-            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/organization/create", null, null).toASCIIString());
+            ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/organization/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                   
             Response response = target.request().header("Authorization", "WRONG TOKEN!!!").post(Entity.json(jsonOrganization));
             String responseString = response.readEntity(String.class);  

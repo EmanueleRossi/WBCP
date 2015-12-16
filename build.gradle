@@ -24,41 +24,48 @@ configurations {
 }
 
 dependencies {
-    compile (	
-        [group: 'biz.paluch.logging', name: 'logstash-gelf', version: '1.7.0'], 				
-        [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.6.0'], 				
-        [group: 'edu.vt.middleware', name: 'vt-password', version: '3.1.2'], 
-	[group: 'javax', name: 'javaee-api', version: '7.0'], 		
-        [group: 'javax.ejb', name: 'javax.ejb-api', version: '3.2'],	
-        [group: 'javax.mail', name: 'javax.mail-api', version: '1.5.4'], 			
-        [group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0.1'], 		
-        [group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'],	
-        [group: 'org.bitbucket.b_c', name: 'jose4j', version: '0.4.4'],	        
-        [group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.3'], 		
-        [group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.3'], 
-        [group: 'org.flywaydb', name: 'flyway-core', version: '3.2.1'],		
-        [group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version: '1.0.0.Final'], 	
-        [group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.0.10.Final'], 
-	[group: 'org.jboss.resteasy', name: 'resteasy-validator-provider-11', version: '3.0.11.Final'], 
-	[group: 'org.jboss.resteasy', name: 'resteasy-client', version: '3.0.10.Final'],
-        [group: 'org.mapstruct', name: 'mapstruct', version: '1.0.0.CR2'],      
-        [group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.0.0.CR2']
+    compile (
+        [group: 'biz.paluch.logging', name: 'logstash-gelf', version: '1.7.2'],        
+        [group: 'com.fasterxml.jackson.module', name: 'jackson-module-jsonSchema', version: '2.6.3'],               
+        [group: 'edu.vt.middleware', name: 'vt-password', version: '3.1.2'],         
+        [group: 'org.apache.commons', name: 'commons-lang3', version: '3.4'],    
+        [group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5'],
+        [group: 'org.bitbucket.b_c', name: 'jose4j', version: '0.4.4'],                         
+        [group: 'org.flywaydb', name: 'flyway-core', version: '3.2.1'],        
+	[group: 'org.mongodb', name: 'mongo-java-driver', version: '3.1.1'],       
+        [group: 'org.mapstruct', name: 'mapstruct', version: '1.0.0.Final'],      
+        [group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.0.0.Final']
     )
+    providedCompile (
+        [group: 'commons-beanutils', name: 'commons-beanutils', version: '1.8.3'],
+        [group: 'javax', name: 'javaee-api', version: '7.0'],
+        [group: 'javax.mail', name: 'javax.mail-api', version: '1.5.3'],        
+        [group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'],    
+        [group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.0'],
+        [group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version: '1.0.0.Final'],            
+        [group: 'org.hibernate', name: 'hibernate-core', version: '4.3.10.Final'],
+        [group: 'org.jboss.resteasy', name: 'resteasy-jaxrs', version: '3.0.11.Final'], 
+        [group: 'org.jboss.resteasy', name: 'resteasy-validator-provider-11', version: '3.0.11.Final'],
+        [group: 'org.postgresql', name: 'postgresql', version: '9.4-1202-jdbc42']        
+    )    
     integrationTestCompile (
         [group: 'junit', name: 'junit', version: '4.12'],
-        [group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.3'], 		
-        [group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.3'],         
+        [group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.4.1'],
+        [group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.4.1'],       
         [group: 'org.jboss.resteasy', name: 'resteasy-jackson-provider', version: '3.0.11.Final'],
-        [group: 'org.postgresql', name: 'postgresql', version: '9.4-1202-jdbc42'],        
-        [group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.12']                       
-    )    
+        [group: 'org.jboss.resteasy', name: 'resteasy-client', version: '3.0.11.Final'],            
+        [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.13'],          
+        [group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.13']       
+    )        
 }
 
 sourceCompatibility = 1.8
 version = '1.0'
 war {
-    archiveName = 'WBCP-' + version + '.war'
-    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens:['WBCP-Version': version])
+    archiveName = 'WBCP.war'
+    filesMatching("**/web.xml") {
+    	filter(org.apache.tools.ant.filters.ReplaceTokens, tokens:['WBCP-Version': version])
+    }
 }
 
 flyway {
@@ -69,11 +76,11 @@ flyway {
 
 task deploy(dependsOn: war, type: Copy) { 
     from('build\\libs\\') { 
-        include 'WBCP-1.0.war'
+        include 'WBCP.war'
     }
-    into 'C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments'     
-    def ok=new File('C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments\\WBCP-1.0.war.deployed'); 
-    def ko=new File('C:\\dev\\tools\\wildfly-8.2.0.Final\\standalone\\deployments\\WBCP-1.0.war.failed');    
+    into 'C:\\dev\\tools\\wildfly-9.0.2.Final\\standalone\\deployments'     
+    def ok=new File('C:\\dev\\tools\\wildfly-9.0.2.Final\\standalone\\deployments\\WBCP.war.deployed'); 
+    def ko=new File('C:\\dev\\tools\\wildfly-9.0.2.Final\\standalone\\deployments\\WBCP.war.failed');    
     doFirst {
         if(ok.exists()) { ok.delete() }
         if(ko.exists()) { ko.delete() } 

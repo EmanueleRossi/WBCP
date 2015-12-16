@@ -52,8 +52,7 @@ public class MailUtil {
 	props.put("mail.smtp.host", this.smtpHost);
         props.put("mail.smtp.port", this.smtpPort);                                     
         props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.socketFactory.port", "465");
-        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.ssl.enable", "true");        
 	
         Session session;
         session = Session.getInstance(props,

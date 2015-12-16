@@ -124,19 +124,19 @@ public class UserRestService {
             }                        
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
             ApplicationError ae = new ApplicationError(e);
-            logger.error("Exception creating crypto keys. CODE=|{}|", ae.getCode());
+            logger.error("Exception creating crypto keys. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(e));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();   
         } catch (IOException | URISyntaxException ex) {
             ApplicationError ae = new ApplicationError(ex);
-            logger.error("Exception in reading JSON default parameters file. CODE=|{}|", ae.getCode());
+            logger.error("Exception in reading JSON default parameters file. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(ex));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();                       
         } catch (MessagingException ex) {
             ApplicationError ae = new ApplicationError(ex);
-            logger.error("Exception in sending mail message with private Key. CODE=|{}|", ae.getCode());
+            logger.error("Exception in sending mail message with private Key. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(ex));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();             
         } catch (Exception eg) {
             ApplicationError aeg = new ApplicationError(eg);
-            logger.error("Generic exception in creating user. CODE=|{}|", aeg.getCode());
+            logger.error("Generic exception in creating user. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
         }
         return response;

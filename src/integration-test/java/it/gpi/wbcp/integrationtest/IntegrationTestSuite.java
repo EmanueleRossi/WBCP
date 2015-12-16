@@ -39,7 +39,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses( { 
     AuthRestServiceITest.class,
     OrganizationRestServiceITest.class,
-    MessageRestServiceITest.class
+    MessageRestServiceITest.class,
+    UserRestServiceITest.class
 } )
 public class IntegrationTestSuite {
 
@@ -60,7 +61,7 @@ public class IntegrationTestSuite {
                 JsonNode rootNode = responseLoginValidObjectMapper.readTree(jsonAuthLoginUserCreate);   
                 IntegrationTestSuite.LOGIN_EMAIL = rootNode.path("email").getTextValue();
                 IntegrationTestSuite.LOGIN_PASSWORD = rootNode.path("requestedClearPassword").getTextValue();            
-                ResteasyWebTarget targetUserCreate = new ResteasyClientBuilder().build().target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP-1.0/rs/user/create", null, null).toASCIIString());
+                ResteasyWebTarget targetUserCreate = new ResteasyClientBuilder().build().target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/user/create", null, null).toASCIIString());
                 targetUserCreate.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
                 Response responseUserCreate = targetUserCreate.request().post(Entity.json(jsonAuthLoginUserCreate));
                 System.out.printf("createTestUser(): |%s|", responseUserCreate.readEntity(String.class));

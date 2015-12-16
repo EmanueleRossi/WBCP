@@ -14,7 +14,7 @@
  */
 package it.gpi.wbcp.entity.model.dao;
 
-import it.gpi.wbcp.entity.mapper.MapStruct;
+import it.gpi.wbcp.entity.util.MapStruct;
 import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.entity.model.entity.ejb.UserEjb;
 import it.gpi.wbcp.util.StringUtil;

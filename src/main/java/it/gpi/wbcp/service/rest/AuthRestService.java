@@ -89,7 +89,7 @@ public class AuthRestService {
             }
         } catch (Exception eg) {
             ApplicationError aeg = new ApplicationError(eg);
-            logger.error(aeg);
+            logger.error(StringUtil.stringifyStackTrace(eg));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();
         }
         return response;

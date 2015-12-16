@@ -139,11 +139,11 @@ public class MessageRestService {
             }                                
         } catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | InvalidAlgorithmParameterException | IOException e) {
             ApplicationError ae = new ApplicationError(e);
-            logger.error("Exception using crypto utility. CODE=|{}|", ae.getCode());
+            logger.error("Exception using crypto utility. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(e));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();   
         } catch (Exception eg) {
             ApplicationError ae = new ApplicationError(eg);
-            logger.error("Generic exception. CODE=|{}|", ae.getCode());
+            logger.error("Generic exception. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();   
         }        
         return response;
@@ -185,7 +185,7 @@ public class MessageRestService {
             response = Response.status(Status.NOT_FOUND).entity(ae).build();
         } catch (Exception eg) { 
             ApplicationError aeg = new ApplicationError(eg);                        
-            logger.error("Generic exception executing organization full text search. CODE=|{}|", aeg.getCode());
+            logger.error("Generic exception executing organization full text search. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
         }     
         return response;        

@@ -65,7 +65,7 @@ public class OrganizationRestService {
             }        
         } catch (Exception eg) {
             ApplicationError aeg = new ApplicationError(eg);
-            logger.error("Generic exception executing organization full text search. CODE=|{}|", aeg.getCode());
+            logger.error("Generic exception executing organization full text search. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
         }     
         return response;        
@@ -89,7 +89,7 @@ public class OrganizationRestService {
             }                        
         } catch (Exception eg) {
             ApplicationError aeg = new ApplicationError(eg);            
-            logger.error("Generic exception in creating organization. CODE=|{}|", aeg.getCode());
+            logger.error("Generic exception in creating organization. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
         }
         return response;
