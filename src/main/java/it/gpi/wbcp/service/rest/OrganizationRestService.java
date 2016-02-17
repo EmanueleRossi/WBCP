@@ -17,7 +17,6 @@ package it.gpi.wbcp.service.rest;
 import it.gpi.wbcp.entity.model.dao.OrganizationDao;
 import it.gpi.wbcp.entity.model.entity.dto.Organization;
 import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
-import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.util.StringUtil;
 import java.util.List;
 import java.util.ResourceBundle;

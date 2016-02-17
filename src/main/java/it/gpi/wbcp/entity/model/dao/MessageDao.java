@@ -82,4 +82,20 @@ public class MessageDao {
         List<Message> response = MapStruct.INSTANCE.messageListEjbToMessageList(responseEjb);
         return response;        
     }     
+    
+    public Message getById(Long id) {
+    	Message response = null;
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<MessageEjb> q = cb.createQuery(MessageEjb.class);
+            Root<MessageEjb> r = q.from(MessageEjb.class);
+            q.select(r).where(cb.equal(r.<Long>get("id"), id));
+            TypedQuery<MessageEjb> tq = em.createQuery(q);
+            MessageEjb messageEjb = tq.getSingleResult();
+            response = MapStruct.INSTANCE.messageEjbToMessage(messageEjb);
+        } catch (NoResultException nre) {
+            logger.info("Not found Message with id: |{}|", id);
+        }
+        return response;
+    }     
 }

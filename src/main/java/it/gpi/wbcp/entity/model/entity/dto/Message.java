@@ -14,8 +14,6 @@
  */
 package it.gpi.wbcp.entity.model.entity.dto;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
 public class Message extends RootDto {
     
     private User user;
