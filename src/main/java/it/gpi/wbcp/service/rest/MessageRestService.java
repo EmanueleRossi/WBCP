@@ -166,12 +166,12 @@ public class MessageRestService {
             instantToCalendar.setTime(sdf.parse(instantTo));
             User user = userDao.getByEmail(requestUser.getEmail());                                    
             List<Message> messages = messageDao.searchByInstant(user, instantFromCalendar, instantToCalendar);                       
-            if (messages == null) {
+            if (messages == null || messages.isEmpty()) {
                 ApplicationError ae = new ApplicationError(lmb.getString("message.not_found") + String.format("instantFrom=|{}|, instantTo=|{}|", instantFrom, instantTo));
                 logger.trace(ae);                
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {                                                                                           
-                CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), user.getPrivateKeyBase64());                
+                CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), requestUser.getPrivateKeyBase64());                
                 for (Message message : messages) {
                     byte[] aesKeyByteArray = cu.decrypt_RSA(StringUtil.decodeBase64(message.getAESKeyRSACryptedBase64()));                                       
                     byte[] decodedMessagePayload = cu.decrypt_AES(StringUtil.decodeBase64(message.getPayload()), new SecretKeySpec(aesKeyByteArray, 0, aesKeyByteArray.length, "AES"));
