@@ -171,8 +171,11 @@ public class MessageRestService {
                 logger.trace(ae);                
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {                                                                                           
-                CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), requestUser.getPrivateKeyBase64());                
+                CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), requestUser.getPrivateKeyBase64());    
+                logger.trace(user);
+                logger.trace(requestUser);
                 for (Message message : messages) {
+                    logger.trace(message);
                     byte[] aesKeyByteArray = cu.decrypt_RSA(StringUtil.decodeBase64(message.getAESKeyRSACryptedBase64()));                                       
                     byte[] decodedMessagePayload = cu.decrypt_AES(StringUtil.decodeBase64(message.getPayload()), new SecretKeySpec(aesKeyByteArray, 0, aesKeyByteArray.length, "AES"));
                     message.setPayload(new String(decodedMessagePayload, StandardCharsets.UTF_8.name())); 
@@ -207,7 +210,7 @@ public class MessageRestService {
                 logger.trace(ae);                
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {                                                                                           
-                CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), user.getPrivateKeyBase64());                
+                CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), requestUser.getPrivateKeyBase64());                
                
                 byte[] aesKeyByteArray = cu.decrypt_RSA(StringUtil.decodeBase64(message.getAESKeyRSACryptedBase64()));                                       
                 byte[] decodedMessageAuthor = cu.decrypt_AES(StringUtil.decodeBase64(message.getAuthor()), new SecretKeySpec(aesKeyByteArray, 0, aesKeyByteArray.length, "AES"));
