@@ -60,7 +60,7 @@ public class UserRestService {
 
     @POST
     @Path("/create")
-    //@Produces(MediaType.APPLICATION_JSON)        
+    @Produces(MediaType.APPLICATION_JSON)        
     public Response create(@Context HttpServletRequest httpRequest, 
                            User user) {
         Response response;
