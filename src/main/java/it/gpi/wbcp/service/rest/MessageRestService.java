@@ -166,13 +166,16 @@ public class MessageRestService {
             instantToCalendar.setTime(sdf.parse(instantTo));
             User user = userDao.getByEmail(requestUser.getEmail());                                    
             List<Message> messages = messageDao.searchByInstant(user, instantFromCalendar, instantToCalendar);                       
-            if (messages == null) {
+            if (messages == null || messages.isEmpty()) {
                 ApplicationError ae = new ApplicationError(lmb.getString("message.not_found") + String.format("instantFrom=|{}|, instantTo=|{}|", instantFrom, instantTo));
                 logger.trace(ae);                
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {                                                                                           
-                CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), user.getPrivateKeyBase64());                
+                CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), requestUser.getPrivateKeyBase64());    
+                logger.trace(user);
+                logger.trace(requestUser);
                 for (Message message : messages) {
+                    logger.trace(message);
                     byte[] aesKeyByteArray = cu.decrypt_RSA(StringUtil.decodeBase64(message.getAESKeyRSACryptedBase64()));                                       
                     byte[] decodedMessagePayload = cu.decrypt_AES(StringUtil.decodeBase64(message.getPayload()), new SecretKeySpec(aesKeyByteArray, 0, aesKeyByteArray.length, "AES"));
                     message.setPayload(new String(decodedMessagePayload, StandardCharsets.UTF_8.name())); 
@@ -185,9 +188,41 @@ public class MessageRestService {
             response = Response.status(Status.NOT_FOUND).entity(ae).build();
         } catch (Exception eg) { 
             ApplicationError aeg = new ApplicationError(eg);                        
-            logger.error("Generic exception executing organization full text search. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
+            logger.error("Generic exception executing message search. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
         }     
         return response;        
-    }              
+    }  
+    
+    @POST
+    @Path("/getAuthor/{messageId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAuthor(@Context HttpServletRequest httpRequest,
+                              @PathParam("messageId") Long messageId,
+                              @Context User requestUser) {
+        Response response;
+        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
+        try {                     
+            User user = userDao.getByEmail(requestUser.getEmail());                                    
+            Message message = messageDao.getById(messageId);
+            if (message == null) {
+                ApplicationError ae = new ApplicationError(lmb.getString("message.not_found") + String.format("messageId=|{}|", messageId));
+                logger.trace(ae);                
+                response = Response.status(Status.NOT_FOUND).entity(ae).build();
+            } else {                                                                                           
+                CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), requestUser.getPrivateKeyBase64());                
+               
+                byte[] aesKeyByteArray = cu.decrypt_RSA(StringUtil.decodeBase64(message.getAESKeyRSACryptedBase64()));                                       
+                byte[] decodedMessageAuthor = cu.decrypt_AES(StringUtil.decodeBase64(message.getAuthor()), new SecretKeySpec(aesKeyByteArray, 0, aesKeyByteArray.length, "AES"));
+                message.setAuthor(new String(decodedMessageAuthor, StandardCharsets.UTF_8.name())); 
+                                                              
+                response = Response.status(Status.OK).entity(message).build();                
+            }                   
+        } catch (Exception eg) { 
+            ApplicationError aeg = new ApplicationError(eg);                        
+            logger.error("Generic exception executing getAuthor(). STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
+            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
+        }     
+        return response;        
+    }    
 }
