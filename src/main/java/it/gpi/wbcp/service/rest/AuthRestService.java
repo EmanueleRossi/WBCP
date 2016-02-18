@@ -17,6 +17,7 @@ package it.gpi.wbcp.service.rest;
 import it.gpi.wbcp.entity.model.dao.ApplicationParameterDao;
 import it.gpi.wbcp.entity.model.dao.UserDao;
 import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
+import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.util.JwtAuthUtil;
 import it.gpi.wbcp.util.StringUtil;
 import java.io.IOException;
@@ -28,8 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -110,5 +113,35 @@ public class AuthRestService {
         claims.setClaim("privateKeyBase64", privateKeyBase64);                                                        
         String token = JwtAuthUtil.encodeJWT(claims, jwtPassword);
         return token;        
+    }
+    
+    @GET
+    @Path("/email/{email}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getByEmail(@Context HttpServletRequest httpRequest, 
+                               @PathParam("email") String email) {
+        Response response;
+        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());          
+        try {
+            if (!StringUtil.validateEmailPattern(email)) {                    
+                ApplicationError ae = new ApplicationError(lmb.getString("user.email_address_not_vali"));
+                logger.warn(ae);                
+                response = Response.status(Status.NOT_FOUND).entity(ae).build(); 
+            } else {
+                User u = userDao.getByEmail(email);
+                if (u == null) {
+                    ApplicationError ae = new ApplicationError(lmb.getString("user.email_address_not_vali"));
+                    logger.warn(ae);   
+                    response = Response.status(Status.NOT_FOUND).entity(ae).build(); 
+                } else {
+                    response = Response.status(Status.OK).entity(u).build();
+                }
+            }        
+        } catch (Exception eg) {
+            ApplicationError aeg = new ApplicationError(eg);
+            logger.error("Generic exception in retrieving user by email. CODE=|{}|", aeg.getCode());
+            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();                     
+        }     
+        return response;        
     }    
 }
