@@ -24,9 +24,11 @@ public class Organization extends RootDto {
     private String mailDomain;    
     private User userInCharge;
     private List<User> users;
+    private List<Counter> counters;
            
     public Organization() {
         users = new ArrayList<>();
+        counters = new ArrayList<>();
     }     
 
     public String getName() { return name; }
@@ -43,4 +45,7 @@ public class Organization extends RootDto {
     
     public User getUserInCharge() { return userInCharge; }
     public void setUserInCharge(User userInCharge) { this.userInCharge = userInCharge; }
+        
+    public List<Counter> getCounters() { return counters; }
+    public void setCounters(List<Counter> counters) { this.counters = counters; }    
 }

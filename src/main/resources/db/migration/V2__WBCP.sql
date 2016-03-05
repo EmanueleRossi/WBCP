@@ -103,3 +103,13 @@ CREATE TABLE organizations_users (
 ALTER TABLE organizations_users
     ADD CONSTRAINT organizations_users_pkey PRIMARY KEY (organization_id, user_id);
 
+CREATE TABLE counters (
+    year bigint NOT NULL,
+    year lenght NOT NULL,
+    year value NOT NULL,
+    id bigint NOT NULL,
+    organization_id bigint NOT NULL
+);
+
+ALTER TABLE counters
+    ADD CONSTRAINT counters_pkey PRIMARY KEY (id);

@@ -14,8 +14,10 @@
  */
 package it.gpi.wbcp.entity.model.dao;
 
+import it.gpi.wbcp.entity.model.entity.dto.Counter;
 import it.gpi.wbcp.entity.util.MapStruct;
 import it.gpi.wbcp.entity.model.entity.dto.Organization;
+import it.gpi.wbcp.entity.model.entity.ejb.CounterEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.OrganizationEjb;
 import it.gpi.wbcp.util.StringUtil;
 import java.lang.reflect.InvocationTargetException;
@@ -23,8 +25,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.TimeZone;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -76,5 +82,46 @@ public class OrganizationDao {
         
         List<Organization> response = MapStruct.INSTANCE.organizationListEjbToOrganizationList(responseEjb);      
         return response;
+    }    
+        
+    private CounterEjb persist(CounterEjb counterEjb) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException { 
+        counterEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
+    	counterEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));   
+        em.persist(counterEjb);
+        
+        return counterEjb;        
     }     
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)         
+    public Counter getNextValue(Organization organization,
+                                Integer year, 
+                                Integer defaultLenght) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        Counter response = null;
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<OrganizationEjb> q = cb.createQuery(OrganizationEjb.class);    
+            Root<OrganizationEjb> r = q.from(OrganizationEjb.class);
+            q.select(r).where(cb.equal(r.<Long>get("id"), organization.getId()));
+            TypedQuery<OrganizationEjb> tq = em.createQuery(q);
+            OrganizationEjb organizationEjb = tq.getSingleResult();
+            
+            CounterEjb counterEjb;
+            Optional<CounterEjb> oCounterEjb = organizationEjb.getCounters().stream().filter(c -> Objects.equals(c.getYear(), year)).findFirst();
+            if (!oCounterEjb.isPresent()) {
+                CounterEjb newYear = new CounterEjb();
+                newYear.setYear(year);
+                newYear.setLenght(defaultLenght);
+                newYear.setValue(1);
+                newYear.setOrganization(organizationEjb);
+                counterEjb = this.persist(newYear);                
+            } else {
+                counterEjb = oCounterEjb.get();
+            }            
+            response = MapStruct.INSTANCE.counterEjbToCounter(counterEjb);  
+            
+        } catch (NoResultException nre) {
+            logger.info("Not found Organization for id: |{}|", organization.getId());        
+        }
+        return response;
+    }
 }
