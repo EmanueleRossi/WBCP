@@ -14,10 +14,14 @@
  */
 package it.gpi.wbcp.service.rest;
 
+import it.gpi.wbcp.entity.model.dao.ApplicationParameterDao;
 import it.gpi.wbcp.entity.model.dao.OrganizationDao;
 import it.gpi.wbcp.entity.model.entity.dto.Organization;
 import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
+import it.gpi.wbcp.entity.model.entity.dto.Counter;
+import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.util.StringUtil;
+import java.util.Calendar;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.ejb.EJB;
@@ -44,7 +48,9 @@ public class OrganizationRestService {
     private static final Logger logger = LogManager.getLogger();    
     
     @EJB
-    OrganizationDao organizationDao;     
+    OrganizationDao organizationDao;  
+    @EJB
+    ApplicationParameterDao aParameterDao;      
 	
     @GET
     @Path("/fullTextSearch/{text}")
@@ -93,4 +99,33 @@ public class OrganizationRestService {
         }
         return response;
     }    
+        
+    @GET
+    @Path("/getCounter")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCounter(@Context HttpServletRequest httpRequest,
+                               Organization organization,
+                               @Context User requestUser) {
+        Response response;
+        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
+        try {      
+            Integer year = Calendar.getInstance().get(Calendar.YEAR);
+            Integer defaultCounterLenght = aParameterDao.getParameterAsInteger("MESSAGE_COUNTER_LENGHT");  
+            String counterSeparator = aParameterDao.getParameterAsString("COUNTER_SEPARATOR");   
+            Counter nextCounter = organizationDao.getNextValue(organization, year, defaultCounterLenght);
+            
+            String counter = new StringBuilder()
+                    .append(year)
+                    .append(counterSeparator)
+                    .append(StringUtil.padLeft(String.valueOf(nextCounter.getValue()), defaultCounterLenght))
+                    .toString();
+            
+            response = Response.status(Status.OK).entity(counter).build();                                  
+        } catch (Exception eg) { 
+            ApplicationError aeg = new ApplicationError(eg);                        
+            logger.error("Generic exception executing getCounter(). STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
+            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
+        }     
+        return response;        
+    }        
 }

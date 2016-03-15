@@ -116,6 +116,15 @@ public class ApplicationParameterDao {
         return Integer.parseInt(parameterValueString);
     }
     
+    public Long getParameterAsLong(String parameterName, Locale locale) throws IOException, URISyntaxException {
+        String parameterValueString = this.getParameterValueString(parameterName, locale);
+        return Long.parseLong(parameterValueString);
+    }
+    public Long getParameterAsLong(String parameterName) throws IOException, URISyntaxException {
+        String parameterValueString = this.getParameterValueString(parameterName, Locale.US);
+        return Long.parseLong(parameterValueString);
+    }    
+    
     public String getParameterAsString(String parameterName, Locale locale) throws IOException, URISyntaxException {
         return this.getParameterValueString(parameterName, locale);
     }    

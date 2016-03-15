@@ -14,9 +14,11 @@
  */
 package it.gpi.wbcp.entity.util;
 
+import it.gpi.wbcp.entity.model.entity.dto.Counter;
 import it.gpi.wbcp.entity.model.entity.dto.Message;
 import it.gpi.wbcp.entity.model.entity.dto.Organization;
 import it.gpi.wbcp.entity.model.entity.dto.User;
+import it.gpi.wbcp.entity.model.entity.ejb.CounterEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.MessageEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.OrganizationEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.UserEjb;
@@ -62,5 +64,14 @@ public interface MapStruct {
     })     
     MessageEjb messageToMessageEjb(Message message);
     Message messageEjbToMessage(MessageEjb messageEjb);
-    List<Message> messageListEjbToMessageList(List<MessageEjb> messageEjbList);    
+    List<Message> messageListEjbToMessageList(List<MessageEjb> messageEjbList); 
+    
+    @Mappings({
+        @Mapping(target = "creationInstantUTC", ignore = true),
+        @Mapping(target = "creationInstantLocale", ignore = true),
+        @Mapping(target = "updateInstantUTC", ignore = true),
+        @Mapping(target = "updateInstantLocale", ignore = true)    
+    })     
+    CounterEjb counterToCounterEjb(Counter counter);    
+    Counter counterEjbToCounter(CounterEjb counter);    
 }

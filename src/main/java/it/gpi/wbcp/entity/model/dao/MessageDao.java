@@ -14,9 +14,11 @@
  */
 package it.gpi.wbcp.entity.model.dao;
 
+import it.gpi.wbcp.entity.model.entity.dto.Counter;
 import it.gpi.wbcp.entity.util.MapStruct;
 import it.gpi.wbcp.entity.model.entity.dto.Message;
 import it.gpi.wbcp.entity.model.entity.dto.User;
+import it.gpi.wbcp.entity.model.entity.ejb.CounterEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.MessageEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.UserEjb;
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -36,6 +40,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import static org.bouncycastle.asn1.x509.X509ObjectIdentifiers.id;
 
 @Stateless
 public class MessageDao {
@@ -97,5 +102,5 @@ public class MessageDao {
             logger.info("Not found Message with id: |{}|", id);
         }
         return response;
-    }     
+    }   
 }

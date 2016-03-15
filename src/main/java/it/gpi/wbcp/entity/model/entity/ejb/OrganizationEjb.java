@@ -17,6 +17,7 @@ package it.gpi.wbcp.entity.model.entity.ejb;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -26,6 +27,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -51,7 +53,7 @@ public class OrganizationEjb extends RootEjb {
     @ManyToOne    
     @JoinColumn(name = "USER_IN_CHARGE_ID", referencedColumnName = "ID")
     private UserEjb userInCharge;
-    
+            
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name="ORGANIZATIONS_USERS",
@@ -59,6 +61,10 @@ public class OrganizationEjb extends RootEjb {
         inverseJoinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")}
     )
     private List<UserEjb> users;
+    
+    @Basic(optional=true)
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "organization")
+    private List<CounterEjb> counters;    
            
     public OrganizationEjb() {
         users = new ArrayList<>();
@@ -78,4 +84,7 @@ public class OrganizationEjb extends RootEjb {
     
     public UserEjb getUserInCharge() { return userInCharge; }
     public void setUserInCharge(UserEjb userInCharge) { this.userInCharge = userInCharge; }
+    
+    public List<CounterEjb> getCounters() { return counters; }
+    public void setCounters(List<CounterEjb> counters) { this.counters = counters; }    
 }

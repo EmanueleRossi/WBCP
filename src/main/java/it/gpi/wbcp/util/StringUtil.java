@@ -113,4 +113,8 @@ public class StringUtil {
         }
         return s;
     }
+    
+    public static String padLeft(String string, Integer lenght) {
+        return String.format("%1$" + lenght + "s", string);  
+    }    
 }

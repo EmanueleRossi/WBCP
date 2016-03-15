@@ -76,5 +76,17 @@
         "description":"Token life duration (in minutes).",
         "parameterValue":"1",
         "localeTag":"en-US"
-    }      
+    },
+    {
+        "name":"MESSAGE_COUNTER_LENGHT",
+        "description":"Message counter lenght (number of characters).",
+        "parameterValue":"5",
+        "localeTag":"en-US"
+    },
+    {
+        "name":"COUNTER_SEPARATOR",
+        "description":"Separator character between year and counter number.",
+        "parameterValue":"/",
+        "localeTag":"en-US"
+    } 
 ]
