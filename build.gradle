@@ -32,7 +32,7 @@ dependencies {
         [group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.5'],
         [group: 'org.bitbucket.b_c', name: 'jose4j', version: '0.4.4'],                         
         [group: 'org.flywaydb', name: 'flyway-core', version: '3.2.1'],        
-	    [group: 'org.mongodb', name: 'mongo-java-driver', version: '3.1.1'],
+        [group: 'org.mongodb', name: 'mongo-java-driver', version: '3.1.1'],
         [group: 'org.mapstruct', name: 'mapstruct', version: '1.0.0.Final'],      
         [group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.0.0.Final']
     )
@@ -69,18 +69,19 @@ war {
 }
 
 flyway {
-    url = 'jdbc:postgresql://localhost:5432/WBCP'
-    user = 'wbcp'
-    password = 'test'
+    url = this.properties['flyway.url']
+    user = this.properties['flyway.user']
+    password = this.properties['flyway.password']
 }
 
 task deploy(dependsOn: war, type: Copy) { 
-    from('build\\libs\\') { 
+    wildfly_home = this.properties['wildfly_home']
+    from('build/libs/') { 
         include 'WBCP.war'
     }
-    into 'C:\\dev\\tools\\wildfly-9.0.2.Final\\standalone\\deployments'     
-    def ok=new File('C:\\dev\\tools\\wildfly-9.0.2.Final\\standalone\\deployments\\WBCP.war.deployed'); 
-    def ko=new File('C:\\dev\\tools\\wildfly-9.0.2.Final\\standalone\\deployments\\WBCP.war.failed');    
+    into "${wildfly_home}/standalone/deployments"  
+    def ok=new File("${wildfly_home}/standalone/deployments/WBCP.war.deployed"); 
+    def ko=new File("${wildfly_home}/standalone/deployments/WBCP.war.failed");    
     doFirst {
         if(ok.exists()) { ok.delete() }
         if(ko.exists()) { ko.delete() } 

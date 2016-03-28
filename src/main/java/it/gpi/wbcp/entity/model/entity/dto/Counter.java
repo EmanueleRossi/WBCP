@@ -14,21 +14,38 @@
  */
 package it.gpi.wbcp.entity.model.entity.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.gpi.wbcp.util.StringUtil;
+
 public class Counter extends RootDto {
        
     private Integer year;
-    private Integer lenght;    
+    private Integer lenght;   
+    private String separator;
     private Long value;   
     private Organization organization;
     
     public Counter() {
     }
     
+    @JsonIgnore    
+    public String getFormattedValue() {
+        String response = new StringBuilder()
+            .append(this.getYear())
+            .append(this.getSeparator())
+            .append(StringUtil.padLeft(String.valueOf(this.getValue()), this.getLenght()))
+            .toString();
+        return response;
+    }
+    
     public Integer getYear() { return year; }
     public void setYear(Integer year) { this.year = year; }
     
     public Integer getLenght() { return lenght; }
-    public void setLenght(Integer lenght) { this.lenght = lenght; }       
+    public void setLenght(Integer lenght) { this.lenght = lenght; }     
+    
+    public String getSeparator() { return separator; }
+    public void setSeparator(String separator) { this.separator = separator; }
       
     public Long getValue() { return value; }
     public void setValue(Long value) { this.value = value; }               

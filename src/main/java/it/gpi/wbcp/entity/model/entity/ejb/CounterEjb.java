@@ -37,6 +37,10 @@ public class CounterEjb extends RootEjb {
     @Basic(optional=false)
     @Column(name = "LENGHT", nullable = false)
     private Integer lenght;
+
+    @Basic(optional=false)
+    @Column(name = "SEPARATOR", nullable = false)
+    private String separator; 
     
     @Basic(optional=false)
     @Column(name = "VALUE", nullable = false)
@@ -54,11 +58,14 @@ public class CounterEjb extends RootEjb {
     public void setYear(Integer year) { this.year = year; }
     
     public Integer getLenght() { return lenght; }
-    public void setLenght(Integer lenght) { this.lenght = lenght; }        
+    public void setLenght(Integer lenght) { this.lenght = lenght; }   
+    
+    public String getSeparator() { return separator; }
+    public void setSeparator(String separator) { this.separator = separator; }    
       
     public Integer getValue() { return value; }
     public void setValue(Integer value) { this.value = value; }    
     
     public OrganizationEjb getOrganization() { return organization; }
-    public void setOrganization(OrganizationEjb value) { this.organization = organization; }        
+    public void setOrganization(OrganizationEjb organization) { this.organization = organization; }        
 }

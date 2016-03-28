@@ -59,8 +59,8 @@ public class AuthRequestFilter implements ContainerRequestFilter {
             if (!(method.equals(UserRestService.class.getMethod("create", HttpServletRequest.class, User.class)) ||  
                  method.equals(AuthRestService.class.getMethod("login", HttpServletRequest.class, String.class, String.class, String.class)))) {
                 String jwtAudience = aParameterDao.getParameterAsString("JWT_AUDIENCE");        
-                String jwtPassword = aParameterDao.getParameterAsString("JWT_PASSWORD");                
-                String authorization = containerRequestContext.getHeaderString("AuthorizationToken");                                              
+                String jwtPassword = aParameterDao.getParameterAsString("JWT_PASSWORD");                             
+                String authorization = containerRequestContext.getHeaderString("AuthorizationToken");                  
                 JwtClaims claims = JwtAuthUtil.decodeJWT(authorization, jwtPassword, jwtAudience);
                 String subject = claims.getSubject();
                 String privateKey = claims.getClaimValue("privateKeyBase64", String.class);                

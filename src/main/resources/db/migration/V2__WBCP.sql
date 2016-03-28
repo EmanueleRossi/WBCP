@@ -105,11 +105,14 @@ ALTER TABLE organizations_users
 
 CREATE TABLE counters (
     year bigint NOT NULL,
-    year lenght NOT NULL,
-    year value NOT NULL,
-    id bigint NOT NULL,
-    organization_id bigint NOT NULL
+    lenght bigint NOT NULL,
+    separator character varying(255),
+    value bigint NOT NULL,
+    organization_id bigint NOT NULL,
+    id bigint NOT NULL
 );
 
 ALTER TABLE counters
     ADD CONSTRAINT counters_pkey PRIMARY KEY (id);
+ALTER TABLE counters
+    ADD CONSTRAINT fk_counters_organizations FOREIGN KEY (organization_id) REFERENCES organizations(id);

@@ -54,9 +54,9 @@ public class OrganizationRestServiceITest {
             String jsonOrganization = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateNoName.json").toURI())));            
             ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/organization/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                   
-            Response response = target.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganization));
+            Response response = target.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganization));
             String responseString = response.readEntity(String.class);  
-            System.out.printf("testOrganizationCreateNoName(): |%s|", responseString);              
+            System.out.printf("testOrganizationCreateNoName(): |%s|%n", responseString);              
             Assert.assertEquals(response.getStatus(), Response.Status.NOT_FOUND.getStatusCode());                                    
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);                        
@@ -74,9 +74,9 @@ public class OrganizationRestServiceITest {
             String jsonOrganization = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreate.json").toURI())));            
             ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/organization/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response response = target.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganization)); 
+            Response response = target.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganization)); 
             String responseString = response.readEntity(String.class);
-            System.out.printf("testOrganizationCreate(): |%s|", responseString);    
+            System.out.printf("testOrganizationCreate(): |%s|%n", responseString);    
             Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());                                              
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);                        
@@ -97,9 +97,9 @@ public class OrganizationRestServiceITest {
             String jsonOrganizationUserCreateFirst = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateUserCreateFirst.json").toURI())));                        
             ResteasyWebTarget targetUserCreateFirst = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/user/create", null, null).toASCIIString());
             targetUserCreateFirst.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response responseUserCreateFirst = targetUserCreateFirst.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganizationUserCreateFirst));                 
+            Response responseUserCreateFirst = targetUserCreateFirst.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganizationUserCreateFirst));                 
             String responseUserCreateFirstString = responseUserCreateFirst.readEntity(String.class);                              
-            System.out.printf("testOrganizationCreateWithUsers(): |%s|", responseUserCreateFirstString);             
+            System.out.printf("testOrganizationCreateWithUsers(): |%s|%n", responseUserCreateFirstString);             
             Assert.assertEquals(responseUserCreateFirst.getStatus(), Response.Status.OK.getStatusCode());                    
             ObjectMapper responseObjectMapperUserCreateFirst = new ObjectMapper();
             JsonNode rootNodeUserCreateFirst = responseObjectMapperUserCreateFirst.readTree(responseUserCreateFirstString);                                              
@@ -108,9 +108,9 @@ public class OrganizationRestServiceITest {
             String jsonOrganizationUserCreateSecond = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateUserCreateSecond.json").toURI())));                        
             ResteasyWebTarget targetUserCreateSecond = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/user/create", null, null).toASCIIString());
             targetUserCreateSecond.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response responseUserCreateSecond = targetUserCreateSecond.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganizationUserCreateSecond));                
+            Response responseUserCreateSecond = targetUserCreateSecond.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganizationUserCreateSecond));                
             String responseUserCreateSecondString = responseUserCreateSecond.readEntity(String.class);                              
-            System.out.printf("testOrganizationCreateWithUsers(): |%s|", responseUserCreateSecondString);              
+            System.out.printf("testOrganizationCreateWithUsers(): |%s|%n", responseUserCreateSecondString);              
             Assert.assertEquals(responseUserCreateSecond.getStatus(), Response.Status.OK.getStatusCode());                      
             ObjectMapper responseObjectMapperUserCreateSecond = new ObjectMapper();
             JsonNode rootNodeUserCreateSecond = responseObjectMapperUserCreateSecond.readTree(responseUserCreateSecondString);
@@ -126,9 +126,9 @@ public class OrganizationRestServiceITest {
             
             ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/organization/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);        
-            Response response = target.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganizationObjectNode));               
+            Response response = target.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).post(Entity.json(jsonOrganizationObjectNode));               
             String responseString = response.readEntity(String.class);   
-            System.out.printf("testOrganizationCreateWithUsers(): |%s|", responseString);               
+            System.out.printf("testOrganizationCreateWithUsers(): |%s|%n", responseString);               
             
             Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());                                    
             ObjectMapper responseObjectMapper = new ObjectMapper();
@@ -150,9 +150,9 @@ public class OrganizationRestServiceITest {
         try {
             ResteasyWebTarget targetName = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/organization/fullTextSearch/GPI S.", null, null).toASCIIString());
             targetName.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response responseName = targetName.request().header("Authorization", IntegrationTestSuite.TOKEN).get();          
+            Response responseName = targetName.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).get();          
             String responseNameString = responseName.readEntity(String.class); 
-            System.out.printf("testOrganizationFullTextSearch(): |%s|", responseNameString);                 
+            System.out.printf("testOrganizationFullTextSearch(): |%s|%n", responseNameString);                 
             Assert.assertEquals(responseName.getStatus(), Response.Status.OK.getStatusCode());                     
             ObjectMapper responseNameObjectMapper = new ObjectMapper();
             JsonNode rootNodeName = responseNameObjectMapper.readTree(responseNameString); 
@@ -163,9 +163,9 @@ public class OrganizationRestServiceITest {
             
             ResteasyWebTarget targetTaxCode = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/organization/fullTextSearch/4260", null, null).toASCIIString());
             targetTaxCode.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response responseTaxCode = targetTaxCode.request().header("Authorization", IntegrationTestSuite.TOKEN).get();          
+            Response responseTaxCode = targetTaxCode.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).get();          
             String responseTaxCodeString = responseTaxCode.readEntity(String.class); 
-            System.out.printf("testOrganizationFullTextSearch(): |{}|", responseTaxCodeString);                
+            System.out.printf("testOrganizationFullTextSearch(): |%s|%n", responseTaxCodeString);                
             Assert.assertEquals(responseTaxCode.getStatus(), Response.Status.OK.getStatusCode());                     
             ObjectMapper responseTaxCodeObjectMapper = new ObjectMapper();
             JsonNode rootNodeTaxCode = responseTaxCodeObjectMapper.readTree(responseTaxCodeString);                        
@@ -176,9 +176,9 @@ public class OrganizationRestServiceITest {
             
             ResteasyWebTarget targetMailDomain = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/organization/fullTextSearch/gpi.i", null, null).toASCIIString());
             targetMailDomain.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
-            Response responseMailDomain = targetMailDomain.request().header("Authorization", IntegrationTestSuite.TOKEN).get();            
+            Response responseMailDomain = targetMailDomain.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).get();            
             String responseMailDomainString = responseMailDomain.readEntity(String.class); 
-            System.out.printf("testOrganizationFullTextSearch(): |{}|", responseMailDomainString);              
+            System.out.printf("testOrganizationFullTextSearch(): |%s|%n", responseMailDomainString);              
             Assert.assertEquals(responseMailDomain.getStatus(), Response.Status.OK.getStatusCode());                  
             ObjectMapper responseMailDomainObjectMapper = new ObjectMapper();
             JsonNode rootNodeMailDomain = responseMailDomainObjectMapper.readTree(responseMailDomainString);                        
