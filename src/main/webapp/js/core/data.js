@@ -13,8 +13,8 @@
 		//if(data.reports != null)
 		//	return callback(null, data.reports);
 
-		var from = "2015-01-01";
-		var to = "2015-12-31";
+		var from = "2016-01-01";
+		var to = "2016-12-31";
 		
 		app.net.searchReportByInstant(from, to, userSession, http, function(err, results) {
 
@@ -39,8 +39,10 @@
 						data.statuses.push(payload);
 					
 					if(payload.contentType == "REPORT")
+					{
+						payload.id = result.id;
 						data.reports.push(payload);
-			
+					}
 				});
 
 			}

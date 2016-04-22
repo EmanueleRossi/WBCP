@@ -53,16 +53,16 @@ app.controller('LoginController', function ($scope, $window, $http) {
   	console.log("doLOGIN", $scope.remember);
   	$scope.errorMessage = "";
     app.auth.cleanCurrentUser();
-    
-   var login = {
+
+    var login = {
         "loginEmail": $scope.username,
         "loginPassword": $scope.password,
         "privateKeyBase64": $scope.privateKey
     } 
 
      app.net.login(login, $http, function(err, userSession){
-    	
-    	console.log("login callback: ", userSession);
+
+         console.log("login callback: ", userSession);
     
       if(err)
       {
@@ -72,7 +72,7 @@ app.controller('LoginController', function ($scope, $window, $http) {
          return;
       }
 
-      app.net.getUserByEmail($scope.username, $http, function(err, user){
+     /* app.net.getUserByEmail($scope.username, $http, function(err, user){
 
         console.log("getUserByEmail callback: ", user);
 
@@ -83,16 +83,16 @@ app.controller('LoginController', function ($scope, $window, $http) {
              
              return;
           }
-
+*/
           var currentUser =  {
             userSession : userSession,
-            user: user
+            user: { firstName : $scope.username , email: $scope.username  }//user
           }
 
           app.auth.setCurrentUser(currentUser, $scope.remember);
           $window.location.href = "#/report-list";
       
-      });
+  //    });
     });
   };
 

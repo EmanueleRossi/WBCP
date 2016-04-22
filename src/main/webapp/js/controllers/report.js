@@ -25,7 +25,8 @@ app.controller('ReportController',
   };
 	// ------------------------------------------------------------------------------
 
-
+	$scope.author = null;
+	
 	var reportUuid = $routeParams.reportUuid;
 	var mode = ['add','view'];
 
@@ -96,6 +97,7 @@ app.controller('ReportController',
 		{
 
 			$scope.report = app.data.getReport(reportUuid);
+			console.log($scope.report);
 
 			if($scope.report != null)
 			{
@@ -210,6 +212,13 @@ $scope.download = function(attachment)
 
 	$scope.closeDialog = function() {
 		$scope.sending = { isSending : false }
+	};
+
+	$scope.getAuthor = function() {
+		app.net.getAuthor($scope.report.id, $http, function(err, data){
+			if(!err && data.author)
+				$scope.author = data.author
+		});
 	};
 
 	$scope.doSend = function () {

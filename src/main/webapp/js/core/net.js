@@ -2,7 +2,8 @@
 
 	var net = {
 		//host :'http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs'
-		host :'/WBCP-web-1.0-SNAPSHOT/rs'	
+		//host :'/WBCP/rs'
+		host :'http://localhost:8080/WBCP/rs'	
 	};
 
 	
@@ -11,28 +12,33 @@
 	net.login = function(credentials, http, callback){
 		
 		var url =  net.host + "/auth/login";
+		console.log("LOGIN!!");
 
 		showLoader();
 		
 		var req = {
 			method: 'POST',
 			url: url,
-			headers: { 
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-		    },
-			data: credentials 
+			headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+			data: 'loginEmail=' + encodeURIComponent(credentials.loginEmail) + 
+							'&loginPassword=' + encodeURIComponent(credentials.loginPassword) + 
+								'&privateKeyBase64=' + encodeURIComponent(credentials.privateKeyBase64)
 		}
 		
 		console.log("Request:", req);
 
 		http(req).
 		success(function(data, status, headers, config) {  
+		  
+		  var token = headers()['authorizationtoken'];
+			
+			app.auth.setAuthToken(token);
+
 		  hideLoader();
 		 
 		  console.log("success:", data);
 		  console.log("status:", status);
-		  
+
 		  return callback(null, data);
 		 
 		}).
@@ -79,8 +85,16 @@
 		var url =  net.host + "/user/email/" + email;
 
 		console.log("url:", url);
+
+		var req = {
+			method: 'GET',
+			url: url,
+			headers: {'AuthorizationToken': app.auth.getAuthToken()}
+		}
 				
-		http.get(url )
+		console.log("getUserByEmail - request: ", req);
+
+		http.get(req )
 		  .success(function(data, status, headers, config) {
 			  
 			  console.log("success:", data);
@@ -94,11 +108,38 @@
 		  });
 	};
 
+	app.net.getAuthor = function(messageId, http, callback) {
+
+		var url =  net.host + "/message/getAuthor/" + messageId;
+				
+		var req = {
+			method: 'POST',
+			url: url,
+			headers: { 
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'AuthorizationToken': app.auth.getAuthToken()
+		    }
+		}
+		
+		console.log("Request:", req);
+
+		http(req).
+		success(function(data, status, headers, config) {  
+		 		  
+		  return callback(null, data);
+		 
+		}).
+		error(function(data, status, headers, config) {
+		
+			 return callback(data);
+		});
+	};
+
 	net.createAccount = function(account, http, callback){
 		
 		var url =  net.host + "/user/create";
 		
-
 		showLoader();
 		
 		var req = {
@@ -148,7 +189,8 @@
 			url: url,
 			headers: { 
 				'Accept': 'application/json',
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'AuthorizationToken': app.auth.getAuthToken()
 		    },
 			data: data 
 		}
@@ -189,7 +231,8 @@
 			url: url,
 			headers: { 
 				'Accept': 'application/json',
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'AuthorizationToken': app.auth.getAuthToken()
 		    },
 			data: userSession 
 		}
@@ -208,21 +251,69 @@
 		}).
 		error(function(data, status, headers, config) {
 		
-			console.log("error:", data);
-			console.log("status:", status);
-			
 			 hideLoader();
 
 			 return callback(data);
 		});
 	};
 
+	net.searchOrganization = function(keyword, http, callback){
+
+		var url =  net.host + "/organization/fullTextSearch/" + keyword;
+
+		var req = {
+			method: 'GET',
+			url: url,
+			headers: { 
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'AuthorizationToken': app.auth.getAuthToken()
+		    }
+		}
+
+		http(req).
+			success(function(data, status, headers, config) {  
+			  return callback(null, data);
+			}).
+			error(function(data, status, headers, config) {
+				return callback(data);
+			});
+
+
+	};
+	 /* return $http.get( app.net.host + '/organization/fullTextSearch/' + val)
+    	.then(function(response){
+
+    		console.log("searchOrganization:" , response.data);
+
+    		$scope.organizations = response.data;
+
+    		if(response.data.length == 0)
+    			return null;
+
+    		return response.data.map(function(item){
+  				return { 
+  					id: item.id,
+  					name: item.name 
+  				};
+			});
+    });
+*/
 	net.serachUserByOrganization = function(item, http, callback) {
 
 		var url =  net.host + "/user/searchByOrganization/" + item.id;
 
-		console.log("url:", url);
-				
+		var req = {
+			method: 'POST',
+			url: url,
+			headers: { 
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'AuthorizationToken': app.auth.getAuthToken()
+		    },
+			data: userSession 
+		}
+
 		http.get(url )
 		  .success(function(data, status, headers, config) {
 			  
@@ -237,226 +328,6 @@
 		  });
 
 	};	
-
-	net.getAppointments = function (startdate, enddate, http, callback){
-		
-		console.log("startdate", startdate);
-		console.log("enddate", enddate);
-		
-		
-		var url =  net.host + "getAppointments?" +
-					"username=" + app.auth.getCurrentUsername()  + 
-					"&password=" + app.auth.getCurrentPassword() +
-					"&startdate=" + moment(startdate.toISOString()).format('YYYY-MM-DD') +
-					"&enddate=" + moment(enddate.toISOString()).format('YYYY-MM-DD');
-		
-		console.log("url:", url);
-
-		showLoader();
-				
-		http.get(url )
-		  .success(function(data, status, headers, config) {
-			  
-			  hideLoader();
-			  console.log("success:", data);
-			  
-			  if(data.status = "OK")
-			  {
-				  return callback(null, data.results);
-			  }
-			  
-		  })
-		  .error(function(data, status, headers, config) {
-			 hideLoader();
-			 return callback(data.error_message);
-		  });
-		
-		/*
-		http.get(net.host + "appointments_1.json")
-    		.success(function(res) {
-
-    			//hideLoader();
-    			console.log(res);
-
-    			if(res && res.status == "OK")
-    			{
-    				if(typeof callback == 'function')
-    					callback(null, res.results);
-    			}
-    		});
-    	*/
-	};	
-
-	net.updateAppointment_ = function(appointment, http, callback)
-	{
-		showLoader();
-		setTimeout(function(){
-			hideLoader();
-			callback(null, appointment);
-		}, 2000);
-	};
-	
-	net.updateAppointment = function(appointment, http, callback)
-	{
-		var url =  net.host + "updateAppointment";
-				
-		var data = "username=" 		+ app.auth.getCurrentUsername() +
-				"&password=" 		+ app.auth.getCurrentPassword() +
-				"&appointmentid=" 	+ appointment.appointmentid +
-				"&date=" 			+ moment(appointment.date).format('YYYY-MM-DD') +
-				"&starttime=" 		+ moment.tz(appointment.starttime, "Europe/Berlin").format() +
-				"&endtime=" 		+ moment.tz(appointment.endtime, "Europe/Berlin").format() +
-				"&fullday=" 		+ (appointment.fullday ? "true" : "false") +	
-				"&appointmentstatus=" + appointment.appointmentstatus +	
-				"&title=" 			+ (appointment.title || '') +	
-				"&description=" 	+ (appointment.description || '') +	
-				"&report=" 			+ (appointment.report || '') +	
-				"&evaluation=" 		+ (appointment.evaluation || '') +	
-				"&trip=" 			+ (appointment.trip || '') +	
-				"&type=" 			+ (appointment.type || '') +	
-				"&customerid=" 		+ appointment.customerid;
-		
-		console.log("data: ", data);
-		showLoader();
-		
-		var req = {
-			method: 'POST',
-			url: url,
-			headers: { 
-				'Accept': 'application/json',
-				'Content-Type': 'application/x-www-form-urlencoded'
-		    },
-			data: data 
-		}
-		
-		http(req).
-		success(function(data, status, headers, config) {  
-		  hideLoader();
-		  console.log("success:", data);
-		  
-		  if(data.status = "OK")
-		  {		
-			  return callback(null, appointment);
-		  }
-		}).
-		error(function(data, status, headers, config) {
-			 hideLoader();
-			 return callback(data.error_message);
-		});
-	};
-	
-	net.insertAppointment = function(appointment, http, callback)
-	{
-		var url =  net.host + "insertAppointment";
-				
-		var data = "username=" 			+ app.auth.getCurrentUsername() +
-					"&password=" 		+ app.auth.getCurrentPassword() +
-					"&date=" 			+ moment(appointment.date).format('YYYY-MM-DD') +
-					"&starttime=" 		+ moment.tz(appointment.starttime, "Europe/Berlin").format() +
-					"&endtime=" 		+ moment.tz(appointment.endtime, "Europe/Berlin").format() +
-					"&fullday=" 		+ (appointment.fullday ? "true" : "false") +	
-					"&appointmentstatus=" + appointment.appointmentstatus +	
-					"&title=" 			+ (appointment.title || '') +	
-					"&description=" 	+ (appointment.description || '') +	
-					"&report=" 			+ (appointment.report || '') +	
-					"&evaluation=" 		+ (appointment.evaluation || '') +	
-					"&trip=" 			+ (appointment.trip || '') +	
-					"&type="			+ (appointment.type || '') +	
-					"&customerid=" 		+ appointment.customerid;
-		
-		console.log("data: ", data);
-		showLoader();
-		
-		var req = {
-			method: 'POST',
-			url: url,
-			headers: { 
-				'Accept': 'application/json',
-				'Content-Type': 'application/x-www-form-urlencoded'
-		    },
-			data: data 
-		}
-		
-		http(req).
-		success(function(data, status, headers, config) {  
-		  hideLoader();
-		  console.log("success:", data);
-		  
-		  if(data.status = "OK")
-		  {
-			  appointment.appointmentid = data.appointmentid;
-			  return callback(null, appointment);
-		  }
-		}).
-		error(function(data, status, headers, config) {
-			 hideLoader();
-			 return callback(data.error_message);
-		});
-	};
-	
-	net.deleteAppointment = function(id, http, callback) {
-		
-		var url =  net.host + "deleteAppointment";
-		
-		var data = "username=" + app.auth.getCurrentUsername() +
-					"&password=" + app.auth.getCurrentPassword() +
-					"&appointmentid=" + id;
-							
-		showLoader();
-		
-		var req = {
-			method: 'POST',
-			url: url,
-			headers: { 
-				'Accept': 'application/json',
-				'Content-Type': 'application/x-www-form-urlencoded'
-		    },
-			data: data
-		}
-		
-		http(req).
-		success(function(data, status, headers, config) {  
-		  hideLoader();
-		  console.log("success:", data);
-		  
-		  if(data.status = "OK")
-		  {
-			  return callback(null, id);
-		  }
-		}).
-		error(function(data, status, headers, config) {
-			 hideLoader();
-			 return callback(data.error_message);
-		});
-	};
-	
-	net.getCustomers = function(keyword, http, callback){
-		
-		var url =  net.host + "getCustomer?" +
-				"username=" + app.auth.getCurrentUsername()  + 
-				"&password=" + app.auth.getCurrentPassword() +
-				"&customername=" + keyword;
-		
-		//showLoader();
-			
-		http.get(url )
-		.success(function(data, status, headers, config) {
-		  
-		  //hideLoader();
-		  console.log("success:", data);
-		  
-		  if(data.status = "OK")
-		  {
-			  return callback(null, data.results || []);
-		  }
-		  
-		})
-		.error(function(data, status, headers, config) {
-			// hideLoader();
-			 return callback(data.error_message);
-		});
-	};	
-
 
 
 	function showLoader()

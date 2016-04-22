@@ -34,14 +34,15 @@
    
     <div class="elenco-messaggi">
 
-
+<!--
       <div ng-show="err" class="panel panel-danger">
         <div class="panel-body">
           <h4>{{ err.message }}</h4>
           <p>{{ err.details}}</p>
+          <p>{{ err.cause.stackTrace}}</p>
         </div>
       </div>
-    
+    -->
       <div ng-show="!reports.length">Nessuna segnalazione trovata</div>
 
         <div ng-show="reports.length" class="tab-pane" ng-class="tabs['sent'].active ? 'active' : ''">
@@ -67,14 +68,14 @@
         <div ng-show="reports.length" class="tab-pane" ng-class="tabs['received'].active ? 'active' : ''">
           <table class="table table-hover elenco">
             <thead>
-              <th>data</th><th>mittente</th><th></th><th></th><th></th><th></th>
+              <th>data</th><th></th><th></th><th></th>
             </thead>
             <tbody>
                <tr ng-class="report.status ? '': 'unread'" ng-click="viewDetail(report.uuid)"
                 ng-repeat="report in reports | filter:{ folder : 'received' }" >
                     <td class="date">{{report.createDate | date : 'shortDate'}}</td>
-                    <td>{{report.sender.firstName}} {{report.sender.lastName}}</td>
-                    <td>{{report.sender.fiscalcode}}</td>
+                   <!-- <td>{{report.sender.firstName}} {{report.sender.lastName}}</td> -->
+                   <!-- <td>{{report.sender.fiscalcode}}</td> -->
                     <td>{{report.description | cut: true : 100}}</td>
                     <td>{{report.comments | commentsCount }}</td>
                     <td class="stato text-right">

@@ -26,15 +26,23 @@
 		<div class="panel panel-default"> 
 			<div class="panel-body"> 
 				<span>
-					Segnalazione <strong>{{report.folder == 'sent' ? 'INVIATA' : 'RICEVUTA da ' + report.sender.firstName + ' ' + report.sender.lastName}}</strong> in data  {{report.createDate | date:'medium' }} 
+					Segnalazione <strong>
+						<span ng-if="report.folder == 'sent'">INVIATA</span>
+						<span ng-if="report.folder != 'sent'">RICEVUTA
+						<!--		{{author}} -->
+						</span>
+					</strong> 
+					in data  {{report.createDate | date:'medium' }}
+					<button class="btn btn-small btn-link ng-if="author == null" ng-click="getAuthor()" title="recupera autore della segnalazione">Recupera autore</button>
 				</span>
 				<a class="btn-link btn-back-to-list pull-right" href="#/report-list">torna alla lista</a>
 				<div class="clear"></div> 
 				<br/>
-			<fieldset ng-show="report.folder == 'received'">
+			<fieldset ng-show="(report.folder == 'received') && author">
 				 <h4>Mittente:</h4>
 				<div class="panel panel-default">
 			  		<div class="panel-body">
+						<!--
 						<div class="form-group row">
 						  	<label class="col-sm-2 control-label">Nome:</label>
 						  	<span class="form-control-static">{{ report.sender.firstName }}</span>
@@ -46,10 +54,21 @@
 						<div class="form-group row">
 						  	<label class="col-sm-2 control-label">Codice fiscale:</label>
 						  	<span class="form-control-static">{{ report.sender.fiscalcode }}</span>
-						</div>
+						</div>-->
 						<div class="form-group row">
-						  	<label class="col-sm-2 control-label">Indirizzo email:</label>
-						  	<span class="form-control-static">{{ report.sender.email }}</span>
+						  	<label class="col-sm-3 control-label">Indirizzo email:</label>
+							<div class="col-sm-9">
+						  		<span class="form-control-static">{{ report.sender.email }}</span>
+							</div>
+						</div>
+
+						<div class="form-group row" >
+							<label class="col-sm-3 control-label">Carta di identità:</label>
+							<div class="col-sm-9">
+								<div ng-repeat="attachment in [report.identityCard]">
+									<div ng-include="'partials/attachment-view.html'"></div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -241,14 +260,7 @@
 					</div>
 				</div>
 		
-				<div class="form-group row" >
-					<label class="col-sm-3 control-label">Carta di identità:</label>
-					<div class="col-sm-9">
-						<div ng-repeat="attachment in [report.identityCard]">
-							<div ng-include="'partials/attachment-view.html'"></div>
-						</div>
-					</div>
-				</div>
+
 
 			</fieldset>
 				
@@ -273,23 +285,24 @@
 					
 							  	<div ng-show="report.folder == 'received'">
 
-							  	
 
-
-							  	 <select class="form-control" ng-model="reportCurrentStatus.value" ng-change="onReportCurrentStatusChange()"
+									<select class="form-control" ng-model="reportCurrentStatus.value" ng-change="onReportCurrentStatusChange()"
 											ng-options="option.value as option.name for option in statusOptions" has-selection />
-				  				
-				  				<button type="button" class="btn btn-danger btn-sm" 
-				  					ng-click="sendStatus()" ng-show="reportCurrentStatus.isChanging" >
-								  	<span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
+
+									<button type="button" class="btn btn-danger btn-sm"
+											ng-click="sendStatus()" ng-show="reportCurrentStatus.isChanging" >
+										<span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
 									</button>
 								</div>
+
+							</div>
+							<div>
 								<small class="text-danger animate" ng-show="reportCurrentStatusMessageShow">{{reportCurrentStatusMessage}}</small>
-								<input type="text" class="form-control" ng-model="reportCurrentStatus.note"
-									placeholder="aggiungi una nota" ng-show="reportCurrentStatus.isChanging" />
-			 					
-									</div>
-			 					<div ng-show="showReportStatusHistory">
+								<input style="width:100%" type="text" class="form-control" ng-model="reportCurrentStatus.note"
+									   placeholder="aggiungi una nota" ng-show="reportCurrentStatus.isChanging" />
+							</div>
+
+								<div ng-show="showReportStatusHistory">
 			 						<hr/>
 			 						<table>
 			 							<thead><th>data</th><th>stato</th><th>note</th></thead>

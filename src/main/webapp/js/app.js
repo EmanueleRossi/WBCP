@@ -19,6 +19,12 @@ var app = angular.module('whistleBlowingApp', ['ngRoute','ui.bootstrap', 'angula
 
 
 
+if(!console)
+    console = {};
+
+if(console.log == undefined)
+    console.log = function(){};
+
 app.directive('dropzone', function () {
   return function (scope, element, attrs) {
     
@@ -175,6 +181,7 @@ app.directive('appDatetime', function ($window) {
 
 app.config(['$routeProvider',
 	function($routeProvider) {
+
 		$routeProvider.
 			when('/home', {
 				templateUrl: 'partials/home.html',

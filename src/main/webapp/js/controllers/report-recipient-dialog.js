@@ -25,8 +25,8 @@ app.controller('ReportRecipientDialogController', function ($scope, $modalInstan
 
 	 console.log("serachUserByOrganization()", item);
 
-	$scope.recipients = [];
-        $scope.selectedOrganization = null;
+	 $scope.recipients = [];
+   $scope.selectedOrganization = null;
 
   	$scope.organizations.forEach(function(org){
 
@@ -51,18 +51,27 @@ app.controller('ReportRecipientDialogController', function ($scope, $modalInstan
     {
         $scope.organizations =   [{ 
             id: "GPI S.p.a",
-            name: "GPI S.p.at",
+            name: "GPI S.p.a",
             users : [{
-              name: "test",
-              email : "test@gpi.it"
+              firstName: "Emanuele",
+              lastName: "Rossi",
+              email : "emanuele.rossi@gpi.it"
             }]
           }]
        return $scope.organizations;
     }
 
-    return $http.get( app.net.host + '/organization/fullTextSearch/' + val)
-    	.then(function(response){
+  var req = {
+      method: 'GET',
+      url: app.net.host + '/organization/fullTextSearch/' + val,
+      headers: { 
+        'AuthorizationToken': app.auth.getAuthToken()
+        }
+    }
 
+    return $http(req).then(function(response){
+
+        console.log("response: ", response.headers());
     		console.log("searchOrganization:" , response.data);
 
     		$scope.organizations = response.data;
