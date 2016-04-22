@@ -20,7 +20,9 @@ import it.gpi.wbcp.entity.model.entity.dto.Organization;
 import it.gpi.wbcp.entity.model.entity.ejb.CounterEjb;
 import it.gpi.wbcp.entity.model.entity.ejb.OrganizationEjb;
 import it.gpi.wbcp.util.StringUtil;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.TimeZone;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -47,7 +50,10 @@ public class OrganizationDao {
     private static final Logger logger = LogManager.getLogger();
 	
     @PersistenceContext(unitName="WBCP_PU")
-    private EntityManager em;   
+    private EntityManager em;  
+    
+    @EJB
+    ApplicationParameterDao aParameterDao; 
 	
     public Organization persist(Organization organization) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         
@@ -93,9 +99,7 @@ public class OrganizationDao {
     }     
     
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)         
-    public Counter getNextValue(Organization organization,
-                                Integer year, 
-                                Integer defaultLenght) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    public Counter getNextValue(Organization organization, Integer year) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, URISyntaxException {
         Counter response = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -110,7 +114,8 @@ public class OrganizationDao {
             if (!oCounterEjb.isPresent()) {
                 CounterEjb newYear = new CounterEjb();
                 newYear.setYear(year);
-                newYear.setLenght(defaultLenght);
+                newYear.setLenght(aParameterDao.getParameterAsInteger("MESSAGE_COUNTER_LENGHT"));
+                newYear.setSeparator(aParameterDao.getParameterAsString("COUNTER_SEPARATOR"));
                 newYear.setValue(1);
                 newYear.setOrganization(organizationEjb);
                 counterEjb = this.persist(newYear);                

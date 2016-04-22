@@ -22,8 +22,11 @@ import it.gpi.wbcp.entity.model.entity.dto.Counter;
 import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.util.StringUtil;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.servlet.http.HttpServletRequest;
@@ -101,29 +104,24 @@ public class OrganizationRestService {
     }    
         
     @GET
-    @Path("/getCounter")
+    @Path("/getNextCounterValue")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCounter(@Context HttpServletRequest httpRequest,
+    public Response getNextCounterValue(@Context HttpServletRequest httpRequest,
                                Organization organization,
+                               Date requestDate,                               
                                @Context User requestUser) {
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
         try {      
-            Integer year = Calendar.getInstance().get(Calendar.YEAR);
-            Integer defaultCounterLenght = aParameterDao.getParameterAsInteger("MESSAGE_COUNTER_LENGHT");  
-            String counterSeparator = aParameterDao.getParameterAsString("COUNTER_SEPARATOR");   
-            Counter nextCounter = organizationDao.getNextValue(organization, year, defaultCounterLenght);
-            
-            String counter = new StringBuilder()
-                    .append(year)
-                    .append(counterSeparator)
-                    .append(StringUtil.padLeft(String.valueOf(nextCounter.getValue()), defaultCounterLenght))
-                    .toString();
-            
-            response = Response.status(Status.OK).entity(counter).build();                                  
+            Locale httpRequestLocale = httpRequest.getLocale();
+            Calendar httpRequestCalendar = Calendar.getInstance(httpRequestLocale);
+            httpRequestCalendar.setTime(requestDate);
+            Integer year = httpRequestCalendar.get(Calendar.YEAR);
+            Counter newCode = organizationDao.getNextValue(organization, year);                     
+            response = Response.status(Status.OK).entity(newCode.getFormattedValue()).build();                                  
         } catch (Exception eg) { 
             ApplicationError aeg = new ApplicationError(eg);                        
-            logger.error("Generic exception executing getCounter(). STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
+            logger.error("Generic exception executing getNextCounterValue(). STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
             response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
         }     
         return response;        

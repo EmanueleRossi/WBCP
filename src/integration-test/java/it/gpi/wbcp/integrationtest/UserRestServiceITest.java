@@ -54,7 +54,7 @@ public class UserRestServiceITest {
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);                    
-            System.out.printf("testUserCreateInvalidPassowrd(): |{}|", responseString);               
+            System.out.printf("testUserCreateInvalidPassowrd(): |%s|%n", responseString);               
             Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());                                   
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);                        
@@ -74,7 +74,7 @@ public class UserRestServiceITest {
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));
             String responseString = response.readEntity(String.class);       
-            System.out.printf("testUserCreateNoPassword(): |{}|", responseString);               
+            System.out.printf("testUserCreateNoPassword(): |%s|%n", responseString);               
             Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());                  
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);                                           
@@ -94,7 +94,7 @@ public class UserRestServiceITest {
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);            
-            System.out.printf("testUserCreateNoEmail(): |{}|", responseString);               
+            System.out.printf("testUserCreateNoEmail(): |%s|%n", responseString);               
             Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());     
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);            
@@ -114,7 +114,7 @@ public class UserRestServiceITest {
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);            
-            System.out.printf("testUserCreateInvalidEmail(): |{}|", responseString);               
+            System.out.printf("testUserCreateInvalidEmail(): |%s|%n", responseString);               
             Assert.assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatus());              
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);            
@@ -134,7 +134,7 @@ public class UserRestServiceITest {
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
             Response response = target.request().post(Entity.json(jsonUser));            
             String responseString = response.readEntity(String.class);             
-            System.out.printf("testUserCreate(): |{}|", responseString);               
+            System.out.printf("testUserCreate(): |%s|%n", responseString);               
             Assert.assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());                       
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseString);            

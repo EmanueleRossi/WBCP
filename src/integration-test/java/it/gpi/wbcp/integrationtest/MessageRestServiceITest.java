@@ -46,21 +46,21 @@ public class MessageRestServiceITest {
     
     @Test
     public void testMessageCreate() {
-        try {            
+        try {           
             String jsonRecipient = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/MessageCreateRecipient.json").toURI())));
             ResteasyWebTarget targetRecipient = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/user/create", null, null).toASCIIString());
             targetRecipient.request().accept(MediaType.APPLICATION_JSON_TYPE);      
             Response responseRecipient = targetRecipient.request().post(Entity.json(jsonRecipient));                    
             String responseRecipientString = responseRecipient.readEntity(String.class);
-            System.out.printf("testMessageCreate(): |%s|", responseRecipientString);              
-            Assert.assertEquals(Response.Status.OK.getStatusCode(), responseRecipient.getStatus());    
+            System.out.printf("responseRecipientString(): |%s|%n", responseRecipientString);    
+            Assert.assertEquals(Response.Status.OK.getStatusCode(), responseRecipient.getStatus()); 
             responseRecipient.close();
             
             String jsonMessage = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/MessageCreate.json").toURI())));
             ResteasyWebTarget targetMessage = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/message/create", null, null).toASCIIString());
-            Response responseMessage = targetMessage.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.json(jsonMessage));            
+            Response responseMessage = targetMessage.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).post(Entity.json(jsonMessage));            
             String responseMessageString = responseMessage.readEntity(String.class);
-            System.out.printf("testMessageCreate(): |%s|", responseMessageString);               
+            System.out.printf("responseMessageString: |%s|%n", responseMessageString);               
             Assert.assertEquals(Response.Status.OK.getStatusCode(), responseMessage.getStatus());                   
             ObjectMapper responseObjectMapper = new ObjectMapper();
             JsonNode rootNode = responseObjectMapper.readTree(responseMessageString);

@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.codehaus.jackson.JsonNode;
@@ -64,10 +65,22 @@ public class IntegrationTestSuite {
                 ResteasyWebTarget targetUserCreate = new ResteasyClientBuilder().build().target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/user/create", null, null).toASCIIString());
                 targetUserCreate.request().accept(MediaType.APPLICATION_JSON_TYPE);                                        
                 Response responseUserCreate = targetUserCreate.request().post(Entity.json(jsonAuthLoginUserCreate));
-                System.out.printf("createTestUser(): |%s|", responseUserCreate.readEntity(String.class));
+                System.out.printf("createTestUser(): |%s|%n", responseUserCreate.readEntity(String.class));
                 Assert.assertEquals(Response.Status.OK.getStatusCode(), responseUserCreate.getStatus());            
                 responseUserCreate.close();
-                
+                                
+                ResteasyWebTarget targetRecipientLogin = new ResteasyClientBuilder().build().target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/auth/login", null, null).toASCIIString());
+                targetRecipientLogin.request().accept(MediaType.APPLICATION_FORM_URLENCODED);  
+                Form loginForm = new Form();
+                loginForm.param("loginEmail", IntegrationTestSuite.LOGIN_EMAIL)
+                    .param("loginPassword", IntegrationTestSuite.LOGIN_PASSWORD)
+                    .param("privateKeyBase64", "I can't know this... sent by e-mail!");
+                Response responseRecipientLogin = targetRecipientLogin.request().post(Entity.form(loginForm));                    
+                IntegrationTestSuite.TOKEN = responseRecipientLogin.getHeaderString("AuthorizationToken");
+                System.out.printf("IntegrationTestSuite.TOKEN: |%s|%n", IntegrationTestSuite.TOKEN);              
+                Assert.assertEquals(Response.Status.OK.getStatusCode(), responseRecipientLogin.getStatus());    
+                responseRecipientLogin.close();
+                               
             } catch (IllegalArgumentException | NullPointerException | URISyntaxException | IOException e) {
                 fail("Exception! " + StringUtil.stringifyStackTrace(e));
             }                                     
@@ -80,6 +93,6 @@ public class IntegrationTestSuite {
     
     @Test
     public void testSuiteStart() {
-        System.out.printf("### INTEGRATION TEST SUITE STARTED! ###");
+        System.out.printf("### INTEGRATION TEST SUITE STARTED! ###%n");
     } 
 }

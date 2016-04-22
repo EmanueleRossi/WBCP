@@ -108,7 +108,8 @@ public class MessageRestService {
                                 } else {                         
                                     String clearTextPayload = message.getPayload();
                                     
-                                    message.setUser(user);                                        
+                                    message.setUser(user);  
+                                    
                                     CryptoUtil cuSender = new CryptoUtil(sender.getPublicKeyBase64());
                                     SecretKey senderAESMessageKey = cuSender.newAESKey();
                                     byte[] senderEncryptedPayload = cuSender.encrypt_AES(clearTextPayload.getBytes(StandardCharsets.UTF_8.name()), senderAESMessageKey);

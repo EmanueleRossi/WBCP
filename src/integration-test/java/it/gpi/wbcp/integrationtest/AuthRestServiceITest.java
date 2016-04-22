@@ -56,7 +56,7 @@ public class AuthRestServiceITest {
             targetLoginParams.add("loginPassword", IntegrationTestSuite.LOGIN_PASSWORD);
             targetLoginParams.add("privateKeyBase64", "SECRET");
             Response responseLoginValid = targetLoginValid.request().post(Entity.form(targetLoginParams));  
-            System.out.printf("testValidLogin(): |%s|", responseLoginValid.readEntity(String.class));
+            System.out.printf("testValidLogin(): |%s|%n", responseLoginValid.readEntity(String.class));
             Assert.assertEquals(responseLoginValid.getStatus(), Status.OK.getStatusCode());   
             IntegrationTestSuite.TOKEN = responseLoginValid.getHeaderString("AuthorizationToken");
             Assert.assertNotNull(IntegrationTestSuite.TOKEN);            
@@ -73,18 +73,18 @@ public class AuthRestServiceITest {
             ResteasyWebTarget targetLoginValid = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/auth/login", null, null).toASCIIString());
             targetLoginValid.request().accept(MediaType.APPLICATION_FORM_URLENCODED_TYPE);                        
             MultivaluedHashMap<String, String> targetLoginParams = new MultivaluedHashMap<>();
-            Response responseLoginValid_01 = targetLoginValid.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));     
-            System.out.printf("testWrongLoginParameters(): |%s|", responseLoginValid_01.readEntity(String.class));
+            Response responseLoginValid_01 = targetLoginValid.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));     
+            System.out.printf("testWrongLoginParameters(): |%s|%n", responseLoginValid_01.readEntity(String.class));
             Assert.assertEquals(responseLoginValid_01.getStatus(), Status.BAD_REQUEST.getStatusCode());                   
             targetLoginParams.add("loginEmail", IntegrationTestSuite.LOGIN_EMAIL);
             responseLoginValid_01.close();            
-            Response responseLoginValid_02 = targetLoginValid.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));
-            System.out.printf("testWrongLoginParameters(): |%s|", responseLoginValid_02.readEntity(String.class));
+            Response responseLoginValid_02 = targetLoginValid.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));
+            System.out.printf("testWrongLoginParameters(): |%s|%n", responseLoginValid_02.readEntity(String.class));
             Assert.assertEquals(responseLoginValid_02.getStatus(), Status.BAD_REQUEST.getStatusCode());   
             responseLoginValid_02.close();            
             targetLoginParams.add("loginPassword", IntegrationTestSuite.LOGIN_PASSWORD);
-            Response responseLoginValid_03 = targetLoginValid.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));   
-            System.out.printf("testWrongLoginParameters(): |%s|", responseLoginValid_03.readEntity(String.class));            
+            Response responseLoginValid_03 = targetLoginValid.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));   
+            System.out.printf("testWrongLoginParameters(): |%s|%n", responseLoginValid_03.readEntity(String.class));            
             Assert.assertEquals(responseLoginValid_03.getStatus(), Status.BAD_REQUEST.getStatusCode());
             responseLoginValid_03.close();            
                        
@@ -102,8 +102,8 @@ public class AuthRestServiceITest {
             targetLoginParams.add("loginEmail", IntegrationTestSuite.LOGIN_EMAIL);
             targetLoginParams.add("loginPassword", "WRONG PASSWORD");
             targetLoginParams.add("privateKeyBase64", "SECRET");
-            Response responseLoginInValid = targetLoginInValid.request().header("Authorization", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));
-            System.out.printf("testInvalidPassword(): |%s|", responseLoginInValid.readEntity(String.class));             
+            Response responseLoginInValid = targetLoginInValid.request().header("AuthorizationToken", IntegrationTestSuite.TOKEN).post(Entity.form(targetLoginParams));
+            System.out.printf("testInvalidPassword(): |%s|%n", responseLoginInValid.readEntity(String.class));             
             Assert.assertEquals(responseLoginInValid.getStatus(), Status.UNAUTHORIZED.getStatusCode());   
                        
         } catch (IllegalArgumentException | NullPointerException | URISyntaxException e) {
@@ -119,7 +119,7 @@ public class AuthRestServiceITest {
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                   
             Response response = target.request().post(Entity.json(jsonOrganization));
             String responseString = response.readEntity(String.class);  
-            System.out.printf("testNoToken(): |%s|", responseString);              
+            System.out.printf("testNoToken(): |%s|%n", responseString);              
             Assert.assertEquals(response.getStatus(), Response.Status.UNAUTHORIZED.getStatusCode());    
                        
         } catch (IllegalArgumentException | NullPointerException | URISyntaxException | IOException e) {
@@ -133,9 +133,9 @@ public class AuthRestServiceITest {
             String jsonOrganization = new String(Files.readAllBytes(Paths.get(this.getClass().getResource("/OrganizationCreateNoName.json").toURI())));            
             ResteasyWebTarget target = client.target(new URI("http", null, IntegrationTestSuite.ITEST_SERVER_URL, IntegrationTestSuite.ITEST_SERVER_PORT, "/WBCP/rs/organization/create", null, null).toASCIIString());
             target.request().accept(MediaType.APPLICATION_JSON_TYPE);                   
-            Response response = target.request().header("Authorization", "WRONG TOKEN!!!").post(Entity.json(jsonOrganization));
+            Response response = target.request().header("AuthorizationToken", "WRONG TOKEN!!!").post(Entity.json(jsonOrganization));
             String responseString = response.readEntity(String.class);  
-            System.out.printf("testWrongToken(): |%s|", responseString);              
+            System.out.printf("testWrongToken(): |%s|%n", responseString);              
             Assert.assertEquals(response.getStatus(), Response.Status.UNAUTHORIZED.getStatusCode());    
                        
         } catch (IllegalArgumentException | NullPointerException | URISyntaxException | IOException e) {
