@@ -399,7 +399,7 @@ app.filter('reportStatusIcon', function () {
     return function(val) {
 
         if(val && val.value != null)
-          return '/img/icon-status-' + val.value + '.png';
+          return '/WBCP/img/icon-status-' + val.value + '.png';
         else
           return null;
     }
