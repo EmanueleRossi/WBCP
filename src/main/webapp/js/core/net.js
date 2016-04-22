@@ -1,9 +1,9 @@
 (function(){
 
 	var net = {
-		//host :'http://185.58.116.136:8080/WBCP-web-1.0-SNAPSHOT/rs'
+		host :'http://devsrv03.erossi.org:8080/WBCP/rs'
 		//host :'/WBCP/rs'
-		host :'http://localhost:8080/WBCP/rs'	
+		//host :'http://localhost:8080/WBCP/rs'
 	};
 
 	
