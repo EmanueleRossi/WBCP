@@ -66,7 +66,7 @@
 
 		if(data.comments)
 		{	
-			var filtered = data.comments.filter(function(c) { return c.reportUuid == reportUuid;});		
+			var filtered = data.comments.filter(function(c) { return c.reportUuid == reportUuid;});
 
 			return filtered.sort(function(a, b) {return b.createDate - a.createDate;})
 

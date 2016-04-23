@@ -33,7 +33,10 @@
 						</span>
 					</strong> 
 					in data  {{report.createDate | date:'medium' }}
-					<button class="btn btn-small btn-link ng-if="author == null" ng-click="getAuthor()" title="recupera autore della segnalazione">Recupera autore</button>
+					<button class="btn btn-small btn-link"
+							ng-if="report.folder == 'received' && author == null"
+							ng-click="getAuthor()"
+							title="recupera autore della segnalazione">Recupera autore</button>
 				</span>
 				<a class="btn-link btn-back-to-list pull-right" href="#/report-list">torna alla lista</a>
 				<div class="clear"></div> 
@@ -169,14 +172,14 @@
 					<div class="col-sm-9">
 						<div ng-repeat="author in report.authors" class="form-group row">
 							<div class="col-sm-2"  >
-								<span class="form-control-static">{{author.firstname}}</span>
-						  </div>
-						  <div class="col-sm-2">
-								<span class="form-control-static">{{author.lastname}}</span>
-						  </div>
-						  <div class="col-sm-8">
-								<span class="form-control-static">{{author.role}}</span>
-						  </div>
+								<span class="form-control-static" ng-if="author.firstname">{{author.firstname}}</span>
+						  	</div>
+						  	<div class="col-sm-2">
+								<span class="form-control-static" ng-if="author.lastname">{{author.lastname}}</span>
+						  	</div>
+						  	<div class="col-sm-8">
+								<span class="form-control-static" ng-if="author.role">{{author.role}}</span>
+						  	</div>
 						</div>
 					</div>
 			  	</div>
@@ -208,16 +211,16 @@
 					<div class="col-sm-9">
 						<div ng-repeat="deponent in report.deponents" class="form-group row">
 							<div class="col-sm-2"  >
-								<span class="form-control-static">{{deponent.firstname}}</span>
+								<span class="form-control-static" ng-if="deponent.firstname">{{deponent.firstname}}</span>
 						  </div>
 						  <div class="col-sm-2">
-								<span class="form-control-static">{{deponent.lastname}}</span>
+								<span class="form-control-static" ng-if="deponent.lastname">{{deponent.lastname}}</span>
 						  </div>
 						  <div class="col-sm-5">
-								<span class="form-control-static">{{deponent.role}}</span>
+								<span class="form-control-static" ng-if="deponent.role">{{deponent.role}}</span>
 						  </div>
 						   <div class="col-sm-3">
-								<span class="form-control-static">{{deponent.contacts}}</span>
+								<span class="form-control-static" ng-if="deponent.contacts">{{deponent.contacts}}</span>
 						  </div>
 						</div>
 					</div>
@@ -323,8 +326,10 @@
 
 				<div class="comments-container">			
 					<div class="pull-right" ng-hide="comment">
-						<button class="btn btn-primary" ng-click="addComment()" ng-hide="comments.length">Rispondi</button>
-						<button class="btn btn-primary" ng-click="addComment()" ng-show="comments.length">Nuova discussione</button>
+						<button class="btn btn-primary" ng-click="addComment()" ng-if="report.folder == 'received'"
+								ng-hide="comments.length">Scrivi</button>
+
+						<button class="btn btn-primary" ng-click="addComment()" ng-show="comments.length">Rispondi</button>
 					</div>
 
 					<div ng-show="comment">

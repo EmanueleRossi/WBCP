@@ -39,6 +39,7 @@ app.controller('ReportListController', function ($scope, $rootScope, $window, $h
 			if(err)
 			{
 				$scope.err = err;
+				$scope.reports = [];
 				return;
 			}
 
@@ -89,7 +90,6 @@ app.controller('ReportListController', function ($scope, $rootScope, $window, $h
 	};
 
 	$scope.viewDetail = function(index) {
-		console.log('viewDetail: ', index);
 		
 		if($scope.reports != null)
 			$window.location.href = "#/report/" + index;

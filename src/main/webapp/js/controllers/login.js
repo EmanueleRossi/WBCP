@@ -15,8 +15,7 @@ app.controller('LoginController', function ($scope, $window, $http) {
   $scope.dropzoneConfig = {
       
       readAsText : function(content) {
-        console.log("readAsText", content);
-        
+
         if(content == null)
           return; 
 
@@ -50,8 +49,7 @@ app.controller('LoginController', function ($scope, $window, $http) {
 
   $scope.doLogin = function () {
     
-  	console.log("doLOGIN", $scope.remember);
-  	$scope.errorMessage = "";
+ 	$scope.errorMessage = "";
     app.auth.cleanCurrentUser();
 
     var login = {
@@ -62,9 +60,7 @@ app.controller('LoginController', function ($scope, $window, $http) {
 
      app.net.login(login, $http, function(err, userSession){
 
-         console.log("login callback: ", userSession);
-    
-      if(err)
+    if(err)
       {
          $scope.errors.message = err.message;
          $scope.errors.details = err.details;

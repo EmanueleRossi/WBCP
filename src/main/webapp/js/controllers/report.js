@@ -85,24 +85,33 @@ app.controller('ReportController',
 		$scope.mode = (reportUuid != null) ? mode[1] : mode[0];
 
 		if(app.auth.getCurrentUser() == null)
-    {
-      	return $window.location.href = "#/login";
+		{
+			return $window.location.href = "#/login";
 		}
 		else
 		{
-      		$scope.user = app.auth.getCurrentUser().user;
+			$scope.user = app.auth.getCurrentUser().user;
 		}
 
 		if(reportUuid != null)
 		{
-
 			$scope.report = app.data.getReport(reportUuid);
-			console.log($scope.report);
+
+			if($scope.report == null)
+			{
+				return $window.location.href = "#/report-list";
+			}
+
 
 			if($scope.report != null)
 			{
 				$scope.comments = app.data.getComments($scope.report.uuid);	
 				$scope.statuses = app.data.getStatuses($scope.report.uuid);
+
+				if($scope.comments != null)
+					$scope.comments.forEach(function(c){
+						c.isMine = (c.sender.email == $scope.user.email);
+					});
 
 				//data:application/pdf;base64, 'data:application/octet-stream');
 	/*
@@ -117,8 +126,6 @@ app.controller('ReportController',
                     $scope.report.identityCard.fileURL = URL.createObjectURL(file);
 				}
 	*/				
-
-				console.log($scope.report);
 
 				if($scope.statuses != null && $scope.statuses.length > 0)
 					$scope.reportCurrentStatus = JSON.parse(JSON.stringify($scope.statuses[0]));
@@ -166,7 +173,23 @@ $scope.download = function(attachment)
 {
 	if(attachment && attachment.content)
 	{
-		$window.open(attachment.content, '_blank');
+		var mimeType = attachment.content.substr(5,attachment.content.indexOf(';')-5);
+		//console.log("mimeType: ", mimeType);
+
+		var base64Data = attachment.content.substr(attachment.content.indexOf(',')+1);
+		//console.log("base64Data: ", base64Data);
+
+		var blob = app.util.base64toBlob(base64Data, mimeType);
+		//return;
+
+		if (window.saveAs) {
+			window.saveAs(blob, attachment.filename); }
+		else if (navigator.msSaveBlob){
+			navigator.msSaveBlob(blob, attachment.filename);
+		}
+		else {
+			$window.open(attachment.content, '_blank');
+		}
 	}
 
 }
@@ -174,8 +197,7 @@ $scope.download = function(attachment)
   $scope.identityCardConfig = {
       
       readAsDataURL : function(content) {
-        console.log("readAsDataURL", content);
-        
+
         if(content == null)
           return; 
 
@@ -222,16 +244,9 @@ $scope.download = function(attachment)
 	};
 
 	$scope.doSend = function () {
-    
-  	//	console.log("doSend", $scope.report);
-	  	
+
   		if(!$scope.report.alreadyReported)
   			$scope.relatedReports = [];
-
-  		console.log("doSend", $scope.form.$valid);
-  		console.log("error", $scope.form.$error);
-
-
 
   		if($scope.form.$valid)
   		{
@@ -291,10 +306,7 @@ $scope.download = function(attachment)
 
   	function sendReport(callback) {
 
-  		console.log("sender:",$scope.report.sender);
-  		console.log("recipient:",$scope.report.recipient);
-  		
-  		// clena report unused fields
+  		// clean report unused fields
   		if(!$scope.report.alreadyReported)
   			$scope.report.relatedReports = null;
 
@@ -320,8 +332,8 @@ $scope.download = function(attachment)
 	        "user": $scope.user,
 	        "sender": $scope.report.sender,    
 	        "recipient": $scope.report.recipient,
-		      "payload": JSON.stringify($scope.report)
-		    };
+			"payload": JSON.stringify($scope.report)
+		};
 
 	    app.net.sendReport(message, $http, callback);
 
@@ -442,13 +454,13 @@ $scope.download = function(attachment)
 		delete $scope.reportCurrentStatus.isChanging;
 
 		var message = {
-      "user": $scope.user,
-      "sender": $scope.report.sender,    
-      "recipient": $scope.report.recipient,
-      "payload": JSON.stringify($scope.reportCurrentStatus)
-    };
+			"user": $scope.user,
+			"sender": $scope.report.recipient,
+			"recipient": $scope.report.sender,
+			"payload": JSON.stringify($scope.reportCurrentStatus)
+		};
 
-   	app.net.sendReport(message, $http, function(err) {
+   		app.net.sendReport(message, $http, function(err) {
  			
 
 			if(err)
@@ -481,14 +493,13 @@ $scope.download = function(attachment)
 
 	$scope.onReportCurrentStatusChange = function() {
 
-		/*
-		if($scope.statuses != null && $scope.statuses.length > 0)
-			if($scope.statuses[0].value == $scope.reportCurrentStatus.value)
-				return;
-		*/
-
 		if($scope.reportCurrentStatus != null)
 		{
+			var value = $scope.reportCurrentStatus.value;
+
+			$scope.reportCurrentStatus = new Status(uuid2.newuuid(), $scope.report.uuid);
+			$scope.reportCurrentStatus.value = value;
+
 			$scope.reportCurrentStatus.isChanging = true;
 			$scope.reportCurrentStatus.note = null;
 		}

@@ -1,9 +1,9 @@
 (function(){
 
 	var net = {
-		host :'http://devsrv03.erossi.org:8080/WBCP/rs'
+		//host :'http://devsrv03.erossi.org:8080/WBCP/rs'
 		//host :'/WBCP/rs'
-		//host :'http://localhost:8080/WBCP/rs'
+		host :'http://localhost:8080/WBCP/rs'
 	};
 
 	
@@ -12,7 +12,6 @@
 	net.login = function(credentials, http, callback){
 		
 		var url =  net.host + "/auth/login";
-		console.log("LOGIN!!");
 
 		showLoader();
 		
@@ -24,30 +23,35 @@
 							'&loginPassword=' + encodeURIComponent(credentials.loginPassword) + 
 								'&privateKeyBase64=' + encodeURIComponent(credentials.privateKeyBase64)
 		}
-		
-		console.log("Request:", req);
 
 		http(req).
 		success(function(data, status, headers, config) {  
-		  
-		  var token = headers()['authorizationtoken'];
-			
-			app.auth.setAuthToken(token);
 
-		  hideLoader();
-		 
-		  console.log("success:", data);
-		  console.log("status:", status);
+			var token = headers()['authorizationtoken'];
 
-		  return callback(null, data);
+			if(token != null)
+			{
+				app.auth.setAuthToken(token);
+
+				hideLoader();
+
+				return callback(null, data);
+
+			}
+			else
+			{
+				return callback({
+					message: "Errore di autenticazione. Token non valido."
+				});
+			}
+
+
 		 
 		}).
 		error(function(data, status, headers, config) {
 			
 			 hideLoader();
 
-			console.log("error status:", status);
-				
 			if(status == 401)
 			{
 				return callback({
@@ -84,21 +88,15 @@
 
 		var url =  net.host + "/user/email/" + email;
 
-		console.log("url:", url);
-
 		var req = {
 			method: 'GET',
 			url: url,
 			headers: {'AuthorizationToken': app.auth.getAuthToken()}
 		}
-				
-		console.log("getUserByEmail - request: ", req);
 
 		http.get(req )
 		  .success(function(data, status, headers, config) {
-			  
-			  console.log("success:", data);
-			  
+
 			  return callback(null, data);
 			  
 		  })
@@ -121,8 +119,6 @@
 				'AuthorizationToken': app.auth.getAuthToken()
 		    }
 		}
-		
-		console.log("Request:", req);
 
 		http(req).
 		success(function(data, status, headers, config) {  
@@ -151,24 +147,16 @@
 		    },
 			data: account 
 		}
-		
-		console.log("Request:", req);
 
 		http(req).
 		success(function(data, status, headers, config) {  
 		  hideLoader();
-		 
-		  console.log("success:", data);
-		  console.log("status:", status);
-		  
+
 		  return callback(null, data);
 		 
 		}).
 		error(function(data, status, headers, config) {
 		
-			console.log("error:", data);
-			console.log("status:", status);
-			
 			 hideLoader();
 
 			 return callback(data);
@@ -177,10 +165,7 @@
 
 
 	net.sendReport = function(data, http, callback){
-		console.log("sendReport");
-	
 		var url =  net.host + "/message/create";
-		
 
 		showLoader();
 		
@@ -194,24 +179,16 @@
 		    },
 			data: data 
 		}
-		
-		console.log("Request:", req);
 
 		http(req).
 		success(function(data, status, headers, config) {  
 		  hideLoader();
 		 
-		  console.log("success:", data);
-		  console.log("status:", status);
-		  
 		  return callback(null, data);
 		 
 		}).
 		error(function(data, status, headers, config) {
-		
-			console.log("error:", data);
-			console.log("status:", status);
-			
+
 			 hideLoader();
 
 			 return callback(data);
@@ -219,9 +196,7 @@
 	};
 
 	net.searchReportByInstant = function(from, to, userSession, http, callback) {
-		
-		console.log("searchReportByInstant");
-	
+
 		var url =  net.host + "/message/searchByInstant/" + from + "/" + to;
 		
 		showLoader();
@@ -237,15 +212,10 @@
 			data: userSession 
 		}
 		
-		console.log("Request:", req);
-
 		http(req).
 		success(function(data, status, headers, config) {  
 		  hideLoader();
-		 
-		 // console.log("success:", data);
-		 // console.log("status:", status);
-		  
+
 		  return callback(null, data);
 		 
 		}).
@@ -281,24 +251,7 @@
 
 
 	};
-	 /* return $http.get( app.net.host + '/organization/fullTextSearch/' + val)
-    	.then(function(response){
 
-    		console.log("searchOrganization:" , response.data);
-
-    		$scope.organizations = response.data;
-
-    		if(response.data.length == 0)
-    			return null;
-
-    		return response.data.map(function(item){
-  				return { 
-  					id: item.id,
-  					name: item.name 
-  				};
-			});
-    });
-*/
 	net.serachUserByOrganization = function(item, http, callback) {
 
 		var url =  net.host + "/user/searchByOrganization/" + item.id;
@@ -316,9 +269,7 @@
 
 		http.get(url )
 		  .success(function(data, status, headers, config) {
-			  
-			  console.log("success:", data);
-			  
+
 				return callback(null, data);
 			  
 		  })

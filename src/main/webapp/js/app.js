@@ -12,7 +12,8 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-var app = angular.module('whistleBlowingApp', ['ngRoute','ui.bootstrap', 'angular-loading-bar', 'angularUUID2', 'ngAnimate', 'draganddrop']);
+var app = angular.module('whistleBlowingApp', [
+        'ngRoute','ui.bootstrap', 'angular-loading-bar', 'angularUUID2', 'ngAnimate'    ]);
 
 
 //app.DEBUG = true;
@@ -27,18 +28,17 @@ if(console.log == undefined)
 
 app.directive('dropzone', function () {
   return function (scope, element, attrs) {
-    
+
 
     var config = scope[attrs.dropzone];
 
     // create a Dropzone for the element with the given options
-    console.log(element);
-    
+
     // file drag hover
     function FileDragHover(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      e.target.className = (e.type == "dragover" ? "hover" : "");
+        e.stopPropagation();
+        e.preventDefault();
+        e.target.className = (e.type == "dragover" ? "hover" : "");
     }
 
 
@@ -48,12 +48,9 @@ app.directive('dropzone', function () {
       // cancel event and hover styling
       FileDragHover(e);
 
-      console.log("FileSelectHandler")
 
       // fetch FileList object
       var files = e.target.files || e.dataTransfer.files;
-
-      console.log(files);
 
       for (var i = 0, f; f = files[i]; i++) {
         if(typeof config.readAsText  == 'function')
@@ -67,8 +64,6 @@ app.directive('dropzone', function () {
     }
 
     function readAsTextFile(file, callback) {
-      console.log("readAsTextFile");
-
         var reader = new FileReader();
         
         reader.onload = function(e) {
@@ -84,8 +79,6 @@ app.directive('dropzone', function () {
     }
 
     function readAsDataURL(file, callback) {
-      console.log("readAsTextFile");
-
         var reader = new FileReader();
         reader.onload = function(e) {
          callback({
@@ -99,12 +92,13 @@ app.directive('dropzone', function () {
     };
 
     var fileselect = jQuery("#fileselect")[0],
-       filedrag = jQuery("#filedrag")[0];
+       filedrag = jQuery("#filedrag")[0] ;
       submitbutton = jQuery("#submitbutton")[0];
 
       if(fileselect)
         fileselect.addEventListener("change", FileSelectHandler, false);
-     
+
+      filedrag.addEventListener("dragenter", FileDragHover, false);
       filedrag.addEventListener("dragover", FileDragHover, false);
       filedrag.addEventListener("dragleave", FileDragHover, false);
       filedrag.addEventListener("drop", FileSelectHandler, false);
@@ -241,8 +235,7 @@ app.directive('fiscalcode', ['$http', function ($http) {
       elem.on('blur', function (evt) {
         scope.$apply(function () {
           
-          	console.log("fiscalcodeUnique: ", elem.val() );
-        	
+
 			ctrl.$setValidity('fiscalcodeUnique', true);
           	ctrl.$setValidity('fiscalcodeFormat', true);
 
@@ -347,9 +340,7 @@ app.directive("hasSelection", function() {
         link: function(scope, element, attributes, ngModel) {
            	
             ngModel.$validators.hasSelection = function(modelValue) {
-           	    
-            	console.log("hasSelection validation:" + modelValue)
-           	    return (modelValue != null);
+                return (modelValue != null);
             };
         }
     };

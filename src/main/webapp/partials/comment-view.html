@@ -12,14 +12,17 @@
     You should have received a copy of the GNU Lesser General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<div class="comment">
-	<div class="col-md-12">
+<div class="comment" ng-class="comment.isMine ? 'sent' : 'received'">
+
+	<div ng-if="!comment.isMine" class=""></div>
+
+	<div class="col-sm-8" ng-class="comment.isMine ? '': 'col-sm-offset-4 text-right'">
 		<fieldset>
 			<div>
 				<span><small>
 					messaggio <strong>{{comment.sender.email == user.email ? 'INVIATO' : 'RICEVUTO'}}</strong> in data  {{comment.createDate | date:'medium' }} 
 				</small></span>
-				<p class="form-control-static  multi-linea">{{comment.description }}</p>
+				<p class="form-control-static  multi-linea text-left">{{comment.description }}</p>
 			</div>
 		</fieldset>
 	</div>

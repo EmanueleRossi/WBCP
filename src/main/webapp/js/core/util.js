@@ -57,7 +57,55 @@
 		}
 	};
 
+	util.base64toBlob = function(b64Data, contentType) {
+		contentType = contentType || '';
+		var sliceSize = 512;
+		b64Data = b64Data.replace(/^[^,]+,/, '');
+		b64Data = b64Data.replace(/\s/g, '');
+		var byteCharacters = window.atob(b64Data);
+		var byteArrays = [];
+
+		for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+			var slice = byteCharacters.slice(offset, offset + sliceSize);
+
+			var byteNumbers = new Array(slice.length);
+			for (var i = 0; i < slice.length; i++) {
+				byteNumbers[i] = slice.charCodeAt(i);
+			}
+
+			var byteArray = new Uint8Array(byteNumbers);
+
+			byteArrays.push(byteArray);
+		}
+
+		var blob = new Blob(byteArrays, {type: contentType});
+		return blob;
+	};
+	
 	app.util = util;
+
+	if (!Array.prototype.find) {
+		Array.prototype.find = function(predicate) {
+			if (this === null) {
+				throw new TypeError('Array.prototype.find called on null or undefined');
+			}
+			if (typeof predicate !== 'function') {
+				throw new TypeError('predicate must be a function');
+			}
+			var list = Object(this);
+			var length = list.length >>> 0;
+			var thisArg = arguments[1];
+			var value;
+
+			for (var i = 0; i < length; i++) {
+				value = list[i];
+				if (predicate.call(thisArg, value, i, list)) {
+					return value;
+				}
+			}
+			return undefined;
+		};
+	}
 
 })()
 
