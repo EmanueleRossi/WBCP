@@ -33,49 +33,12 @@
 						</span>
 					</strong> 
 					in data  {{report.createDate | date:'medium' }}
-					<button class="btn btn-small btn-link"
-							ng-if="report.folder == 'received' && author == null"
-							ng-click="getAuthor()"
-							title="recupera autore della segnalazione">Recupera autore</button>
+
 				</span>
 				<a class="btn-link btn-back-to-list pull-right" href="#/report-list">torna alla lista</a>
 				<div class="clear"></div> 
 				<br/>
-			<fieldset ng-show="(report.folder == 'received') && author">
-				 <h4>Mittente:</h4>
-				<div class="panel panel-default">
-			  		<div class="panel-body">
-						<!--
-						<div class="form-group row">
-						  	<label class="col-sm-2 control-label">Nome:</label>
-						  	<span class="form-control-static">{{ report.sender.firstName }}</span>
-						</div>
-						<div class="form-group row">
-						  	<label class="col-sm-2 control-label">Cognome:</label>
-						  	<span class="form-control-static">{{ report.sender.lastName }}</span>
-						</div>
-						<div class="form-group row">
-						  	<label class="col-sm-2 control-label">Codice fiscale:</label>
-						  	<span class="form-control-static">{{ report.sender.fiscalcode }}</span>
-						</div>-->
-						<div class="form-group row">
-						  	<label class="col-sm-3 control-label">Indirizzo email:</label>
-							<div class="col-sm-9">
-						  		<span class="form-control-static">{{ report.sender.email }}</span>
-							</div>
-						</div>
 
-						<div class="form-group row" >
-							<label class="col-sm-3 control-label">Carta di identità:</label>
-							<div class="col-sm-9">
-								<div ng-repeat="attachment in [report.identityCard]">
-									<div ng-include="'partials/attachment-view.html'"></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</fieldset>
 
 			<filedset>
 				<div class="form-group row">
@@ -296,6 +259,12 @@
 											ng-click="sendStatus()" ng-show="reportCurrentStatus.isChanging" >
 										<span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span>
 									</button>
+
+									<button class="btn btn-small btn-primary"
+											ng-if="reportCurrentStatus.value == 2 && !reportCurrentStatus.isChanging && author == null"
+											ng-click="getAuthor()"
+											title="recupera autore della segnalazione">Recupera identità del segnalante
+									</button>
 								</div>
 
 							</div>
@@ -323,6 +292,42 @@
 						</div>
 					</div>
 				</div>
+
+			<fieldset ng-show="(report.folder == 'received') && author">
+				<h4 class="text-danger">Segnalante:</h4>
+				<div class="panel panel-danger">
+					<div class="panel-body">
+						<!--
+						<div class="form-group row">
+							  <label class="col-sm-2 control-label">Nome:</label>
+							  <span class="form-control-static">{{ report.sender.firstName }}</span>
+						</div>
+						<div class="form-group row">
+							  <label class="col-sm-2 control-label">Cognome:</label>
+							  <span class="form-control-static">{{ report.sender.lastName }}</span>
+						</div>
+						<div class="form-group row">
+							  <label class="col-sm-2 control-label">Codice fiscale:</label>
+							  <span class="form-control-static">{{ report.sender.fiscalcode }}</span>
+						</div>-->
+						<div class="form-group row">
+							<label class="col-sm-3 control-label">Indirizzo email:</label>
+							<div class="col-sm-9">
+								<span class="form-control-static">{{ report.sender.email }}</span>
+							</div>
+						</div>
+
+						<div class="form-group row" >
+							<label class="col-sm-3 control-label">Carta di identità:</label>
+							<div class="col-sm-9">
+								<div ng-repeat="attachment in [report.identityCard]">
+									<div ng-include="'partials/attachment-view.html'"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</fieldset>
 
 				<div class="comments-container">			
 					<div class="pull-right" ng-hide="comment">
