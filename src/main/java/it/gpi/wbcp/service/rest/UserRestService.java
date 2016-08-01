@@ -106,15 +106,16 @@ public class UserRestService {
 
                                 String smtpHost = aParameterDao.getParameterAsString("SMTP_HOST");
                                 Integer smtpPort = aParameterDao.getParameterAsInteger("SMTP_PORT");
+                                Boolean sslEnabled = aParameterDao.getParameterAsBoolean("SSL_ENABLED");                                
                                 String smtpAuthUsername = aParameterDao.getParameterAsString("SMTP_AUTH_USERNAME");
                                 String smtpAuthPassword = aParameterDao.getParameterAsString("SMTP_AUTH_PASSWORD");
                                 String mailFromAddress = aParameterDao.getParameterAsString("MAIL_FROM_ADDRESS");
                                 String mailSubject = aParameterDao.getParameterAsString("MAIL_SUBJECT", httpRequest.getLocale());
                                 String mailBody = aParameterDao.getParameterAsString("MAIL_BODY", httpRequest.getLocale());
                                 
-                                MailUtil mu = new MailUtil(smtpHost, smtpPort, smtpAuthUsername, smtpAuthPassword);
+                                MailUtil mu = new MailUtil(smtpHost, smtpPort, sslEnabled, smtpAuthUsername, smtpAuthPassword);
                                 String privateKeyBase64 = StringUtil.getBase64EncodedUTF8String(cu.getPrivateKey().getEncoded());
-                                mu.sendMailSSL(mailFromAddress, user.getEmail(), mailSubject, mailBody, privateKeyBase64);
+                                mu.sendMail(mailFromAddress, user.getEmail(), mailSubject, mailBody, privateKeyBase64);
 
                                 response = Response.status(Status.OK).entity(responseUser).build();   
                             }

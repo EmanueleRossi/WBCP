@@ -38,30 +38,36 @@ public class MailUtil {
     
     private final String username;
     private final String password;
+    private final String sslEnabled;
     
-    public MailUtil(String smtpHost, int smtpPort, String username, String password) {
+    public MailUtil(String smtpHost, int smtpPort, Boolean sslEnabled, String username, String password) {
         this.smtpHost = smtpHost;
         this.smtpPort = smtpPort;
+        this.sslEnabled = String.valueOf(sslEnabled);
         this.username = username;
         this.password = password;        
     }
         
-    public void sendMailSSL(String fromAddress, String toAddress, String subject, String text, String attachmentFileString) throws MessagingException, IOException {
+    public void sendMail(String fromAddress, String toAddress, String subject, String text, String attachmentFileString) throws MessagingException, IOException {
         
         Properties props = new Properties();
 	props.put("mail.smtp.host", this.smtpHost);
         props.put("mail.smtp.port", this.smtpPort);                                     
         props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.ssl.enable", "true");        
+        props.put("mail.smtp.ssl.enable", this.sslEnabled);        
 	
         Session session;
-        session = Session.getInstance(props,
-            new javax.mail.Authenticator() {
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(username, password);
-                }
-            });
+        if (StringUtil.isNullOrEmpty(this.username) && StringUtil.isNullOrEmpty(this.password)) {
+            session = Session.getInstance(props);
+        } else {
+            session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(username, password);
+                    }
+                });
+        }
  
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(fromAddress));

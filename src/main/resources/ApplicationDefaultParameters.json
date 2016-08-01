@@ -2,31 +2,37 @@
     {
         "name":"SMTP_HOST",
         "description":"FQDN name or IP Address of the SMTP Server.",
-        "parameterValue":"smtp.gmail.com",
+        "parameterValue":"posta.gpi.it",
         "localeTag":"en-US"
     },
     {
         "name":"SMTP_PORT",
         "description":"SMTP service TCP/IP port.",
-        "parameterValue":"465",
+        "parameterValue":"25",
         "localeTag":"en-US"
     },
     {
+        "name":"SSL_ENABLED",
+        "description":"SMTP SSL protocol enabled or not.",
+        "parameterValue":"false",
+        "localeTag":"en-US"
+    },    
+    {
         "name":"SMTP_AUTH_USERNAME",
         "description":"SMTP SSL Authentication Username",
-        "parameterValue":"whistleblowingtest@gmail.com",
+        "parameterValue":"",
         "localeTag":"en-US"
     },    
     {
         "name":"SMTP_AUTH_PASSWORD",
         "description":"SMTP SSL Authentication Password (clear text).",
-        "parameterValue":"whistleblowingtest!",
+        "parameterValue":"",
         "localeTag":"en-US"
     },      
     {
         "name":"MAIL_FROM_ADDRESS",
         "description":"Mail address of mail origin.",
-        "parameterValue":"wbcp@wbcp.org",
+        "parameterValue":"whistleblowing@gpi.it",
         "localeTag":"en-US"
     },   
     {

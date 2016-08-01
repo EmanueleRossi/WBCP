@@ -107,6 +107,15 @@ public class ApplicationParameterDao {
         return parameter.getParameterValue();                                                   
     }
     
+    public Boolean getParameterAsBoolean(String parameterName, Locale locale) throws IOException, URISyntaxException {
+        String parameterValueString = this.getParameterValueString(parameterName, locale);
+        return Boolean.parseBoolean(parameterValueString);
+    }
+    public Boolean getParameterAsBoolean(String parameterName) throws IOException, URISyntaxException {
+        String parameterValueString = this.getParameterValueString(parameterName, Locale.US);
+        return Boolean.parseBoolean(parameterValueString);
+    }    
+    
     public Integer getParameterAsInteger(String parameterName, Locale locale) throws IOException, URISyntaxException {
         String parameterValueString = this.getParameterValueString(parameterName, locale);
         return Integer.parseInt(parameterValueString);
