@@ -23,7 +23,7 @@ app.controller('LoginController', function ($scope, $window, $http) {
           
           $scope.errors = {};
 
-          if(content.size != 3168)
+          if(content.size < 3164 || content.size > 3168)
           {
              $scope.errors = {
                 message : "Chiave non valida",
