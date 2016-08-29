@@ -57,7 +57,88 @@ public class UserRestService {
     UserDao userDao;
     @EJB
     ApplicationParameterDao aParameterDao;   
+    
 
+    @POST
+    @Path("/changepwd")
+    @Produces(MediaType.APPLICATION_JSON)        
+    public Response changePassword(@Context HttpServletRequest httpRequest,
+                                    @Context User requestUser,
+                                    User user) {    
+        Response response;
+        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());  
+        try {
+            if (!StringUtil.isNullOrEmpty(user.getEmail()) && !StringUtil.validateEmailPattern(user.getEmail())) {
+                ApplicationError ae = new ApplicationError(String.format(lmb.getString("user.email_address_not_valid"), user.getEmail()));
+                logger.warn(ae);
+                response = Response.status(Status.NOT_FOUND).entity(ae).build();
+            } else {
+                User backEndUser = userDao.getByEmail(user.getEmail());
+                if (backEndUser == null) {
+                    ApplicationError ae = new ApplicationError(String.format(lmb.getString("user.email_not_exists"), user.getEmail()));
+                    logger.warn(ae);
+                    response = Response.status(Status.NOT_FOUND).entity(ae).build();                    
+                } else {
+                    System.out.println("TEST" + requestUser.getEmail());
+                    System.out.println("TEST" + backEndUser.getEmail());                    
+                    if (!requestUser.getEmail().equalsIgnoreCase(backEndUser.getEmail())) {
+                        ApplicationError ae = new ApplicationError(lmb.getString("user.changepwd_not_allowed_for_different_user"));
+                        logger.warn(ae);
+                        response = Response.status(Status.BAD_REQUEST).entity(ae).build();                        
+                    } else {
+                        if (StringUtil.isNullOrEmpty(user.getRequestedClearPassword())) {
+                            ApplicationError ae = new ApplicationError(lmb.getString("user.requested_password_empty"));
+                            logger.warn(ae);
+                            response = Response.status(Status.NOT_FOUND).entity(ae).build();
+                        } else {
+                            String requestedClearPassword = user.getRequestedClearPassword();
+                            pwUtil = new PasswordUtil(requestedClearPassword, httpRequest.getLocale());
+                            if (!pwUtil.isAValidPassword()) {
+                                ApplicationError ae = new ApplicationError(lmb.getString("user.requested_password_not_valid"));
+                                logger.warn(ae);
+                                response = Response.status(Status.NOT_FOUND).entity(ae).build();                            
+                            } else {
+                                backEndUser.setPasswordHashBase64(StringUtil.getSHA512Base64(requestedClearPassword));
+                                backEndUser.setRequestedClearPassword(null);                                             
+
+                                backEndUser.setAccountExpirationInstant(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));
+
+                                User responseUser = userDao.persist(backEndUser); 
+
+                                String smtpHost = aParameterDao.getParameterAsString("SMTP_HOST");
+                                Integer smtpPort = aParameterDao.getParameterAsInteger("SMTP_PORT");
+                                Boolean sslEnabled = aParameterDao.getParameterAsBoolean("SSL_ENABLED");                                
+                                String smtpAuthUsername = aParameterDao.getParameterAsString("SMTP_AUTH_USERNAME");
+                                String smtpAuthPassword = aParameterDao.getParameterAsString("SMTP_AUTH_PASSWORD");
+                                String mailFromAddress = aParameterDao.getParameterAsString("MAIL_FROM_ADDRESS");
+                                String mailSubject = aParameterDao.getParameterAsString("MAIL_SUBJECT_CHANGE_PWD", httpRequest.getLocale());
+                                String mailBody = aParameterDao.getParameterAsString("MAIL_BODY_CHANGE_PWD", httpRequest.getLocale());
+
+                                MailUtil mu = new MailUtil(smtpHost, smtpPort, sslEnabled, smtpAuthUsername, smtpAuthPassword);
+                                mu.sendMail(mailFromAddress, backEndUser.getEmail(), mailSubject, mailBody);
+
+                                response = Response.status(Status.OK).entity(responseUser).build();   
+                            }
+                        }       
+                    }
+                }                
+            }  
+        } catch (IOException | URISyntaxException ex) {
+            ApplicationError ae = new ApplicationError(ex);
+            logger.error("Exception in reading JSON default parameters file. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(ex));
+            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();                       
+        } catch (MessagingException ex) {
+            ApplicationError ae = new ApplicationError(ex);
+            logger.error("Exception in sending mail message with private Key. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(ex));
+            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(ae).build();               
+        } catch (Exception eg) {
+            ApplicationError aeg = new ApplicationError(eg);
+            logger.error("Generic exception in changing user password. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
+            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
+        }
+        return response;
+    }            
+            
     @POST
     @Path("/create")
     @Produces(MediaType.APPLICATION_JSON)        
@@ -86,7 +167,7 @@ public class UserRestService {
                             logger.warn(ae);
                             response = Response.status(Status.NOT_FOUND).entity(ae).build();
                         } else {                                        
-                            String requestedClearPassword = user.getRequestedClearPassword();
+                            String requestedClearPassword = user.getRequestedClearPassword(); 
                             pwUtil = new PasswordUtil(requestedClearPassword, httpRequest.getLocale());
                             if (!pwUtil.isAValidPassword()) {
                                 ApplicationError ae = new ApplicationError(lmb.getString("user.requested_password_not_valid"));
@@ -110,12 +191,12 @@ public class UserRestService {
                                 String smtpAuthUsername = aParameterDao.getParameterAsString("SMTP_AUTH_USERNAME");
                                 String smtpAuthPassword = aParameterDao.getParameterAsString("SMTP_AUTH_PASSWORD");
                                 String mailFromAddress = aParameterDao.getParameterAsString("MAIL_FROM_ADDRESS");
-                                String mailSubject = aParameterDao.getParameterAsString("MAIL_SUBJECT", httpRequest.getLocale());
-                                String mailBody = aParameterDao.getParameterAsString("MAIL_BODY", httpRequest.getLocale());
+                                String mailSubject = aParameterDao.getParameterAsString("MAIL_SUBJECT_SEND_KEY", httpRequest.getLocale());
+                                String mailBody = aParameterDao.getParameterAsString("MAIL_BODY_SEND_KEY", httpRequest.getLocale());
                                 
                                 MailUtil mu = new MailUtil(smtpHost, smtpPort, sslEnabled, smtpAuthUsername, smtpAuthPassword);
                                 String privateKeyBase64 = StringUtil.getBase64EncodedUTF8String(cu.getPrivateKey().getEncoded());
-                                mu.sendMail(mailFromAddress, user.getEmail(), mailSubject, mailBody, privateKeyBase64);
+                                mu.sendMailWithAttachment(mailFromAddress, user.getEmail(), mailSubject, mailBody, privateKeyBase64);
 
                                 response = Response.status(Status.OK).entity(responseUser).build();   
                             }

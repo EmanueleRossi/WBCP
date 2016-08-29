@@ -45,8 +45,13 @@ public class UserDao {
         UserEjb userEjb = MapStruct.INSTANCE.userToUserEjb(user);
     	  userEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
     	  userEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));
-        em.persist(userEjb);
-
+        
+        if(userEjb.getId() != null) {
+            em.merge(userEjb);
+        } else {          
+            em.persist(userEjb);
+        }
+        
         User response = MapStruct.INSTANCE.userEjbToUser(userEjb);
         return response;
     }

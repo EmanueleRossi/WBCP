@@ -60,7 +60,12 @@ public class OrganizationDao {
         OrganizationEjb organizationEjb = MapStruct.INSTANCE.organizationToOrganizationEjb(organization);    
     	organizationEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
     	organizationEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));    	        
-        em.persist(organizationEjb);
+
+        if(organizationEjb.getId() != null) {
+            em.merge(organizationEjb);
+        } else {          
+            em.persist(organizationEjb);
+        }
                 
         Organization response = MapStruct.INSTANCE.organizationEjbToOrganization(organizationEjb);       
         return response;

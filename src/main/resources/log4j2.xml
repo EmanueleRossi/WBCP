@@ -5,7 +5,7 @@
     </Properties>
     <Appenders>
         <Console name="console-log" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %throwable{10} %l - %msg%n"/>
+            <EnhancedLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %throwable{10} %l - %msg%n"/>
         </Console>
         <RollingFile name="file-log" fileName="${log-path}/WBCP.log" filePattern="${log-path}/%d{yyyy-MM-dd}-WBCP-web.log">
             <PatternLayout>
@@ -14,33 +14,15 @@
             <Policies>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
-        </RollingFile>
-        <Gelf name="gelf" host="udp:devopssrv04.erossi.org" port="12201" version="1.1" extractStackTrace="true"
-              filterStackTrace="true" mdcProfiling="true" includeFullMdc="true" maximumMessageSize="8192"
-              originHost="%host{fqdn}">
-            <Field name="timestamp" pattern="%d{dd MMM yyyy HH:mm:ss,SSS}" />
-            <Field name="level" pattern="%level" />
-            <Field name="simpleClassName" pattern="%C{1}" />
-            <Field name="className" pattern="%C" />
-            <Field name="server" pattern="%host" />
-            <Field name="server.fqdn" pattern="%host{fqdn}" />
-            <!-- 
-            <Field name="fieldName2" literal="fieldValue2" />            
-            <Field name="mdcField2" mdc="mdcField2" /> 
-            <DynamicMdcFields regex="mdc.*" />
-            <DynamicMdcFields regex="(mdc|MDC)fields" />
-            -->
-        </Gelf>        
+        </RollingFile>     
     </Appenders>
     <Loggers>
         <Logger name="it.gpi" level="trace" additivity="false">
             <appender-ref ref="file-log" level="trace"/>
-            <appender-ref ref="console-log" level="trace"/>
-            <appender-ref ref="gelf" level="trace"/>            
+            <appender-ref ref="console-log" level="trace"/>         
         </Logger>
         <Root level="info" additivity="false">
             <AppenderRef ref="console-log"/>
-            <AppenderRef ref="gelf"/>
         </Root>
     </Loggers>
 </Configuration>

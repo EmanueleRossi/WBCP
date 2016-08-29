@@ -47,8 +47,12 @@ public class MailUtil {
         this.username = username;
         this.password = password;        
     }
+    
+    public void sendMail(String fromAddress, String toAddress, String subject, String text) throws MessagingException, IOException {
+        this.sendMailWithAttachment(fromAddress, toAddress, subject, text, null);
+    }     
         
-    public void sendMail(String fromAddress, String toAddress, String subject, String text, String attachmentFileString) throws MessagingException, IOException {
+    public void sendMailWithAttachment(String fromAddress, String toAddress, String subject, String text, String attachmentFileString) throws MessagingException, IOException {
         
         Properties props = new Properties();
 	props.put("mail.smtp.host", this.smtpHost);
@@ -77,12 +81,15 @@ public class MailUtil {
         BodyPart messageBodyPart = new MimeBodyPart();
         messageBodyPart.setContent(text, "text/html; charset=utf-8");
         Multipart multipart = new MimeMultipart();
-        multipart.addBodyPart(messageBodyPart);
-        messageBodyPart = new MimeBodyPart();                
-        DataSource source = new ByteArrayDataSource(attachmentFileString, "text/plain");
-        messageBodyPart.setDataHandler(new DataHandler(source));
-        messageBodyPart.setFileName("private.key");        
-        multipart.addBodyPart(messageBodyPart);
+        multipart.addBodyPart(messageBodyPart);        
+        if (!StringUtil.isNullOrEmpty(attachmentFileString)) {
+            messageBodyPart = new MimeBodyPart();                
+            DataSource source = new ByteArrayDataSource(attachmentFileString, "text/plain");
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName("private.key");        
+            multipart.addBodyPart(messageBodyPart);
+
+        }
         message.setContent(multipart);
         
         Transport.send(message);        

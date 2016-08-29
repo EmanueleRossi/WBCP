@@ -52,7 +52,12 @@ public class MessageDao {
         MessageEjb messageEjb = MapStruct.INSTANCE.messageToMessageEjb(message);    
         messageEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
     	messageEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));   
-        em.persist(messageEjb);
+
+        if(messageEjb.getId() != null) {
+            em.merge(messageEjb);
+        } else {          
+            em.persist(messageEjb);
+        }
 
         Message response = MapStruct.INSTANCE.messageEjbToMessage(messageEjb);
         return response;        

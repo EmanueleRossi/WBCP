@@ -53,7 +53,11 @@ public class ApplicationParameterDao {
     	anAppParameter.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
     	anAppParameter.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));    	    
     	
-        em.persist(anAppParameter);
+        if(anAppParameter.getId() != null) {
+            em.merge(anAppParameter);
+        } else {          
+            em.persist(anAppParameter);
+        }
     }     
     
     private ApplicationParameterEjb getByName(String parameterName, Locale locale) {

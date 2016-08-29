@@ -2,7 +2,7 @@
     {
         "name":"SMTP_HOST",
         "description":"FQDN name or IP Address of the SMTP Server.",
-        "parameterValue":"posta.gpi.it",
+        "parameterValue":"192.168.40.36",
         "localeTag":"en-US"
     },
     {
@@ -26,7 +26,7 @@
     {
         "name":"SMTP_AUTH_PASSWORD",
         "description":"SMTP SSL Authentication Password (clear text).",
-        "parameterValue":"",
+        "parameterValue":"whistleblowingtest!",
         "localeTag":"en-US"
     },      
     {
@@ -36,29 +36,53 @@
         "localeTag":"en-US"
     },   
     {
-        "name":"MAIL_SUBJECT",
-        "description":"Subject of the sent e-mail.",
+        "name":"MAIL_SUBJECT_SEND_KEY",
+        "description":"Subject of the sent e-mail with the Private Key, after user creation.",
         "parameterValue":"Your Whistleblowing Private Key",
         "localeTag":"en-US"
     },      
     {
-        "name":"MAIL_SUBJECT",
-        "description":"Subject of the sent e-mail.",
+        "name":"MAIL_SUBJECT_SEND_KEY",
+        "description":"Subject of the sent e-mail with the Private Key, after user creation.",
         "parameterValue":"La tua chiave privata per il Whistleblowing",
         "localeTag":"it-IT"
     },     
     {
-        "name":"MAIL_BODY",
-        "description":"Body of the sent e-mail.",
+        "name":"MAIL_BODY_SEND_KEY",
+        "description":"Body of the sent e-mail with the Private Key, after user creation.",
         "parameterValue":"<h1>Whistle Blowing Platform</h1>.<span>Attached You'll find your private key, needed to read messages sent to you. Save it on a safe place, do not share it, and use it only for WhistleBlowing platform!</span>",
         "localeTag":"en-US"
     },   
     {
-        "name":"MAIL_BODY",
-        "description":"Body of the sent e-mail.",
+        "name":"MAIL_BODY_SEND_KEY",
+        "description":"Body of the sent e-mail with the Private Key, after user creation.",
         "parameterValue":"<h1>Whistle Blowing Platform</h1>.<span>In allegato, troverai la tua chiave privata, necessaria per leggere i messaggi che ti vengono spediti. Memorizzala in un posto sicuro, non condividerla ed usala solo per la piattaforma di WhistleBlowing!</span>",
         "localeTag":"it-IT"
-    },       
+    },
+     {
+        "name":"MAIL_SUBJECT_CHANGE_PWD",
+        "description":"Subject of the sent e-mail after a successful password change.",
+        "parameterValue":"Your Whistleblowing Password Is Changed!",
+        "localeTag":"en-US"
+    },      
+    {
+        "name":"MAIL_SUBJECT_CHANGE_PWD",
+        "description":"Subject of the sent e-mail after a successful password change.",
+        "parameterValue":"La tua password per il Whistleblowing è stata cambiata.",
+        "localeTag":"it-IT"
+    },     
+    {
+        "name":"MAIL_BODY_CHANGE_PWD",
+        "description":"Body of the sent e-mail after a successful password change.",
+        "parameterValue":"<h1>Whistle Blowing Platform</h1>.<span>This e-mail confirms you a successful password change for the WhistleBlowing platform!</span>",
+        "localeTag":"en-US"
+    },   
+    {
+        "name":"MAIL_BODY_CHANGE_PWD",
+        "description":"Body of the sent e-mail after a successful password change.",
+        "parameterValue":"<h1>Whistle Blowing Platform</h1>.<span>Questa e-mail ti conferma l'avvenuto cambio della password di accesso alla piattaforma di WhistleBlowing!</span>",
+        "localeTag":"it-IT"
+    }, 
     {
         "name":"JWT_ISSUER",
         "description":"Jwt issuer, the name of application that issues Jwt tokens!",

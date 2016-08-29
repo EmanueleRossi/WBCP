@@ -37,15 +37,21 @@ public class StringUtil {
     private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         
     public static String stringifyStackTrace(Throwable e) {
-        StringWriter sw = new StringWriter();    
+        StringWriter sw = new StringWriter(); 
+        StringBuilder sb = new StringBuilder();        
         try {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            sw.close();
+            sw.close();            
+            String[] lines = sw.toString().split("\n");
+            for (int i = 0; i < Math.min(lines.length, 10); i++) {
+                sb.append(lines[i]).append("\n");
+            }
+            return sb.toString();            
         } catch (IOException ioe) {
             logger.error("stringifyException=|{}|", ioe.getMessage());
         }    
-        return sw.toString();
+        return sb.toString();
     }
   
     public static String getSHA512Base64(String s) {        
