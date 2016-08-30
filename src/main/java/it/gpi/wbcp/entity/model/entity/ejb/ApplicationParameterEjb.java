@@ -26,7 +26,7 @@ import javax.persistence.Table;
 @Entity
 @Cacheable(false)
 @Table(name="APP_PARAMETERS")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class ApplicationParameterEjb extends RootEjb {
 	
     private static final long serialVersionUID = 1L;

@@ -178,7 +178,7 @@ public class MessageRestService {
                 CryptoUtil cu = new CryptoUtil(user.getPublicKeyBase64(), requestUser.getPrivateKeyBase64());    
                 for (Message message : messages) {
                     byte[] aesKeyByteArray = cu.decrypt_RSA(StringUtil.decodeBase64(message.getAESKeyRSACryptedBase64()));                                       
-                    byte[] decodedMessagePayload = cu.decrypt_AES(StringUtil.decodeBase64(message.getPayload()), new SecretKeySpec(aesKeyByteArray, 0, aesKeyByteArray.length, "AES"));
+                    byte[] decodedMessagePayload = cu.decrypt_AES(StringUtil.decodeBase64(message.getPayload()), new SecretKeySpec(aesKeyByteArray, 0, aesKeyByteArray.length, "AES"));                    
                     message.setPayload(new String(decodedMessagePayload, StandardCharsets.UTF_8.name())); 
                 }                                              
                 response = Response.status(Status.OK).entity(messages).build();                

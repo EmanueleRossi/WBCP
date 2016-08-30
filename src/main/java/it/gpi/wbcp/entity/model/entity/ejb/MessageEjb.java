@@ -30,7 +30,7 @@ import javax.persistence.Transient;
 
 @Entity
 @Table(name="MESSAGES")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class MessageEjb extends RootEjb {
 
     private static final long serialVersionUID = 1L;    

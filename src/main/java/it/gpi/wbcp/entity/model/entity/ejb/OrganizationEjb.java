@@ -32,7 +32,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="ORGANIZATIONS")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class OrganizationEjb extends RootEjb {
 	
     private static final long serialVersionUID = 1L;

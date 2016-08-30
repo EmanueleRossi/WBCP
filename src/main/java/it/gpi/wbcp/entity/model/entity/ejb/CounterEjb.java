@@ -25,7 +25,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="COUNTERS")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class CounterEjb extends RootEjb {
 	    
     private static final long serialVersionUID = 1L;

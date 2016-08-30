@@ -19,18 +19,13 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
-@Entity
-@Table(name="BASE_ENTITIES")
-@Inheritance(strategy = InheritanceType.JOINED)
+@MappedSuperclass
 public class RootEjb implements Serializable {
 	
     private static final long serialVersionUID = 1L;
