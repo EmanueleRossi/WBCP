@@ -83,7 +83,9 @@ public class OrganizationRestServiceITest {
             Assert.assertNotNull(rootNode.path("id"));            
             Assert.assertNotNull(rootNode.path("name"));
             Assert.assertNotNull(rootNode.path("taxCode"));             
-            Assert.assertNotNull(rootNode.path("mailDomain"));                 
+            Assert.assertNotNull(rootNode.path("mailDomain"));      
+            Assert.assertNotNull(rootNode.path("newMessageTemplate"));   
+            Assert.assertNotNull(rootNode.path("uiStyle"));   
             response.close(); 
             
         } catch (IllegalArgumentException | NullPointerException | IOException | URISyntaxException e) {
@@ -138,6 +140,8 @@ public class OrganizationRestServiceITest {
             Assert.assertNotNull(rootNode.path("name"));
             Assert.assertNotNull(rootNode.path("taxCode"));             
             Assert.assertNotNull(rootNode.path("mailDomain"));
+            Assert.assertNotNull(rootNode.path("newMessageTemplate"));   
+            Assert.assertNotNull(rootNode.path("uiStyle"));               
             response.close(); 
             
         } catch (IllegalArgumentException | NullPointerException | IOException | URISyntaxException e) {
@@ -158,6 +162,10 @@ public class OrganizationRestServiceITest {
             JsonNode rootNodeName = responseNameObjectMapper.readTree(responseNameString); 
             Assert.assertNotNull(rootNodeName.get(0).path("id"));                                              
             Assert.assertNotNull(rootNodeName.get(0).path("name"));
+            Assert.assertNotNull(rootNodeName.get(0).path("taxCode"));                                              
+            Assert.assertNotNull(rootNodeName.get(0).path("mailDomain"));        
+            Assert.assertNotNull(rootNodeName.get(0).path("newMessageTemplate"));   
+            Assert.assertNotNull(rootNodeName.get(0).path("uiStyle"));             
             Assert.assertEquals("GPI S.p.A.", rootNodeName.get(0).path("name").getTextValue());
             responseName.close();
             
@@ -168,9 +176,13 @@ public class OrganizationRestServiceITest {
             System.out.printf("testOrganizationFullTextSearch(): |%s|%n", responseTaxCodeString);                
             Assert.assertEquals(responseTaxCode.getStatus(), Response.Status.OK.getStatusCode());                     
             ObjectMapper responseTaxCodeObjectMapper = new ObjectMapper();
-            JsonNode rootNodeTaxCode = responseTaxCodeObjectMapper.readTree(responseTaxCodeString);                        
+            JsonNode rootNodeTaxCode = responseTaxCodeObjectMapper.readTree(responseTaxCodeString);                            
             Assert.assertNotNull(rootNodeTaxCode.get(0).path("id"));                                              
-            Assert.assertNotNull(rootNodeTaxCode.get(0).path("vatCode"));
+            Assert.assertNotNull(rootNodeTaxCode.get(0).path("name"));
+            Assert.assertNotNull(rootNodeTaxCode.get(0).path("taxCode"));                                              
+            Assert.assertNotNull(rootNodeTaxCode.get(0).path("mailDomain"));        
+            Assert.assertNotNull(rootNodeTaxCode.get(0).path("newMessageTemplate"));   
+            Assert.assertNotNull(rootNodeTaxCode.get(0).path("uiStyle"));            
             Assert.assertEquals("01944260221", rootNodeTaxCode.get(0).path("taxCode").getTextValue());
             responseName.close();
             
@@ -182,8 +194,12 @@ public class OrganizationRestServiceITest {
             Assert.assertEquals(responseMailDomain.getStatus(), Response.Status.OK.getStatusCode());                  
             ObjectMapper responseMailDomainObjectMapper = new ObjectMapper();
             JsonNode rootNodeMailDomain = responseMailDomainObjectMapper.readTree(responseMailDomainString);                        
-            Assert.assertNotNull(rootNodeMailDomain.get(0).path("id"));                                              
-            Assert.assertNotNull(rootNodeMailDomain.get(0).path("vatCode"));
+            Assert.assertNotNull(rootNodeMailDomain.get(0).path("id"));       
+            Assert.assertNotNull(rootNodeMailDomain.get(0).path("name"));
+            Assert.assertNotNull(rootNodeMailDomain.get(0).path("taxCode"));                                              
+            Assert.assertNotNull(rootNodeMailDomain.get(0).path("mailDomain"));        
+            Assert.assertNotNull(rootNodeMailDomain.get(0).path("newMessageTemplate"));   
+            Assert.assertNotNull(rootNodeMailDomain.get(0).path("uiStyle"));           
             Assert.assertEquals("gpi.it", rootNodeMailDomain.get(0).path("mailDomain").getTextValue());
             responseName.close();            
             

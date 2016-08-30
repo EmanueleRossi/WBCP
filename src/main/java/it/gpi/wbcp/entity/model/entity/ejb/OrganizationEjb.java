@@ -49,6 +49,14 @@ public class OrganizationEjb extends RootEjb {
     @Column(name = "MAIL_DOMAIN", nullable = true, length = 255)
     private String mailDomain;    
     
+    @Basic(optional=false)
+    @Column(name = "NEW_MESSAGE_TEMPLATE", nullable = false, length = 65535)
+    private String newMessageTemplate;
+           
+    @Basic(optional=false)
+    @Column(name = "UI_STYLE", nullable = false, length = 65535)
+    private String uiStyle;    
+    
     @Basic(optional=true)
     @ManyToOne    
     @JoinColumn(name = "USER_IN_CHARGE_ID", referencedColumnName = "ID")
@@ -78,6 +86,12 @@ public class OrganizationEjb extends RootEjb {
     
     public String getMailDomain() { return mailDomain; }
     public void setMailDomain(String mailDomain) { this.mailDomain = mailDomain; }       
+    
+    public String getNewMessageTemplate() { return newMessageTemplate; }
+    public void setNewMessageTemplate(String newMessageTemplate) { this.newMessageTemplate = newMessageTemplate; }    
+    
+    public String getUiStyle() { return uiStyle; }
+    public void setUiStyle(String uiStyle) { this.uiStyle = uiStyle; }    
     
     public List<UserEjb> getUsers() { return users; }
     public void setUsers(List<UserEjb> users) { this.users = users; }

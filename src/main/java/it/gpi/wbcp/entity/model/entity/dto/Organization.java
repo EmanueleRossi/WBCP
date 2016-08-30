@@ -21,7 +21,9 @@ public class Organization extends RootDto {
     
     private String name;
     private String taxCode;
-    private String mailDomain;    
+    private String mailDomain;
+    private String newMessageTemplate;
+    private String uiStyle; 
     private User userInCharge;
     private List<User> users;
     private List<Counter> counters;
@@ -38,7 +40,13 @@ public class Organization extends RootDto {
     public void setTaxCode(String taxCode) { this.taxCode = taxCode; }       
     
     public String getMailDomain() { return mailDomain; }
-    public void setMailDomain(String mailDomain) { this.mailDomain = mailDomain; }       
+    public void setMailDomain(String mailDomain) { this.mailDomain = mailDomain; }  
+    
+    public String getNewMessageTemplate() { return newMessageTemplate; }
+    public void setNewMessageTemplate(String newMessageTemplate) { this.newMessageTemplate = newMessageTemplate; }    
+    
+    public String getUiStyle() { return uiStyle; }
+    public void setUiStyle(String uiStyle) { this.uiStyle = uiStyle; }      
     
     public List<User> getUsers() { return users; }
     public void setUsers(List<User> users) { this.users = users; }

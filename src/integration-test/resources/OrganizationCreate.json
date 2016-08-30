@@ -1,5 +1,7 @@
 {
     "name":"GPI S.p.A.",
     "taxCode":"01944260221",
-    "mailDomain":"gpi.it"
+    "mailDomain":"gpi.it",
+    "newMessageTemplate":"Template GPI",
+    "uiStyle":"Style GPI"
 }
