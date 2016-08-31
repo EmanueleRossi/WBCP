@@ -47,21 +47,21 @@ import org.apache.logging.log4j.Logger;
 @Path("/organization")
 @Stateless
 public class OrganizationRestService {
-		
-    private static final Logger logger = LogManager.getLogger();    
-    
+
+    private static final Logger logger = LogManager.getLogger();
+
     @EJB
-    OrganizationDao organizationDao;  
+    OrganizationDao organizationDao;
     @EJB
-    ApplicationParameterDao aParameterDao;      
-	
+    ApplicationParameterDao aParameterDao;
+
     @GET
     @Path("/fullTextSearch/{text}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response fullTextSearch(@Context HttpServletRequest httpRequest,
                                    @PathParam("text") String text) {
         Response response;
-        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());          
+        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
         try {
             List<Organization> organizations = organizationDao.fullTextSearch(text);
             if (organizations == null) {
@@ -69,61 +69,84 @@ public class OrganizationRestService {
                 logger.warn(ae);
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {
-                response = Response.status(Status.OK).entity(organizations).build();                
-            }        
+                response = Response.status(Status.OK).entity(organizations).build();
+            }
         } catch (Exception eg) {
             ApplicationError aeg = new ApplicationError(eg);
             logger.error("Generic exception executing organization full text search. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
-            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
-        }     
-        return response;        
+            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();
+        }
+        return response;
     }
-    
-    @POST
-    @Path("/create")    
-    @Produces(MediaType.APPLICATION_JSON)        
-    public Response create(@Context HttpServletRequest httpRequest,
-                           Organization organization) {       
+
+    @GET
+    @Path("/findAll")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findAll(@Context HttpServletRequest httpRequest) {
         Response response;
-        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());  
+        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
+        try {
+            List<Organization> organizations = organizationDao.findAll();
+            if (organizations == null) {
+                ApplicationError ae = new ApplicationError(lmb.getString("organization.not_found"));
+                logger.warn(ae);
+                response = Response.status(Status.NOT_FOUND).entity(ae).build();
+            } else {
+                response = Response.status(Status.OK).entity(organizations).build();
+            }
+        } catch (Exception eg) {
+            ApplicationError aeg = new ApplicationError(eg);
+            logger.error("Generic exception executing organization full text search. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
+            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();
+        }
+        return response;
+    }
+
+    @POST
+    @Path("/create")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response create(@Context HttpServletRequest httpRequest,
+                           Organization organization) {
+        Response response;
+        ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
         try {
             if (StringUtil.isNullOrEmpty(organization.getName())) {
                 ApplicationError ae = new ApplicationError(lmb.getString("organization.creation.no_name"));
                 logger.warn(ae);
                 response = Response.status(Status.NOT_FOUND).entity(ae).build();
             } else {
-                organizationDao.persist(organization); 
-                response = Response.status(Status.OK).entity(organization).build();   
-            }                        
+                organizationDao.persist(organization);
+                response = Response.status(Status.OK).entity(organization).build();
+            }
         } catch (Exception eg) {
-            ApplicationError aeg = new ApplicationError(eg);            
+            ApplicationError aeg = new ApplicationError(eg);
             logger.error("Generic exception in creating organization. STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
-            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
+            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();
         }
         return response;
-    }    
-        
+    }
+
     @GET
     @Path("/getNextCounterValue")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getNextCounterValue(@Context HttpServletRequest httpRequest,
                                Organization organization,
-                               Date requestDate,                               
+                               Date requestDate,
                                @Context User requestUser) {
         Response response;
         ResourceBundle lmb = ResourceBundle.getBundle("WBCP-web", httpRequest.getLocale());
-        try {      
+        try {
             Locale httpRequestLocale = httpRequest.getLocale();
             Calendar httpRequestCalendar = Calendar.getInstance(httpRequestLocale);
             httpRequestCalendar.setTime(requestDate);
             Integer year = httpRequestCalendar.get(Calendar.YEAR);
-            Counter newCode = organizationDao.getNextValue(organization, year);                     
-            response = Response.status(Status.OK).entity(newCode.getFormattedValue()).build();                                  
-        } catch (Exception eg) { 
-            ApplicationError aeg = new ApplicationError(eg);                        
+            Counter newCode = organizationDao.getNextValue(organization, year);
+            response = Response.status(Status.OK).entity(newCode.getFormattedValue()).build();
+        } catch (Exception eg) {
+            ApplicationError aeg = new ApplicationError(eg);
             logger.error("Generic exception executing getNextCounterValue(). STACKTRACE=|{}|", StringUtil.stringifyStackTrace(eg));
-            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();             
-        }     
-        return response;        
-    }        
+            response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(aeg).build();
+        }
+        return response;
+    }
 }

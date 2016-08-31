@@ -46,36 +46,36 @@ import org.apache.logging.log4j.Logger;
 
 @Stateless
 public class OrganizationDao {
-    
+
     private static final Logger logger = LogManager.getLogger();
-	
+
     @PersistenceContext(unitName="WBCP_PU")
-    private EntityManager em;  
-    
+    private EntityManager em;
+
     @EJB
-    ApplicationParameterDao aParameterDao; 
-	
+    ApplicationParameterDao aParameterDao;
+
     public Organization persist(Organization organization) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        
-        OrganizationEjb organizationEjb = MapStruct.INSTANCE.organizationToOrganizationEjb(organization);    
+
+        OrganizationEjb organizationEjb = MapStruct.INSTANCE.organizationToOrganizationEjb(organization);
     	organizationEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
-    	organizationEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));    	        
+    	organizationEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));
 
         if(organizationEjb.getId() != null) {
             em.merge(organizationEjb);
-        } else {          
+        } else {
             em.persist(organizationEjb);
         }
-                
-        Organization response = MapStruct.INSTANCE.organizationEjbToOrganization(organizationEjb);       
+
+        Organization response = MapStruct.INSTANCE.organizationEjbToOrganization(organizationEjb);
         return response;
-    }   
-    
+    }
+
     public List<Organization> fullTextSearch(String text) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-    	List<OrganizationEjb> responseEjb = new ArrayList<>();        
+    	List<OrganizationEjb> responseEjb = new ArrayList<>();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<OrganizationEjb> q = cb.createQuery(OrganizationEjb.class);    
+            CriteriaQuery<OrganizationEjb> q = cb.createQuery(OrganizationEjb.class);
             Root<OrganizationEjb> r = q.from(OrganizationEjb.class);
             q.select(r)
                 .where(
@@ -84,36 +84,53 @@ public class OrganizationDao {
                         cb.like(r.<String>get("taxCode"), StringUtil.createDbLikeString(text)),
                         cb.like(r.<String>get("mailDomain"), StringUtil.createDbLikeString(text))
                     )
-                );            
+                );
             TypedQuery<OrganizationEjb> tq = em.createQuery(q);
             responseEjb = tq.getResultList();
         } catch (NoResultException nre) {
-            logger.info("Not found Organization with criteria: |{}|", text);            
+            logger.info("Not found Organization with criteria: |{}|", text);
         }
-        
-        List<Organization> response = MapStruct.INSTANCE.organizationListEjbToOrganizationList(responseEjb);      
+
+        List<Organization> response = MapStruct.INSTANCE.organizationListEjbToOrganizationList(responseEjb);
         return response;
-    }    
-        
-    private CounterEjb persist(CounterEjb counterEjb) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException { 
+    }
+
+    public List<Organization> findAll() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    	List<OrganizationEjb> responseEjb = new ArrayList<>();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<OrganizationEjb> q = cb.createQuery(OrganizationEjb.class);
+            Root<OrganizationEjb> r = q.from(OrganizationEjb.class);
+            q.select(r);
+            TypedQuery<OrganizationEjb> tq = em.createQuery(q);
+            responseEjb = tq.getResultList();
+        } catch (NoResultException nre) {
+            logger.info("No organization found");
+        }
+
+        List<Organization> response = MapStruct.INSTANCE.organizationListEjbToOrganizationList(responseEjb);
+        return response;
+    }
+
+    private CounterEjb persist(CounterEjb counterEjb) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         counterEjb.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
-    	counterEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));   
+    	counterEjb.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));
         em.persist(counterEjb);
-        
-        return counterEjb;        
-    }     
-    
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)         
+
+        return counterEjb;
+    }
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public Counter getNextValue(Organization organization, Integer year) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, IOException, URISyntaxException {
         Counter response = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<OrganizationEjb> q = cb.createQuery(OrganizationEjb.class);    
+            CriteriaQuery<OrganizationEjb> q = cb.createQuery(OrganizationEjb.class);
             Root<OrganizationEjb> r = q.from(OrganizationEjb.class);
             q.select(r).where(cb.equal(r.<Long>get("id"), organization.getId()));
             TypedQuery<OrganizationEjb> tq = em.createQuery(q);
             OrganizationEjb organizationEjb = tq.getSingleResult();
-            
+
             CounterEjb counterEjb;
             Optional<CounterEjb> oCounterEjb = organizationEjb.getCounters().stream().filter(c -> Objects.equals(c.getYear(), year)).findFirst();
             if (!oCounterEjb.isPresent()) {
@@ -123,14 +140,14 @@ public class OrganizationDao {
                 newYear.setSeparator(aParameterDao.getParameterAsString("COUNTER_SEPARATOR"));
                 newYear.setValue(1);
                 newYear.setOrganization(organizationEjb);
-                counterEjb = this.persist(newYear);                
+                counterEjb = this.persist(newYear);
             } else {
                 counterEjb = oCounterEjb.get();
-            }            
-            response = MapStruct.INSTANCE.counterEjbToCounter(counterEjb);  
-            
+            }
+            response = MapStruct.INSTANCE.counterEjbToCounter(counterEjb);
+
         } catch (NoResultException nre) {
-            logger.info("Not found Organization for id: |{}|", organization.getId());        
+            logger.info("Not found Organization for id: |{}|", organization.getId());
         }
         return response;
     }
