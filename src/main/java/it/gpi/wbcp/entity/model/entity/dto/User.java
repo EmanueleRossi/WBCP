@@ -22,74 +22,77 @@ import java.util.Calendar;
 import java.util.List;
 
 public class User extends RootDto {
-       
+
     private String lastName;
     private String firstName;
     private String taxCode;
     private String email;
     private String requestedClearPassword;
-    private String passwordHashBase64;      
+    private String passwordHashBase64;
     @JsonIgnore
-    private String publicKeyBase64; 
+    private String publicKeyBase64;
     @JsonIgnore
-    private String privateKeyBase64;    
+    private String privateKeyBase64;
     private Calendar accountStartInstant;
-    private Calendar accountExpirationInstant;    
+    private Calendar accountExpirationInstant;
     @JsonIgnore
-    private List<MessageEjb> messages;       
+    private List<MessageEjb> messages;
     @JsonIgnore
     private List<OrganizationEjb> organizations;
-    
+
     public User() {
         messages = new ArrayList<>();
         organizations = new ArrayList<>();
     }
-    
+
     @JsonIgnore
     public String getSignature() {
         String signature = new StringBuilder()
                 .append(lastName)
                 .append(", ")
                 .append(firstName)
+                .append(" [")
+                .append(taxCode)
+                .append("]")
                 .append(" <")
                 .append(email)
                 .append(">").toString();
         return signature;
-    }	
-    
+    }
+
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
-    
+
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
-    
+
     public String getTaxCode() { return taxCode; }
-    public void setTaxCode(String taxCode) { this.taxCode = taxCode; }       
-	
+    public void setTaxCode(String taxCode) { this.taxCode = taxCode; }
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
     public String getRequestedClearPassword() { return requestedClearPassword; }
     public void setRequestedClearPassword(String requestedClearPassword) { this.requestedClearPassword = requestedClearPassword; }
-	
+
     public String getPasswordHashBase64() { return passwordHashBase64; }
     public void setPasswordHashBase64(String passwordHashBase64) { this.passwordHashBase64 = passwordHashBase64; }
-    
+
     public String getPublicKeyBase64() { return publicKeyBase64; }
     public void setPublicKeyBase64(String publicKeyBase64) { this.publicKeyBase64 = publicKeyBase64; }
 
     public String getPrivateKeyBase64() { return privateKeyBase64; }
     public void setPrivateKeyBase64(String privateKeyBase64) { this.privateKeyBase64 = privateKeyBase64; }
-	
+
     public Calendar getAccountStartInstant() { return accountStartInstant; }
     public void setAccountStartInstant(Calendar accountStartInstant) { this.accountStartInstant = accountStartInstant; }
-	
+
     public Calendar getAccountExpirationInstant() { return accountExpirationInstant; }
     public void setAccountExpirationInstant(Calendar accountExpirationInstant) { this.accountExpirationInstant = accountExpirationInstant; }
-    
+
     public List<MessageEjb> getMessages() { return messages; }
     public void setMessages(List<MessageEjb> messages) { this.messages = messages; }
-    
+
     public List<OrganizationEjb> getOrganizations() { return organizations; }
-    public void setOrganizations(List<OrganizationEjb> organizations) { this.organizations = organizations; }           
+    public void setOrganizations(List<OrganizationEjb> organizations) { this.organizations = organizations; }
 }
