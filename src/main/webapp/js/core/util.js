@@ -1,3 +1,17 @@
+/*
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 (function(){
 
 	var util = {
@@ -20,14 +34,20 @@
 			],
 
 			reasonOptions  : [
-				{ name : "E' penalmente rilevante" } ,
-				{ name : "Viola il Codice di comportamento o altre disposizioni sanzionabili in via disciplinare" } ,
-				{ name : "Arreca un danno patrimoniale all’ente o altra amministrazione" } ,
-				{ name : "Arreca un danno all’immagine dell’amministrazione" } ,
-				{ name : "Viola le norme ambientali e di sicurezza sul lavoro" } ,
-				{ name : "Costituisce un caso di malagestione delle risorse pubbliche (sprechi,mancato rispetto dei termini procedimentali, ecc.)" } ,
-				{ name : "Costituisce una misura discriminatoria nei confronti del dipendente pubblico che ha segnalato illecito" } ,
-				{ name : "Altro" } 
+				{ name : "E' penalmente rilevante", mtemplate: 'default' } ,
+				{ name : "Viola il Codice di comportamento o altre disposizioni sanzionabili in via disciplinare" , mtemplate: 'default' } ,
+				{ name : "Arreca un danno patrimoniale all’ente o altra amministrazione", mtemplate: 'default'  } ,
+				{ name : "Arreca un danno all’immagine dell’amministrazione", mtemplate: 'default' } ,
+				{ name : "Viola le norme ambientali e di sicurezza sul lavoro", mtemplate: 'default'  } ,
+				{ name : "Costituisce un caso di malagestione delle risorse pubbliche (sprechi,mancato rispetto dei termini procedimentali, ecc.)" , mtemplate: 'default' } ,
+				{ name : "Costituisce una misura discriminatoria nei confronti del dipendente pubblico che ha segnalato illecito", mtemplate: 'default' } ,
+				{ name : "Altro", mtemplate: 'default' },
+
+				{ name : "penalmente rilevanti" , mtemplate : 'simple' } ,
+				{ name : "poste in essere in violazione dei Codici di comportamento o altre disposizioni sanzionabili in via disciplinare" , mtemplate : 'simple' } ,
+				{ name : "suscettibili di arrecare un pregiudizio patrimoniale all’amministrazione di appartenenza o ad altro ente pubblico" , mtemplate: 'simple' } ,
+				{ name : "suscettibili di arrecare un pregiudizio alla immagine dell’amministrazione" , mtemplate : 'simple' } ,
+				{ name : "altro", mtemplate: 'simple' }
 			],
 
 			areaOptions: [
@@ -53,6 +73,11 @@
 				{ name : "Istruzione e Formazione" } ,
 				{ name : "Gestione Finanziaria" } ,
 				{ name : "Altro" }
+			],
+
+			placeTypeOptions : [
+				{ name : "UFFICIO", value : "Interno" } ,
+				{ name : "ALL’ESTERNO DELL’UFFICIO", value : "Esterno" }
 			]
 		}
 	};

@@ -1,4 +1,17 @@
+/*
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
 
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 app.controller('ReportListController', function ($scope, $rootScope, $window, $http) {
  	
 	$scope.user = null;
@@ -23,10 +36,10 @@ app.controller('ReportListController', function ($scope, $rootScope, $window, $h
 		if(currentUser == null)
       		return $window.location.href = "#/login";
 
-  	$scope.user = currentUser.user;
-  	userSession = currentUser.userSession;		
+		$scope.user = currentUser.user;
+		userSession = currentUser.userSession;
 
-  	loadData();
+		loadData();
 	};
 
 
@@ -44,37 +57,36 @@ app.controller('ReportListController', function ($scope, $rootScope, $window, $h
 			}
 
 			var sentUuids = [];
+			var hasSent = false;
+			var hasReseived = false;
+
 
 			// detect folder (sent or received)
-			if(reports)
-				for(var i = 0, len = reports.length; i< len; ++i)
-				{
+			if(reports){
+				for(var i = 0, len = reports.length; i< len; ++i) {
 					var report = reports[i];
 
-					if(report.recipient && report.recipient.email == $scope.user.email)
-					{
-						if(sentUuids.indexOf(report.uuid) != -1)
-						{
+					if (report.recipient && report.recipient.email == $scope.user.email) {
+						if (sentUuids.indexOf(report.uuid) != -1) {
 							report.folder = folders[0];
 						}
-						else
-						{
+						else {
 							report.folder = folders[1];
 							sentUuids.push(report.uuid);
 						}
 					}
-					else if(report.sender && report.sender.email == $scope.user.email)
-					{
+					else if (report.sender && report.sender.email == $scope.user.email) {
 						report.folder = folders[0];
 					}
 
 					report.comments = app.data.getComments(report.uuid);
-			 		report.status = app.data.getStatuses(report.uuid)[0];
+					report.status = app.data.getStatuses(report.uuid)[0];
 				}
 
-			var hasSent = (reports.find(function(r){return r.folder=='sent'}) != null);
-			var hasReseived = (reports.find(function(r){return r.folder=='received'}) != null);
-			
+				hasSent = (reports.find(function(r){return r.folder=='sent'}) != null);
+				hasReseived = (reports.find(function(r){return r.folder=='received'}) != null);
+			}
+
 			$scope.tabs['sent']['enabled'] = hasSent;
 			$scope.tabs['received']['enabled'] = hasReseived;
 
@@ -83,7 +95,6 @@ app.controller('ReportListController', function ($scope, $rootScope, $window, $h
 				$scope.tabs['sent']['active'] = false;
 				$scope.tabs['received']['active'] = hasReseived;
 			}
-
 
 			$scope.reports = reports;
 		});
@@ -95,12 +106,8 @@ app.controller('ReportListController', function ($scope, $rootScope, $window, $h
 			$window.location.href = "#/report/" + index;
 	};
 
-	$scope.add = function(){
+	$scope.add = function() {
 		$window.location.href = "#/report/";
 	};
-
-	
-
-
 
 });

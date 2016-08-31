@@ -1,6 +1,6 @@
 
-var Report = function (uuid) {
- 	this.mversion = 0.1;
+var Report = function (uuid, mtemplate) {
+ 	this.mtemplate = mtemplate || 'default';
  	this.contentType = "REPORT";
  	this.uuid = uuid;
  	

@@ -1,99 +1,81 @@
+/*
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+app.controller('ReportRecipientDialogController', function ($scope, $modalInstance, $http, $location) {
+
+    $scope.selectedOrganization = null;
+
+    $scope.organizations = null;
+
+    $scope.recipient = null;
+
+    $scope.selected =  {
+        recipient : null
+    };
+
+    $scope.onSelected = function () {
+        $scope.selected.recipient = null;
+    };
+
+    $scope.orgInputFormatter = function(item)
+      {
+        if(item != null)
+            return item.name;
+      };
+
+    function init() {
+
+        var host = $location.host().replace("www.", "");
+        //host = "wb-pubbliservizi.gpi.it";
+
+        var req = {
+            method: 'GET',
+            url: app.net.host + '/organization/findAll',
+            headers: {
+                'AuthorizationToken': app.auth.getAuthToken()
+            }
+        };
+
+        return $http(req).then(function(response){
+
+            console.log("findAllOrganization:" , response.data);
+
+            if(response.data != null) {
+
+                $scope.organizations = response.data.filter(function(org){
+                    if(host != 'localhost') {
+                        return org.uiStyle == host;
+                    }
+                    return true;
+                });
+
+                if($scope.organizations.length == 1) {
+                    $scope.selectedOrganization = $scope.organizations[0];
+                };
+            }
+        });
+    };
+
+    init();
 
 
-app.controller('ReportRecipientDialogController', function ($scope, $modalInstance, $http, items) {
+    $scope.ok = function () {
+        $modalInstance.close( {recipient: $scope.selected.recipient, organization: $scope.selectedOrganization});
+    };
 
-  $scope.organization = null;
-
-  $scope.organizations = null;
-
-  $scope.recipients = [];
-
-  //$scope.recipients =  [{ firstName: "Emanuele" , lastName: "Rossi", email: "emanuele.rossi@gpi.it" }];
-  
-  $scope.selected = {
-  	item: null
-  };
-
-
-  $scope.orgInputFormatter = function(item)
-  {
-  	if(item != null)
-  		return item.name;
-  };
-
-  $scope.serachUserByOrganization = function(item, model, label) {
-
-	 console.log("serachUserByOrganization()", item);
-
-	 $scope.recipients = [];
-   $scope.selectedOrganization = null;
-
-  	$scope.organizations.forEach(function(org){
-
-  		if(org.name == item.name)
-  		{
-        $scope.selectedOrganization = org;
-        $scope.recipients = org.users;	
-
-        return;
-  		}
-  	});
-
-	
-  };
-
- 
-  $scope.searchOrganization = function(val) {
-
- // 	return [ {id: 3, name: "Gpi.SPA"}];
-
-    if(app.DEBUG)
-    {
-        $scope.organizations =   [{ 
-            id: "GPI S.p.a",
-            name: "GPI S.p.a",
-            users : [{
-              firstName: "Emanuele",
-              lastName: "Rossi",
-              email : "emanuele.rossi@gpi.it"
-            }]
-          }]
-       return $scope.organizations;
-    }
-
-  var req = {
-      method: 'GET',
-      url: app.net.host + '/organization/fullTextSearch/' + val,
-      headers: { 
-        'AuthorizationToken': app.auth.getAuthToken()
-        }
-    }
-
-    return $http(req).then(function(response){
-
-        console.log("response: ", response.headers());
-    		console.log("searchOrganization:" , response.data);
-
-    		$scope.organizations = response.data;
-
-    		if(response.data.length == 0)
-    			return null;
-
-    		return response.data.map(function(item){
-  				return { 
-  					id: item.id,
-  					name: item.name 
-  				};
-			});
-    });
-  };
-
-  $scope.ok = function () {
-    $modalInstance.close( {recipient: $scope.selected.item, organization: $scope.selectedOrganization});
-  };
-
-  $scope.cancel = function () {
-    $modalInstance.dismiss('cancel');
-  };
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
   
 });

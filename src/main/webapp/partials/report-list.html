@@ -13,87 +13,72 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <div class="container" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="container-header">
-	<h2 class="title-application">WhistleBlowing</h2>
-	<p class="autenticazione">Utente: <span>{{ user.firstName }} {{ user.lastName }} </span> 
-    <span ng-click="logout()" class="logout text-primary">(disconnetti)</span></p>
-	<div class="clear"></div> 
- </div>
+    <div class="container-header">
+        <h2 class="title-application">WhistleBlowing</h2>
+        <p class="autenticazione">Utente: <span>{{ user.firstName }} {{ user.lastName }} </span>
+        <span ng-click="logout()" class="logout text-primary">(disconnetti)</span></p>
+        <div class="clear"></div>
+    </div>
 
-  <button class="btn btn-primary pull-right"  ng-show="reports != null" ng-click="add()">Nuova segnalazione</button>
+    <button class="btn btn-primary pull-right" data-ng-show="reports != null" ng-click="add()">Nuova segnalazione</button>
 
-  <div class="container-body">
+    <div class="container-body">
     
- <tabset>
-    <tab heading="Segnalazioni inviate" active="tabs['sent'].active" ng-show="tabs['sent'].enabled" />
-    <tab heading="Segnalazioni ricevute" active="tabs['received'].active" ng-show="tabs['received'].enabled" />
- </tabset>
-		
-  <div class="tab-content">
-    
-   
-    <div class="elenco-messaggi">
+        <tabset>
+        <tab heading="Segnalazioni inviate" active="tabs['sent'].active" ng-show="tabs['sent'].enabled" />
+        <tab heading="Segnalazioni ricevute" active="tabs['received'].active" ng-show="tabs['received'].enabled" />
+    </tabset>
 
-<!--
-      <div ng-show="err" class="panel panel-danger">
-        <div class="panel-body">
-          <h4>{{ err.message }}</h4>
-          <p>{{ err.details}}</p>
-          <p>{{ err.cause.stackTrace}}</p>
-        </div>
-      </div>
-    -->
+        <div class="tab-content">
 
-        <div ng-show="reports == null" class="alert alert-info">Recupero segnalazioni in corso...</div>
-      <div ng-show="reports != null && reports.length == 0">Nessuna segnalazione trovata</div>
+            <div class="elenco-messaggi">
 
-        <div ng-show="reports.length" class="tab-pane" ng-class="tabs['sent'].active ? 'active' : ''">
-      		<table class="table table-hover elenco">
-            <thead>
-              <th>Data</th><th>Organizzazione</th><th>Segnalazione</th><th>Discussioni</th><th style="width:200px">Stato</th>
-            </thead>
-              <tbody>
-                 <tr ng-class="report.status ? '': 'unread'" ng-repeat="report in reports | filter:{ folder : 'sent' }" ng-click="viewDetail(report.uuid)">
-                      <td class="date">{{report.createDate | date : 'dd-MMM-yyyy'}}</td>
-                      <td>{{report.recipientOrganization.name}}</td>
-                      <td>{{report.description | cut: true : 100}}</td>
-                      <td>{{report.comments | commentsCount }}</td>
-                      <td class="stato">
-                        {{ report.status | reportStatusValue}}
-                        <!--  &nbsp;&nbsp;&nbsp;
-                        <img src="{{ report.status | reportStatusIcon}}"/>
-                        -->
-                      </td>
-                 </tr>
-              </tbody>
-            </table>
-              <div class="clear"></div> 
+                <div ng-show="reports == null" class="alert alert-info">Recupero segnalazioni in corso...</div>
+                <div ng-show="reports != null && reports.length == 0">Nessuna segnalazione trovata</div>
+
+                <div ng-show="reports.length" class="tab-pane" ng-class="tabs['sent'].active ? 'active' : ''">
+                    <table class="table table-hover elenco">
+                        <thead>
+                        <th>Data</th><th>Organizzazione</th><th>Segnalazione</th><th>Discussioni</th><th style="width:200px">Stato</th>
+                        </thead>
+                        <tbody>
+                        <tr ng-class="report.status ? '': 'unread'" ng-repeat="report in reports | filter:{ folder : 'sent' }" ng-click="viewDetail(report.uuid)">
+                            <td class="date">{{report.createDate | date : 'dd-MMM-yyyy'}}</td>
+                            <td>{{report.recipientOrganization.name}}</td>
+                            <td>{{report.description | cut: true : 100}}</td>
+                            <td>{{report.comments | commentsCount }}</td>
+                            <td class="stato">{{ report.status | reportStatusValue}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="clear"></div>
+                </div>
+
+                <div data-ng-show="reports.length" class="tab-pane" data-ng-class="tabs['received'].active ? 'active' : ''">
+                    <table class="table table-hover elenco">
+                        <thead>
+                        <th>Data</th><th>Segnalazione</th><th>Discussioni</th><th style="width:200px">Stato</th>
+                        </thead>
+                        <tbody>
+                        <tr ng-class="report.status ? '': 'unread'" ng-click="viewDetail(report.uuid)"
+                            ng-repeat="report in reports | filter:{ folder : 'received' }" >
+                            <td class="date">{{report.createDate | date : 'shortDate'}}</td>
+                            <!-- <td>{{report.sender.firstName}} {{report.sender.lastName}}</td> -->
+                            <!-- <td>{{report.sender.fiscalcode}}</td> -->
+                            <td>{{report.description | cut: true : 100}}</td>
+                            <td>{{report.comments | commentsCount }}</td>
+                            <td class="stato">
+                                {{ report.status | reportStatusValue}}
+                                <!--  &nbsp;&nbsp;&nbsp;
+                               <img src="{{ report.status | reportStatusIcon}}"/>
+                                  -->
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="clear"></div>
+                </div>
+            </div>
         </div>
-        <div ng-show="reports.length" class="tab-pane" ng-class="tabs['received'].active ? 'active' : ''">
-          <table class="table table-hover elenco">
-            <thead>
-              <th>Data</th><th>Segnalazione</th><th>Discussioni</th><th style="width:200px">Stato</th>
-            </thead>
-            <tbody>
-               <tr ng-class="report.status ? '': 'unread'" ng-click="viewDetail(report.uuid)"
-                ng-repeat="report in reports | filter:{ folder : 'received' }" >
-                    <td class="date">{{report.createDate | date : 'shortDate'}}</td>
-                   <!-- <td>{{report.sender.firstName}} {{report.sender.lastName}}</td> -->
-                   <!-- <td>{{report.sender.fiscalcode}}</td> -->
-                    <td>{{report.description | cut: true : 100}}</td>
-                    <td>{{report.comments | commentsCount }}</td>
-                    <td class="stato">
-                      {{ report.status | reportStatusValue}}
-                      <!--  &nbsp;&nbsp;&nbsp;
-                     <img src="{{ report.status | reportStatusIcon}}"/>
-                        -->
-                    </td>
-               </tr>
-            </tbody>
-          </table>
-          <div class="clear"></div> 
-        </div>
-      </div>             
-    </div>       
-  </div>
+    </div>
 </div>

@@ -1,0 +1,257 @@
+<!--
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+
+
+<tabset>
+    <tab heading="Informazioni" active="tabs['base'].active" />
+    <!--   <tab heading="Allegati" active="tabs['advance'].active" /> -->
+</tabset>
+
+<div class="container-body">
+    <form novalidate name="form" data-ng-submit="doSend(form)">
+        <div class="tab-pane" ng-class="tabs['base'].active ? 'active' : ''">
+            <br/>
+            <a class="btn-link pull-right btn-back-to-list" href="#/report-list">torna alla lista</a>
+            <div class="clear"></div>
+            <div class="form col-md-12 center-block">
+                <fieldset>
+
+                    <!-- Qualifica o posizione professionale:  report.currentPosition -->
+                    <div class="form-group row has-feedback"
+                         ng-class="(form.$submitted || form.currentPosition.$touched) ? (form.currentPosition.$valid ? 'has-success' : 'has-error') : ''">
+                        <label class="col-sm-3 control-label">Qualifica o posizione professionale*:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="currentPosition" ng-model="report.currentPosition" required />
+                            <div ng-show="form.$submitted || form.currentPosition.$touched" >
+                                <span class="small text-danger" ng-show="form.currentPosition.$error.required">Campo obbligatorio</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sede di servizio*:   report.currentOrganization-->
+                    <div class="form-group row has-feedback"
+                         ng-class="(form.$submitted || form.currentOrganization.$touched) ? (form.currentOrganization.$valid ? 'has-success' : 'has-error') : ''">
+                        <label class="col-sm-3 control-label">Sede di servizio*:</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="currentOrganization" ng-model="report.currentOrganization" required/>
+                            <div ng-show="form.$submitted || form.currentOrganization.$touched" >
+                                <span class="small text-danger" ng-show="form.currentOrganization.$error.required">Campo obbligatorio</span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+
+                <fieldset>
+                   <!--Data in cui si è verificato il fatto: report.date -->
+                    <div class="form-group row has-feedback"
+                        ng-class="(form.$submitted || form.date.$touched) ? (form.date.$valid ? 'has-success' : 'has-error') : ''">
+                    <label class="col-sm-3 control-label">Data in cui si è verificato il fatto*:</label>
+                        <div class="col-sm-9">
+                            <p class="input-group">
+                                <input type="text" class="form-control" name="date" datepicker-popup="dd-MM-yyyy" ng-model="report.date" is-open="datePickerStatus['date'].opened" datepicker-options="dateOptions"  close-text="Close" />
+			          <span class="input-group-btn">
+			            <button type="button" class="btn btn-default" ng-click="openDatePicker('date', $event)">
+			             	<i class="glyphicon glyphicon-calendar"></i>
+			            </button>
+			           </span>
+                            </p>
+                            <div ng-show="form.$submitted || form.date.$touched" >
+                                <span class="small text-danger" ng-show="form.date.$invalid">Formato data non valido</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Luogo fisico in cui si è verificato il fatto report.place -->
+                    <div class="form-group row  has-feedback"
+                         ng-class="(form.$submitted || form.placeType.$touched) ? (form.placeType.$valid ? 'has-success' : 'has-error') : ''">
+                        <label class="col-sm-3 control-label">Luogo fisico in cui si è verificato il fatto:</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" ng-model="report.placeType"  name="placeType"
+                                    ng-options="option.value as option.name for option in placeTypeOptions" has-selection>
+                                <option value="">-- seleziona motivo --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" ng-show="report.placeType == 'Interno'">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <input type="text" class="form-control" placeholder="indicare denominazione e indirizzo della struttura" ng-model="report.place">
+                        </div>
+                    </div>
+
+                    <div class="form-group row" ng-show="report.placeType == 'Esterno'">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <input type="text" class="form-control" placeholder="indicare luogo e indirizzo" ng-model="report.place">
+                        </div>
+                    </div>
+
+
+                    <!-- La condotta è illecita perchè: report.reason -->
+                    <div class="form-group row has-feedback"
+                         ng-class="(form.$submitted || form.reason.$touched) ? (form.reason.$valid ? 'has-success' : 'has-error') : ''">
+                        <label class="col-sm-3 control-label">Ritengo che le azioni od omissioni commesse o tentate siano*:</label>
+                        <div class="col-sm-9">
+                            <select class="form-control" ng-model="report.reason"  name="reason"
+                                    ng-options="option.name as option.name for option in reasonOptions |  filter : { mtemplate : report.mtemplate }" has-selection>
+                                <option value="">-- seleziona motivo --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row" ng-show="report.reason == 'altro'">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <input type="text" class="form-control" placeholder="specificare" ng-model="report.otherReason">
+                        </div>
+                    </div>
+
+                    <!-- Descrizione del fatto*: report.description-->
+                    <div class="form-group has-feedback"
+                         ng-class="(form.$submitted || form.description.$touched) ? (form.description.$valid ? 'has-success' : 'has-error') : ''">
+
+                        <label class="control-label">Descrizione del fatto*:</label>
+                        <textarea rows="8" class="form-control" name="description" ng-model="report.description" required></textarea>
+
+                        <div ng-show="form.$submitted || form.description.$touched">
+                            <span class="small text-danger" ng-show="form.description.$error.required">Prego, fornire una descrizione del fatto</span>
+                        </div>
+                    </div>
+
+                    <!--	Soggetto che ha commesso il fatto: Nome, Cognome, Qualifica (possono essere inseriti più nomi) report.authors -->
+                    <div class="form-group row">
+                        <label class="col-sm-3 control-label">Autore che ha commesso il fatto: (possono essere inseriti più nomi)</label>
+                        <div class="col-sm-9 element-list-container">
+
+                            <div ng-repeat="author in report.authors">
+
+                                <div class="pull-right">
+                                    <a class="btn btn-default delete" ng-click="deleteAuthor($index)">x</a>
+                                    <a class="btn btn-default add" ng-show="$last" ng-click="addAuthor()">+</a>
+                                </div>
+
+                                <div class="form-group element-list-item" ng-class="$last ? 'last' : ''">
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            <input type="text" class="form-control segnalazioni" placeholder="nome" ng-model="author.firstname"/>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <input type="text" class="form-control segnalazioni" placeholder="cognome" ng-model="author.lastname"/>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control segnalazioni" placeholder="qualifica" ng-model="author.role"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 		Eventuali altri soggetti che possono riferire sul fatto report.deponents	-->
+                    <div class="form-group row">
+                        <label class="col-sm-3 control-label">Altri eventuali soggetti a conoscenza del fatto e/o in grado di riferire sul medesimo:</label>
+                        <div class="col-sm-9 element-list-container">
+                            <div ng-repeat="deponent in report.deponents">
+
+                                <div class="pull-right">
+                                    <a class="btn btn-default delete" ng-click="deleteDeponent($index)">x</a>
+                                    <a class="btn btn-default add" ng-show="$last" ng-click="addDeponent()">+</a>
+                                </div>
+
+                                <div class="form-group element-list-item" ng-class="$last ? 'last' : ''">
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            <input type="text" class="form-control segnalazioni" placeholder="nome" ng-model="deponent.firstname"/>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <input type="text" class="form-control segnalazioni" placeholder="cognome" ng-model="deponent.lastname"/>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <input type="text" class="form-control segnalazioni" placeholder="qualifica" ng-model="deponent.role"/>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <input type="text" class="form-control segnalazioni" placeholder="recapiti" ng-model="deponent.contacts"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+
+                <fieldset>
+
+                    <!-- Allegati -->
+                    <div class="form-group row">
+                        <label class="col-sm-3 control-label">Eventuali allegati a sostegno della segnalazione:</label>
+                        <div class="col-sm-9">
+
+                            <div data-ng-repeat="attachment in report.attachments" class="clearfix">
+                                <attachment data-attachment="attachment"
+                                    data-remove="removeAttachment(attach)"></attachment>
+
+                            </div>
+
+                            <button class="btn btn-sm btn-link" data-ng-click="addAttachment()">Aggiungi altro allegato</button>
+                        </div>
+                    </div>
+
+                </fieldset>
+
+
+            </div>
+            <div class="clear"></div>
+
+            <br/><br/>
+        </div>
+        <div class="tab-pane" ng-class="tabs['advance'].active ? 'active' : ''">
+            <br/>
+            <div class="form col-md-12 center-block">
+                <fieldset>
+
+
+                </fieldset>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="form-group" ng-class="validation.disclaimer.error">
+            <div class="col-sm-12">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="disclaimer" ng-model="disclaimer" required> Il segnalante è consapevole delle responsabilità e delle conseguenze civili e penali previste in caso di dichiarazioni mendaci e/o formazione o uso di atti falsi, anche ai sensi e per gli effetti dell'art. 76 del d.P.R. 445/2000
+                    </label>
+                </div>
+
+                <div ng-show="form.$submitted">
+                    <span class="small text-danger" ng-show="form.disclaimer.$error.required" >Devi accettare le condizioni per proseguire</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-12 text-right">
+                <button type="submit" class="btn btn-primary">Invia Segnalazione</button>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+
+
+
+
+
