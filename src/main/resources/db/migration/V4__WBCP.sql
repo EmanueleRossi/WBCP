@@ -14,7 +14,7 @@
  */
 
 ALTER TABLE organizations 
-  ADD COLUMN new_message_template character varying(65535) NOT NULL,
-  ADD COLUMN ui_style character varying(65535) NOT NULL
+  ADD COLUMN new_message_template character varying(65535),
+  ADD COLUMN ui_style character varying(65535)
 ;
  
