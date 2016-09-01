@@ -37,7 +37,6 @@ app.controller('ReportRecipientDialogController', function ($scope, $modalInstan
     function init() {
 
         var host = $location.host().replace("www.", "");
-        //host = "wb-pubbliservizi.gpi.it";
 
         var req = {
             method: 'GET',
@@ -48,8 +47,6 @@ app.controller('ReportRecipientDialogController', function ($scope, $modalInstan
         };
 
         return $http(req).then(function(response){
-
-            console.log("findAllOrganization:" , response.data);
 
             if(response.data != null) {
 
