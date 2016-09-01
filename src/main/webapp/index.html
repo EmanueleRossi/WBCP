@@ -22,8 +22,9 @@
   <link rel="stylesheet" href="css/bootstrap/bootstrap.css">
   <link rel="stylesheet" href="css/bootstrap/bootstrap-datetimepicker.min.css">
   <link rel="stylesheet" href="css/loading-bar/loading-bar.min.css">
- 
+
   <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" ng-href="css/{{uiStyle}}.css">
 
   <script src="js/jquery/jquery-1.11.2.min.js"></script>
   <!-- <script src="js/moment/moment-with-locales.min.js"></script> -->
@@ -69,6 +70,6 @@
 
 </head>
 <body ng-cloak>
-    <div ng-view></div> 
+    <div ng-view data-ng-class="cssStyle"></div>
 </body>
 </html>

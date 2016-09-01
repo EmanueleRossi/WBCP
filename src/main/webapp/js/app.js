@@ -299,7 +299,7 @@ app.factory('APIInterceptor', function ($rootScope, $q) {
     };
 });
 
-app.run(function ($rootScope, $window) {
+app.run(function ($rootScope, $window, $location) {
 
     $rootScope.$on('event.unauthorized', function() {
         $window.location.href = "#/login";
@@ -314,13 +314,17 @@ app.run(function ($rootScope, $window) {
             $window.location.href = "#/login";
 		}
 	});
-
-
+    
     $rootScope.logout = function() {
         app.data.cleanData();
         app.auth.cleanCurrentUser();
         $window.location.href = "#/home";
     };
+
+    var host = $location.host().replace("www.","");
+
+    $rootScope.uiStyle = host;
+    $rootScope.cssStyle = host.replace(/\./g,' ');
 
 });
 
