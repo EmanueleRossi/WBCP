@@ -84,6 +84,30 @@
         "localeTag":"it-IT"
     }, 
     {
+        "name":"MAIL_SUBJECT_NEW_MSG",
+        "description":"Subject of the sent e-mail after a successful password change.",
+        "parameterValue":"You have a new message!",
+        "localeTag":"en-US"
+    },      
+    {
+        "name":"MAIL_SUBJECT_NEW_MSG",
+        "description":"Subject of the sent e-mail after a successful password change.",
+        "parameterValue":"Un nuovo messaggio per te...",
+        "localeTag":"it-IT"
+    },     
+    {
+        "name":"MAIL_BODY_NEW_MSG",
+        "description":"Body of the sent e-mail after a successful password change.",
+        "parameterValue":"<h1>Whistle Blowing Platform</h1>.<span>There is a new message for you on the Whistleblowing Platform!</span>",
+        "localeTag":"en-US"
+    },   
+    {
+        "name":"MAIL_BODY_NEW_MSG",
+        "description":"Body of the sent e-mail after a successful password change.",
+        "parameterValue":"<h1>Whistle Blowing Platform</h1>.<span>C'é un nuovo messaggio sulla piattaforma di WhistleBlowing!</span>",
+        "localeTag":"it-IT"
+    },
+    {
         "name":"JWT_ISSUER",
         "description":"Jwt issuer, the name of application that issues Jwt tokens!",
         "parameterValue":"WBCP",

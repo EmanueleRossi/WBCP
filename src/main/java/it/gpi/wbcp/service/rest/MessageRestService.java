@@ -21,6 +21,7 @@ import it.gpi.wbcp.entity.model.entity.dto.Message;
 import it.gpi.wbcp.entity.model.entity.dto.User;
 import it.gpi.wbcp.entity.model.entity.dto.ApplicationError;
 import it.gpi.wbcp.util.CryptoUtil;
+import it.gpi.wbcp.util.MailUtil;
 import it.gpi.wbcp.util.StringUtil;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -134,6 +135,18 @@ public class MessageRestService {
                                     recipientMessage.setAESKeyRSACryptedBase64(StringUtil.getBase64EncodedUTF8String(cryptedRecipientAESMessageKey));
                                     messageDao.persist(recipientMessage);
                                     
+                                    String smtpHost = aParameterDao.getParameterAsString("SMTP_HOST");
+                                    Integer smtpPort = aParameterDao.getParameterAsInteger("SMTP_PORT");
+                                    Boolean sslEnabled = aParameterDao.getParameterAsBoolean("SSL_ENABLED");                                
+                                    String smtpAuthUsername = aParameterDao.getParameterAsString("SMTP_AUTH_USERNAME");
+                                    String smtpAuthPassword = aParameterDao.getParameterAsString("SMTP_AUTH_PASSWORD");
+                                    String mailFromAddress = aParameterDao.getParameterAsString("MAIL_FROM_ADDRESS");
+                                    String mailSubject = aParameterDao.getParameterAsString("MAIL_SUBJECT_NEW_MSG", httpRequest.getLocale());
+                                    String mailBody = aParameterDao.getParameterAsString("MAIL_BODY_CHANGE_NEW_MSG", httpRequest.getLocale());
+
+                                    MailUtil mu = new MailUtil(smtpHost, smtpPort, sslEnabled, smtpAuthUsername, smtpAuthPassword);
+                                    mu.sendMail(mailFromAddress, recipient.getEmail(), mailSubject, mailBody);
+                                   
                                     response = Response.status(Status.OK).entity(message).build();
                                 }
                             }                            

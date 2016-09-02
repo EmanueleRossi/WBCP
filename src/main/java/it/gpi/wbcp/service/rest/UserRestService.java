@@ -78,9 +78,7 @@ public class UserRestService {
                     ApplicationError ae = new ApplicationError(String.format(lmb.getString("user.email_not_exists"), user.getEmail()));
                     logger.warn(ae);
                     response = Response.status(Status.NOT_FOUND).entity(ae).build();                    
-                } else {
-                    System.out.println("TEST" + requestUser.getEmail());
-                    System.out.println("TEST" + backEndUser.getEmail());                    
+                } else {              
                     if (!requestUser.getEmail().equalsIgnoreCase(backEndUser.getEmail())) {
                         ApplicationError ae = new ApplicationError(lmb.getString("user.changepwd_not_allowed_for_different_user"));
                         logger.warn(ae);
