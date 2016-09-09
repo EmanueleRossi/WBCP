@@ -142,7 +142,7 @@ public class MessageRestService {
                                     String smtpAuthPassword = aParameterDao.getParameterAsString("SMTP_AUTH_PASSWORD");
                                     String mailFromAddress = aParameterDao.getParameterAsString("MAIL_FROM_ADDRESS");
                                     String mailSubject = aParameterDao.getParameterAsString("MAIL_SUBJECT_NEW_MSG", httpRequest.getLocale());
-                                    String mailBody = aParameterDao.getParameterAsString("MAIL_BODY_CHANGE_NEW_MSG", httpRequest.getLocale());
+                                    String mailBody = aParameterDao.getParameterAsString("MAIL_BODY_NEW_MSG", httpRequest.getLocale());
 
                                     MailUtil mu = new MailUtil(smtpHost, smtpPort, sslEnabled, smtpAuthUsername, smtpAuthPassword);
                                     mu.sendMail(mailFromAddress, recipient.getEmail(), mailSubject, mailBody);

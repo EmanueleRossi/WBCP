@@ -38,79 +38,97 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Stateless
 public class ApplicationParameterDao {
-	
+
     private static final Logger logger = LogManager.getLogger();
-    
+
     @PersistenceContext(unitName="WBCP_PU")
     private EntityManager em;
-	
-    private void persist(ApplicationParameterEjb anAppParameter) {    	
+
+    private void persist(ApplicationParameterEjb anAppParameter) {
     	anAppParameter.setUpdateInstantUTC(Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.UK));
-    	anAppParameter.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));    	    
-    	
+    	anAppParameter.setUpdateInstantLocale(Calendar.getInstance(TimeZone.getDefault(), Locale.getDefault()));
+
         if(anAppParameter.getId() != null) {
             em.merge(anAppParameter);
-        } else {          
+        } else {
             em.persist(anAppParameter);
         }
-    }     
-    
+    }
+
+    private String getLanguageTag(Locale locale) {
+        String languageTag = locale.toLanguageTag();
+        String[] locales = new String[]{"it-IT", "en-US"};
+
+        if (!ArrayUtils.contains(locales, languageTag)) {
+            if (locales[0].contains(languageTag)) {
+                languageTag = locales[0];
+            } else {
+                languageTag = locales[1]; // en-US as default language
+            }
+        }
+        return languageTag;
+    }
+
     private ApplicationParameterEjb getByName(String parameterName, Locale locale) {
     	ApplicationParameterEjb response = null;
-        try {         
+        String languageTag = getLanguageTag(locale);
+
+        try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<ApplicationParameterEjb> q = cb.createQuery(ApplicationParameterEjb.class);    
-            Root<ApplicationParameterEjb> r = q.from(ApplicationParameterEjb.class);            
+            CriteriaQuery<ApplicationParameterEjb> q = cb.createQuery(ApplicationParameterEjb.class);
+            Root<ApplicationParameterEjb> r = q.from(ApplicationParameterEjb.class);
             q.select(r)
                 .where(
                     cb.and(
                         cb.equal(r.<String>get("name"), parameterName),
-                        cb.equal(r.<String>get("localeTag"), locale.toLanguageTag())
+                        cb.equal(r.<String>get("localeTag"), languageTag)
                     )
-                );                                            
+                );
             TypedQuery<ApplicationParameterEjb> tq = em.createQuery(q);
-            response = tq.getSingleResult();            
+            response = tq.getSingleResult();
         } catch (NoResultException nre) {
-            logger.info("Not found ApplicationParameter with parameterName: |{}|", parameterName);            
-        }            
-        return response;  
+            logger.info("Not found ApplicationParameter with parameterName: |{}| for locale |{} ({})|", parameterName, languageTag, locale.toLanguageTag() );
+        }
+        return response;
     }
-    
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)     
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     private String getParameterValueString(String parameterName, Locale locale) throws IOException, URISyntaxException {
         ApplicationParameterEjb parameter = this.getByName(parameterName, locale);
-        if (parameter == null) {                        
+        if (parameter == null) {
             URL jsonDefaultParametersFileURL = Thread.currentThread().getContextClassLoader().getResource("ApplicationDefaultParameters.json");
             InputStream jsonDefaultParametersFileInputStream = jsonDefaultParametersFileURL.openStream();
             String jsonDefaultParmetersString = StringUtil.readString(jsonDefaultParametersFileInputStream);
-            JsonReader jsonDefaultParameterStringReader = Json.createReader(new StringReader(jsonDefaultParmetersString));            
-            JsonArray jsonDefaultParmetersArray = jsonDefaultParameterStringReader.readArray();            
+            JsonReader jsonDefaultParameterStringReader = Json.createReader(new StringReader(jsonDefaultParmetersString));
+            JsonArray jsonDefaultParmetersArray = jsonDefaultParameterStringReader.readArray();
             ApplicationParameterEjb defaultParameter = new ApplicationParameterEjb();
-            
+            String languageTag = getLanguageTag(locale);
+
             for (int i = 0; i < jsonDefaultParmetersArray.size(); i++) {
-                JsonObject jsonDefaultParameter = jsonDefaultParmetersArray.getJsonObject(i);                                
-                if (parameterName.equalsIgnoreCase(jsonDefaultParameter.getString("name")) && 
-                        locale.toLanguageTag().equalsIgnoreCase(jsonDefaultParameter.getString("localeTag"))) {     
-                    logger.trace("Read default parameter from JSON: |{}|", jsonDefaultParameter.toString());  
+                JsonObject jsonDefaultParameter = jsonDefaultParmetersArray.getJsonObject(i);
+                if (parameterName.equalsIgnoreCase(jsonDefaultParameter.getString("name")) &&
+                        languageTag.equalsIgnoreCase(jsonDefaultParameter.getString("localeTag"))) {
+                    logger.trace("Read default parameter from JSON: |{}|", jsonDefaultParameter.toString());
                     defaultParameter.setName(jsonDefaultParameter.getString("name"));
                     defaultParameter.setDescription(jsonDefaultParameter.getString("description"));
                     defaultParameter.setParameterValue(jsonDefaultParameter.getString("parameterValue"));
                     defaultParameter.setLocale(Locale.forLanguageTag(jsonDefaultParameter.getString("localeTag")));
-                }                                                               
+                }
             }
             this.persist(defaultParameter);
-            logger.trace("Inserted new Parameter: |{}|=|{}|", defaultParameter.getName(), defaultParameter.getParameterValue());   
-            
+            logger.trace("Inserted new Parameter: |{}|=|{}|", defaultParameter.getName(), defaultParameter.getParameterValue());
+
             parameter = this.getByName(parameterName, locale);
-        }                       
-        return parameter.getParameterValue();                                                   
+        }
+        return parameter.getParameterValue();
     }
-    
+
     public Boolean getParameterAsBoolean(String parameterName, Locale locale) throws IOException, URISyntaxException {
         String parameterValueString = this.getParameterValueString(parameterName, locale);
         return Boolean.parseBoolean(parameterValueString);
@@ -118,8 +136,8 @@ public class ApplicationParameterDao {
     public Boolean getParameterAsBoolean(String parameterName) throws IOException, URISyntaxException {
         String parameterValueString = this.getParameterValueString(parameterName, Locale.US);
         return Boolean.parseBoolean(parameterValueString);
-    }    
-    
+    }
+
     public Integer getParameterAsInteger(String parameterName, Locale locale) throws IOException, URISyntaxException {
         String parameterValueString = this.getParameterValueString(parameterName, locale);
         return Integer.parseInt(parameterValueString);
@@ -128,7 +146,7 @@ public class ApplicationParameterDao {
         String parameterValueString = this.getParameterValueString(parameterName, Locale.US);
         return Integer.parseInt(parameterValueString);
     }
-    
+
     public Long getParameterAsLong(String parameterName, Locale locale) throws IOException, URISyntaxException {
         String parameterValueString = this.getParameterValueString(parameterName, locale);
         return Long.parseLong(parameterValueString);
@@ -136,12 +154,12 @@ public class ApplicationParameterDao {
     public Long getParameterAsLong(String parameterName) throws IOException, URISyntaxException {
         String parameterValueString = this.getParameterValueString(parameterName, Locale.US);
         return Long.parseLong(parameterValueString);
-    }    
-    
+    }
+
     public String getParameterAsString(String parameterName, Locale locale) throws IOException, URISyntaxException {
         return this.getParameterValueString(parameterName, locale);
-    }    
+    }
     public String getParameterAsString(String parameterName) throws IOException, URISyntaxException {
         return this.getParameterValueString(parameterName, Locale.US);
-    }    
+    }
 }
