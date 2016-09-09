@@ -71,8 +71,6 @@ angular.module('whistleBlowingApp')
             templateUrl: 'partials/common/attachment.tmpl.html',
             controller : function($scope) {
 
-                console.log("att:", $scope.attachment);
-
                 $scope.config = {
 
                     readAsDataURL : function(content) {
@@ -84,16 +82,13 @@ angular.module('whistleBlowingApp')
 
                             $scope.errors = {};
 
-                            /*  if(content.size != 3168) TODO: check sul max file size
-                             {
-                             $scope.errors = {
-                             message : "Chiave non valida",
-                             details : "il file selezionato non contiene una chiave privata valida"
-                             };
+                            if(content.size > 1048000) // 1MB
+                            {
+                                var size = Math.round(content.size / 10000) / 100;
+                                alert("Si sta tentando di caricare un file di " + size + " MB. E' consentito il caricamento di files di dimensione massima pari a 1 MB");
+                                return;
+                            }
 
-                             return;
-                             }
-                             */
 
                             $scope.attachment.content = content.content;
                             $scope.attachment.filename =content.name;

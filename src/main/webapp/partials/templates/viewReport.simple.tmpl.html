@@ -69,7 +69,7 @@
                     <div class="form-group row" ng-show="report.authors">
                         <label class="col-sm-3 control-label">Autore/i del fatto:</label>
                         <div class="col-sm-9">
-                            <span data-ng-if="report.authors"><em>nessun autore indicato</em></span>
+                            <span data-ng-if="!report.authors || !report.authors[0].firstname"><em>nessun autore indicato</em></span>
                             <div ng-repeat="author in report.authors" class="form-group row">
                                 <div class="col-sm-2"  >
                                     <span class="form-control-static" ng-if="author.firstname">{{author.firstname}}</span>
@@ -87,7 +87,7 @@
                     <div class="form-group row" ng-show="report.deponents">
                         <label class="col-sm-3 control-label">Eventuali altri soggetti che possono riferire sul fatto:</label>
                         <div class="col-sm-9">
-                            <span data-ng-if="report.deponents"><em>nessun altro soggetto indicato</em></span>
+                            <span data-ng-if="!report.deponents || !report.deponents[0].firstname"><em>nessun altro soggetto indicato</em></span>
                             <div ng-repeat="deponent in report.deponents" class="form-group row">
                                 <div class="col-sm-2"  >
                                     <span class="form-control-static" ng-if="deponent.firstname">{{deponent.firstname}}</span>

@@ -61,9 +61,18 @@ app.controller('LoginController', function ($scope, $window, $http) {
 
 
   $scope.doLogin = function () {
-    
- 	$scope.errorMessage = "";
+
+      if($scope.privateKey == null) {
+          $scope.errors.details = "Chiave mancante";
+          $scope.errors.details = "Prego fornire la chiave privata ricevuta tramite email";
+          return;
+      }
+
+      $scope.errors.message = "";
+      $scope.errors.details = "";
+
     app.auth.cleanCurrentUser();
+
 
     var login = {
         "loginEmail": $scope.username,
@@ -73,35 +82,23 @@ app.controller('LoginController', function ($scope, $window, $http) {
 
      app.net.login(login, $http, function(err, userSession){
 
-    if(err)
-      {
-         $scope.errors.message = err.message;
-         $scope.errors.details = err.details;
-         
-         return;
-      }
+        if(err)
+        {
+            $scope.errors.message = err.message;
+            $scope.errors.details = err.details;
 
-     /* app.net.getUserByEmail($scope.username, $http, function(err, user){
+            return;
+        }
 
-        console.log("getUserByEmail callback: ", user);
-
-         if(err)
-          {
-             $scope.errors.message = "Errori di accesso";
-             $scope.errors.details = "Utente non trovato a sistema";
-             
-             return;
-          }
-*/
-          var currentUser =  {
+        var currentUser =  {
             userSession : userSession,
             user: { firstName : $scope.username , email: $scope.username  }//user
-          }
+        }
 
-          app.auth.setCurrentUser(currentUser, $scope.remember);
-          $window.location.href = "#/report-list";
-      
-  //    });
+         console.log("currentUser:", currentUser);
+
+        app.auth.setCurrentUser(currentUser, $scope.remember);
+        $window.location.href = "#/report-list";
     });
   };
 

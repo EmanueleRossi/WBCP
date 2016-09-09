@@ -15,8 +15,8 @@
 (function(){
 
 	var net = {
-		host :'/WBCP/rs'
-	};
+		host: '/WBCP/rs'
+	}
 
 	app.net = net;
 
@@ -75,47 +75,6 @@
 		});
 
 };
-
-	net.localLogin = function(credentials, http, callback){
-		showLoader();
-		
-
-		
-		setTimeout(function(){
-			 hideLoader();
-
-			  return callback(null, {
-			  			firstName: "Emanuele",
-						lastName: "Rossi",
-						taxCode: "RSSMNL77R02L781Y",
-						email: "emanuele.rossi@gpi.it",
-						token: "xxxx"
-					});
-		}, 2000);
-	
-	};
-
-	net.getUserByEmail = function(email, http, callback){
-
-		var url =  net.host + "/user/email/" + email;
-
-		var req = {
-			method: 'GET',
-			url: url,
-			headers: {'AuthorizationToken': app.auth.getAuthToken()}
-		}
-
-		http.get(req )
-		  .success(function(data, status, headers, config) {
-
-			  return callback(null, data);
-			  
-		  })
-		  .error(function(data, status, headers, config) {
-			
-			 return callback("error");
-		  });
-	};
 
 	app.net.getAuthor = function(messageId, http, callback) {
 

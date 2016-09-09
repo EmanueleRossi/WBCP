@@ -189,13 +189,13 @@ app.controller('AddReportController',
   			delete $scope.report.otherReason; 	
 
   		if($scope.report.deponents.length == 1)
-  			if( $scope.report.deponents[0].firstname == "" &&
-  				$scope.report.deponents[0].lastname == "" &&
-  				$scope.report.deponents[0].role == "" &&
-  				$scope.report.deponents[0].contacts == "")
-	  			{
-	  				$scope.report.deponents = null;
-	  			}
+			if( $scope.report.deponents[0].firstname == "" &&
+				$scope.report.deponents[0].lastname == "" &&
+				$scope.report.deponents[0].role == "" &&
+				$scope.report.deponents[0].contacts == "")
+			{
+				$scope.report.deponents = null;
+			}
 
   		var message = {
 	        "user": $scope.user,

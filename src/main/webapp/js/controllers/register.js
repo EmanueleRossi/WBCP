@@ -19,9 +19,7 @@ app.controller('RegisterController', function ($scope, $window, $http) {
   $scope.accountCreated = false;
 
   $scope.createAccount = function () {
-    
-    console.log("createAccount", $scope.user);
-   
+
     $scope.errors = {};
     
     var account = {
@@ -34,7 +32,6 @@ app.controller('RegisterController', function ($scope, $window, $http) {
 
     app.net.createAccount(account, $http, function(err, acc){
 
-        console.log("callback: ", err);
         if(err)
         {
            $scope.errors.message = err.message;
