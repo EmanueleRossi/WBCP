@@ -15,8 +15,10 @@
 <div class="container" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="container-header">
         <h2 class="title-application">WhistleBlowing</h2>
-        <p class="autenticazione">Utente: <span>{{ user.firstName }} {{ user.lastName }} </span>
-        <span ng-click="logout()" class="logout text-primary">(disconnetti)</span></p>
+        <p class="autenticazione">Utente:
+            <span>{{ user.firstName }} {{ user.lastName }} </span>
+            <span ng-click="changePassword()" class="logout text-primary"> - cambio password - </span>
+            <span ng-click="logout()" class="logout text-primary">disconnetti</span></p>
         <div class="clear"></div>
     </div>
 

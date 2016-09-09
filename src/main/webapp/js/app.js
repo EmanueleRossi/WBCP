@@ -299,7 +299,7 @@ app.factory('APIInterceptor', function ($rootScope, $q) {
     };
 });
 
-app.run(function ($rootScope, $window, $location) {
+app.run(function ($rootScope, $window, $location, $modal) {
 
     $rootScope.$on('event.unauthorized', function() {
         $window.location.href = "#/login";
@@ -319,6 +319,15 @@ app.run(function ($rootScope, $window, $location) {
         app.data.cleanData();
         app.auth.cleanCurrentUser();
         $window.location.href = "#/home";
+    };
+
+    $rootScope.changePassword = function() {
+        $modal.open({
+            animation: true,
+            size:'sm',
+            templateUrl: 'partials/common/changePasswordDialog.html',
+            controller: 'ChangePasswordDialogController'
+        });
     };
 
     var host = $location.host().replace("www.","");
