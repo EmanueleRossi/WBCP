@@ -1,0 +1,14 @@
+
+#loginModal {
+    position: relative;
+}
+
+#loginModal .logo {
+    background: transparent url('../img/logo-policlinico-san-matteo-pavia.jpg') no-repeat 0 0;
+    background-size: contain;
+    height:50px;
+   /* width: 200px;
+    position: absolute;
+    right:10px; */
+    top:15px;
+}
